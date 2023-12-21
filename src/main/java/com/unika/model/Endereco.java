@@ -1,0 +1,96 @@
+package com.unika.model;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
+public class Endereco {
+    private Long id;
+    private String endereco;
+    private String numero;
+    private String cep;
+    private String bairro;
+    private String telefone;
+    private String cidade;
+    private String estado;
+    private Boolean principal;
+    private Long idMonitorador;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getEndereco() {
+        return endereco;
+    }
+
+    public void setEndereco(String endereco) {
+        this.endereco = endereco;
+    }
+
+    public String getNumero() {
+        return numero;
+    }
+
+    public void setNumero(String numero) {
+        this.numero = numero;
+    }
+
+    public String getCep() {
+        return cep;
+    }
+
+    public void setCep(String cep) {
+        this.cep = cep;
+    }
+
+    public String getBairro() {
+        return bairro;
+    }
+
+    public void setBairro(String bairro) {
+        this.bairro = bairro;
+    }
+
+    public String getTelefone() {
+        return telefone;
+    }
+
+    public void setTelefone(String telefone) {
+        this.telefone = telefone;
+    }
+
+    public String getCidade() {
+        return cidade;
+    }
+
+    public void setCidade(String cidade) {
+        this.cidade = cidade;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
+
+    public Boolean getPrincipal() {
+        return principal;
+    }
+
+    public void setPrincipal(Boolean principal) {
+        this.principal = principal;
+    }
+
+    public Long getIdMonitorador() {
+        return idMonitorador;
+    }
+
+    public void setIdMonitorador(Long idMonitorador) {
+        this.idMonitorador = idMonitorador;
+    }
+}

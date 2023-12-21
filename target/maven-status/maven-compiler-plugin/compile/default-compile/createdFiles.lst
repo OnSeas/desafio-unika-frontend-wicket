@@ -1,2 +1,8 @@
+com/unika/model/PessoaFisica.class
+com/unika/apiService/MonitoradorApi.class
+com/unika/model/Monitorador.class
+com/unika/model/PessoaJuridica.class
+com/unika/model/TipoPessoa.class
 com/unika/HomePage.class
+com/unika/model/Endereco.class
 com/unika/WicketApplication.class
