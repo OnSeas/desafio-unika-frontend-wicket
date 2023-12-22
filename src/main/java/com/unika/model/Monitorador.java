@@ -4,13 +4,19 @@ import org.joda.time.LocalDate;
 
 import java.util.List;
 
-public abstract class Monitorador {
+public class Monitorador {
     private Long id;
     private TipoPessoa tipoPessoa;
     private String email;
     private String dataNascimento; // TODO mudar
     private String inscricaoEstadual;
     private List<Endereco> enderecoList;
+    private String cpf;
+    private String nome;
+    private String rg;
+    private String cnpj;
+    private String razaoSocial;
+
 
     public Long getId() {
         return id;
@@ -58,5 +64,63 @@ public abstract class Monitorador {
 
     public void setEnderecoList(List<Endereco> enderecoList) {
         this.enderecoList = enderecoList;
+    }
+
+    public String getCpf() {
+        return cpf;
+    }
+
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public String getRg() {
+        return rg;
+    }
+
+    public void setRg(String rg) {
+        this.rg = rg;
+    }
+
+    public String getCnpj() {
+        return cnpj;
+    }
+
+    public void setCnpj(String cnpj) {
+        this.cnpj = cnpj;
+    }
+
+    public String getRazaoSocial() {
+        return razaoSocial;
+    }
+
+    public void setRazaoSocial(String razaoSocial) {
+        this.razaoSocial = razaoSocial;
+    }
+
+
+    @Override
+    public String toString() {
+        return "Monitorador Java Ob{" +
+                "id=" + id +
+                ", tipoPessoa=" + tipoPessoa +
+                ", email='" + email + '\'' +
+                ", dataNascimento='" + dataNascimento + '\'' +
+                ", inscricaoEstadual='" + inscricaoEstadual + '\'' +
+                ", enderecoList=" + enderecoList +
+                ", cpf='" + cpf + '\'' +
+                ", nome='" + nome + '\'' +
+                ", rg='" + rg + '\'' +
+                ", cnpj='" + cnpj + '\'' +
+                ", razaoSocial='" + razaoSocial + '\'' +
+                '}';
     }
 }

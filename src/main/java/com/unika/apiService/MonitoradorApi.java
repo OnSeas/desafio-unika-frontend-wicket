@@ -2,91 +2,101 @@ package com.unika.apiService;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.unika.model.Endereco;
 import com.unika.model.Monitorador;
-import com.unika.model.PessoaFisica;
-import okhttp3.*;
+import okhttp3.Response;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.List;
 
-public class MonitoradorApi {
+public class MonitoradorApi { //TODO lidar com exeções
     final String apiUrl = "http://localhost:8080/monitorador";
 
-    public Monitorador cadastrarMonitorador(Monitorador monitorador) throws IOException {
+    ApiService apiService = new ApiService();
+    Gson gson = new Gson();
 
-        Response response = conectarApi(
-                getJson(monitorador),
-                "/cadastrar",
-                "POST");
+    public Monitorador cadastrarMonitorador(Monitorador monitorador) throws IOException {
+        Response response = apiService.conectarApiPOST(
+                gson.toJson(monitorador, Monitorador.class),
+                apiUrl + "/cadastrar"
+        );
 
         if(response.isSuccessful()){
             assert response.body() != null;
-            return getObject(response.body().string());
+            String json = response.body().string();
+            return gson.fromJson(json, Monitorador.class);
         } else {
             throw new RuntimeException(response.body().string());
         }
     }
 
-//    public List<Monitorador> listarMonitoradores() throws IOException {
-//
-//        Response response = conectarApiGet(
-//                "/listar");
-//
-//        if(response.isSuccessful()){
-//            Type listType = new TypeToken<List<Monitorador>>() {}.getType();
-//
-//            Gson gson = new Gson();
-//            List<Monitorador> monitoradorList = gson.fromJson(response.body().string(), listType);
-//            return monitoradorList;
-//        } else {
-//            throw new RuntimeException(response.body().string());
-//        }
-//    }
+    public List<Monitorador> listarMonitoradores() throws IOException {
+        Response response = apiService.conectarApiGET(apiUrl + "/listar");
 
-    // Conexões com a API
-    private Response conectarApi(String jsonBody, String endpoint, String metodo) throws IOException {
-        OkHttpClient client = new OkHttpClient().newBuilder()
-                .build();
-        MediaType mediaType = MediaType.parse("application/json");
-        RequestBody body = RequestBody.create(mediaType, jsonBody);
-        Request request = new Request.Builder()
-                .url(apiUrl + endpoint) // Muda em cada chamada
-                .method(metodo, body) // Muda em cada chamada
-                .addHeader("Content-Type", "application/json")
-                .build();
-        return client.newCall(request).execute();
+        if (response.isSuccessful()){
+            assert response.body() != null;
+            String json = response.body().string();
+            Type listType = new TypeToken<List<Monitorador>>() {}.getType();
+            return gson.fromJson(json, listType);
+        } else {
+            throw new RuntimeException(response.body().string());
+        }
     }
 
-    private Response conectarApiGet(String endpoint) throws IOException {
-        OkHttpClient client = new OkHttpClient().newBuilder()
-                .build();
-        Request request = new Request.Builder().url(apiUrl + endpoint).get().build();
-        return client.newCall(request).execute();
+    public Monitorador buscarMonitorador(Long id) throws IOException {
+        Response response = apiService.conectarApiGET(apiUrl + "/buscar/" + id);
+
+        if (response.isSuccessful()){
+            assert response.body() != null;
+            String json = response.body().string();
+            return gson.fromJson(json, Monitorador.class);
+        } else {
+            throw new RuntimeException(response.body().string());
+        }
     }
 
-    private Response conectarApiDelete(String endpoint) throws IOException {
-        OkHttpClient client = new OkHttpClient().newBuilder()
-                .build();
-        Request request = new Request.Builder().url(apiUrl + endpoint).delete().build();
-        return client.newCall(request).execute();
+    public Monitorador atualizarMonitorador(Monitorador monitorador, Long id) throws IOException {
+        Response response = apiService.conectarApiPUT(
+                gson.toJson(monitorador, Monitorador.class),
+                apiUrl + "/atualizar/" + id
+        );
+
+        if (response.isSuccessful()){
+            assert response.body() != null;
+            String json = response.body().string();
+            return gson.fromJson(json, Monitorador.class);
+        } else {
+            throw new RuntimeException(response.body().string());
+        }
     }
 
-    // Conversores de Json pra Object
+    public String deletarMonitorador(Long id) throws IOException {
+        Response response = apiService.conectarApiDELETE(
+                apiUrl + "/deletar/" + id
+        );
 
-    private List<Monitorador> getObjects(String string) {
-        Gson gson = new Gson();
-        return gson.fromJson(string, List.class);
-    }
-    private Monitorador getObject(String string) {
-        Gson gson = new Gson();
-        return gson.fromJson(string, PessoaFisica.class);
+        if (response.isSuccessful()){
+            assert response.body() != null;
+            return response.body().string();
+        } else {
+            throw new RuntimeException(response.body().string());
+        }
     }
 
-    private String getJson(Monitorador monitorador) {
-        Gson gson = new Gson();
-        return gson.toJson(monitorador, PessoaFisica.class);
+    public String adcionarEndereco(Long id, Endereco endereco) throws IOException {
+        Response response = apiService.conectarApiPOST(
+                gson.toJson(endereco, Endereco.class),
+                apiUrl + "/" + id + "/endereco"
+        );
+
+        if (response.isSuccessful()){
+            assert response.body() != null;
+            return response.body().string();
+        } else {
+            throw new RuntimeException(response.body().string());
+        }
     }
+
 
 }

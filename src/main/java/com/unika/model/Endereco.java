@@ -12,7 +12,6 @@ public class Endereco {
     private String cidade;
     private String estado;
     private Boolean principal;
-    private Long idMonitorador;
 
     public Long getId() {
         return id;
@@ -86,11 +85,18 @@ public class Endereco {
         this.principal = principal;
     }
 
-    public Long getIdMonitorador() {
-        return idMonitorador;
-    }
-
-    public void setIdMonitorador(Long idMonitorador) {
-        this.idMonitorador = idMonitorador;
+    @Override
+    public String toString() {
+        return "Endereco{" +
+                "id=" + id +
+                ", endereco='" + endereco + '\'' +
+                ", numero='" + numero + '\'' +
+                ", cep='" + cep + '\'' +
+                ", bairro='" + bairro + '\'' +
+                ", telefone='" + telefone + '\'' +
+                ", cidade='" + cidade + '\'' +
+                ", estado='" + estado + '\'' +
+                ", principal=" + principal +
+                '}';
     }
 }
