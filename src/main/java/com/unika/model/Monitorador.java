@@ -1,10 +1,9 @@
 package com.unika.model;
 
-import org.joda.time.LocalDate;
-
+import java.io.Serializable;
 import java.util.List;
 
-public class Monitorador {
+public class Monitorador implements Serializable {
     private Long id;
     private TipoPessoa tipoPessoa;
     private String email;

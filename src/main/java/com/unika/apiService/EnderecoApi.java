@@ -7,6 +7,7 @@ import com.unika.model.Monitorador;
 import okhttp3.*;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.util.List;
 
@@ -60,6 +61,25 @@ public class EnderecoApi {
         Response response = apiService.conectarApiDELETE(
                 apiUrl + "/deletar/" + idEndereco
         );
+
+        if (response.isSuccessful()){
+            assert response.body() != null;
+            return response.body().string();
+        } else {
+            throw new RuntimeException(response.body().string());
+        }
+    }
+
+    public String tornarPrincipal(Long idEndereco, Long idMonitor) throws IOException {
+
+        System.out.println(apiUrl + "/" + idEndereco + "/tornar-principal/" + idMonitor);
+
+        Response response = apiService.conectarApiPUT(
+                gson.toJson(""),
+                apiUrl + "/" + idEndereco + "/tornar-principal/" + idMonitor
+        );
+
+        System.out.println("Teste2");
 
         if (response.isSuccessful()){
             assert response.body() != null;

@@ -7,10 +7,11 @@ import com.unika.model.Monitorador;
 import okhttp3.Response;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.util.List;
 
-public class MonitoradorApi { //TODO lidar com exeções
+public class MonitoradorApi{ //TODO lidar com exeções
     final String apiUrl = "http://localhost:8080/monitorador";
 
     ApiService apiService = new ApiService();
@@ -98,5 +99,68 @@ public class MonitoradorApi { //TODO lidar com exeções
         }
     }
 
+    public String ativarMonitorador(Long id) throws IOException {
+        Response response = apiService.conectarApiPUT(
+                "",
+                apiUrl + "/ativar/" + id
+        );
+
+        if (response.isSuccessful()){
+            assert response.body() != null;
+            return response.body().string();
+        } else {
+            throw new RuntimeException(response.body().string());
+        }
+    }
+
+    public String desativarMonitorador(Long id) throws IOException {
+        Response response = apiService.conectarApiPUT(
+                "",
+                apiUrl + "/desativar/" + id
+        );
+
+        if (response.isSuccessful()){
+            assert response.body() != null;
+            return response.body().string();
+        } else {
+            throw new RuntimeException(response.body().string());
+        }
+    }
+
+    public Monitorador buscarMonitoradorPorEmail(String email) throws IOException {
+        Response response = apiService.conectarApiGET(apiUrl + "/buscar/email/" + email);
+
+        if (response.isSuccessful()){
+            assert response.body() != null;
+            String json = response.body().string();
+            return gson.fromJson(json, Monitorador.class);
+        } else {
+            throw new RuntimeException(response.body().string());
+        }
+    }
+
+    public Monitorador buscarMonitoradorPorCpf(String cpf) throws IOException {
+        Response response = apiService.conectarApiGET(apiUrl + "/buscar/cpf/" + cpf);
+
+        if (response.isSuccessful()){
+            assert response.body() != null;
+            String json = response.body().string();
+            return gson.fromJson(json, Monitorador.class);
+        } else {
+            throw new RuntimeException(response.body().string());
+        }
+    }
+
+    public Monitorador buscarMonitoradorPorCnpj(String cnpj) throws IOException {
+        Response response = apiService.conectarApiGET(apiUrl + "/buscar/cnpj/" + cnpj);
+
+        if (response.isSuccessful()){
+            assert response.body() != null;
+            String json = response.body().string();
+            return gson.fromJson(json, Monitorador.class);
+        } else {
+            throw new RuntimeException(response.body().string());
+        }
+    }
 
 }
