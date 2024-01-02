@@ -1,8 +1,9 @@
 package com.unika.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import java.io.Serializable;
 
-public class Endereco {
+public class Endereco implements Serializable {
+    private static final long serialVersionUID = -5603883707902618920L;
     private Long id;
     private String endereco;
     private String numero;

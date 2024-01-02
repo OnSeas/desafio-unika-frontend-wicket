@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:wicket="http://wicket.apache.org" lang="pt">
+    <head>
+        <meta charset="UTF-8">
+        <title>Cadastro de monitorador</title>
+    </head>
+
+    <body>
+        <wicket:extend>
+
+            <div class="d-flex justify-content-center">
+                <h2 wicket:id="CadastrarMonitorador">Teste!</h2>
+            </div>
+
+            <div class="d-flex justify-content-center">
+                <form wicket:id="monitoradorForm" name="formMonitorador">
+
+                    <div class="row g-2 align-items-center">
+                        <div class="col-auto">
+                            <label for="exampleFormControlInput1" class="form-label">Tipo Pessoa</label>
+                        </div>
+                        <div class="col-auto">
+                            <select class="form-select form-select-lg" aria-label="Default select example" id="exampleFormControlInput1" wicket:id="tipoPessoa">
+                                <option>[primeira opcao]</option>
+                                <option>[segunda opcao]</option>
+                            </select> <br>
+                        </div>
+                    </div>
+
+                    <div class="row g-2 align-items-center">
+                        <div class="col-auto">
+                            <label for="exampleFormControlInput2" class="form-label">Email address</label>
+                        </div>
+                        <div class="col-auto">
+                            <input type="text" class="form-control" id="exampleFormControlInput2" wicket:id="email" placeholder="name@example.com">
+                        </div>
+                    </div>
+
+                    <div class="row g-2 align-items-center">
+                        <div class="col-auto">
+                            <label for="exampleFormControlInput3" class="form-label">Data de Nascimento</label>
+                        </div>
+                        <div class="col-auto">
+                            <input type="text" class="form-control" id="exampleFormControlInput3" wicket:id="dataNascimento" placeholder="00/00/2856">
+                        </div>
+                    </div>
+
+                    <input type="text" wicket:id="inscricaoEstadual" placeholder="inscricaoEstadual"><br>
+                    <input type="text" wicket:id="cpf" placeholder="cpf"><br>
+                    <input type="text" wicket:id="nome" placeholder="nome"><br>
+                    <input type="text" wicket:id="rg" placeholder="rg"><br>
+                    <input type="text" wicket:id="cnpj" placeholder="cnpj"><br>
+                    <input type="text" wicket:id="razaoSocial" placeholder="razaoSocial"><br>
+
+                    <input type="submit" value="Submit">
+                </form>
+            </div>
+
+        </wicket:extend>
+    </body>
+</html>

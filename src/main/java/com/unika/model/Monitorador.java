@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 
 public class Monitorador implements Serializable {
+    private static final long serialVersionUID = -3905174428237967539L;
     private Long id;
     private TipoPessoa tipoPessoa;
     private String email;
