@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="pt" xmlns:wicket="http://wicket.apache.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Monitoradores - Início</title>
+</head>
+<body>
+    <wicket:extend>
+
+        <div class="d-flex justify-content-center">
+            <h1>Bem Vindo a Monitoradores Aplication!</h1>
+        </div>
+
+        <div class="d-flex justify-content-center">
+            <h3>Você pode acessar as funcionalidades da aplicação na barra de navegação ou nos botões a baixo.</h3>
+        </div>
+
+        <div class="d-grid gap-2 col-2 mx-auto">
+            <wicket:link>
+                <a class="btn btn-primary" type="button" href="cadastro/SelecaoCadastro.html">Cadastro de Monitoradores</a>
+                <a class="btn btn-primary" type="button" href="listagem/ListarMonitoradores.html">Listar Monitoradores</a>
+            </wicket:link>
+        </div>
+
+        <wicket:child/>
+
+    </wicket:extend>
+</body>
+</html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt" xmlns:wicket="http://wicket.apache.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Cadastrar Pessoa Física</title>
+</head>
+<body>
+    <wicket:extend>
+        <div class="d-flex justify-content-center">
+            <h2 wicket:id="cadastrarPF">[title]</h2>
+        </div>
+
+        <div style="color: red" wicket:id="FeedbackMessage"></div>
+
+        <div>
+            <form wicket:id="pessoaFisicaForm" name="formMonitorador">
+                <div class="d-grid gap-3 col-3 mx-auto">
+                    <div>
+                        <label for="inputNomeForm" class="form-label">Nome</label>
+                        <input type="text" class="form-control" wicket:id="nome" id="inputNomeForm" placeholder="Seu Nome">
+                    </div>
+
+                    <div>
+                        <label for="inputEmailForm" class="form-label">Email</label>
+                        <input type="email" class="form-control" wicket:id="email" id="inputEmailForm" placeholder="nome@email.com">
+                    </div>
+
+                    <div>
+                        <label for="inputDataNascimentoForm" class="form-label">Data de Nascimento</label>
+                        <input type="date" class="form-control" data-date-format="yyyy-MM-dd" wicket:id="dataNascimento" id="inputDataNascimentoForm">
+                    </div>
+
+                    <div>
+                        <label for="inputCpfForm" class="form-label">CPF</label>
+                        <input type="text" class="form-control" wicket:id="cpf" id="inputCpfForm" placeholder="000.000.000-00">
+                    </div>
+
+                    <div>
+                        <label for="inputRgForm" class="form-label">RG</label>
+                        <input type="text" class="form-control" wicket:id="rg" id="inputRgForm" placeholder="000000000">
+                    </div>
+
+                    <input class="btn btn-primary" type="submit" value="Cadastrar">
+                </div>
+            </form>
+        </div>
+
+    </wicket:extend>
+</body>
+</html>

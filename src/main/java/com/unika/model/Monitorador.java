@@ -1,6 +1,8 @@
 package com.unika.model;
 
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 public class Monitorador implements Serializable {
@@ -8,7 +10,7 @@ public class Monitorador implements Serializable {
     private Long id;
     private TipoPessoa tipoPessoa;
     private String email;
-    private String dataNascimento; // TODO mudar
+    private LocalDate dataNascimento; // TODO Resolver problemas
     private String inscricaoEstadual;
     private List<Endereco> enderecoList;
     private String cpf;
@@ -42,11 +44,11 @@ public class Monitorador implements Serializable {
         this.email = email;
     }
 
-    public String getDataNascimento() {
+    public LocalDate getDataNascimento() {
         return dataNascimento;
     }
 
-    public void setDataNascimento(String dataNascimento) {
+    public void setDataNascimento(LocalDate dataNascimento) {
         this.dataNascimento = dataNascimento;
     }
 
