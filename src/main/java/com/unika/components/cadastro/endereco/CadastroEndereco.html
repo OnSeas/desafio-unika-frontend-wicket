@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pt" xmlns:wicket="http://wicket.apache.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Cadastrar endereço</title>
+</head>
+<body>
+    <wicket:extend>
+        <div class="d-flex justify-content-center">
+            <h2 wicket:id="TitleEnderecoForm">[title]</h2>
+        </div>
+
+        <div>
+            <form wicket:id="enderecoForm" name="FormularioEndereco">
+                <div class="d-grid gap-3 col-3 mx-auto">
+                    <div>
+                        <label for="inputEnderecoForm" class="form-label">Endereço</label>
+                        <textarea class="form-control" wicket:id="endereco" placeholder="Rua 01, Qd 00 Lt 02..." id="inputEnderecoForm"></textarea>
+                    </div>
+
+                    <div>
+                        <label for="inputNumberForm" class="form-label">Número</label>
+                        <input type="number" class="form-control" wicket:id="numero" id="inputNumberForm" placeholder="000">
+                    </div>
+
+                    <div>
+                        <label for="inputCepForm" class="form-label">CEP</label>
+                        <input type="text" class="form-control" wicket:id="cep" id="inputCepForm" placeholder="00000-000">
+                    </div>
+
+                    <div>
+                        <label for="inputBairroForm" class="form-label">Bairro</label>
+                        <input type="text" class="form-control" wicket:id="bairro" id="inputBairroForm" placeholder="São João">
+                    </div>
+
+                    <div>
+                        <label for="inputTelefoneForm" class="form-label">Telefone</label>
+                        <input type="text" class="form-control" wicket:id="telefone" id="inputTelefoneForm" placeholder="(00)00000-0000">
+                    </div>
+
+                    <div>
+                        <label for="inputCidadeForm" class="form-label">Cidade</label>
+                        <input type="text" class="form-control" wicket:id="cidade" id="inputCidadeForm" placeholder="São Paulo">
+                    </div>
+
+                    <div>
+                        <label for="inputEstadoForm" class="form-label">Estado</label>
+                        <select class="form-select form-select-lg mb-3" aria-label="Default select example" wicket:id="estado" id="inputEstadoForm">
+                            <option selected>Open this select menu</option>
+                            <option value="AC">Acre</option>
+                            <option value="AL">Alagoas</option>
+                            <option value="AP">Amapá</option>
+                            <option value="AM">Amazonas</option>
+                            <option value="BA">Bahia</option>
+                            <option value="CE">Ceará</option>
+                            <option value="DF">Distrito Federal</option>
+                            <option value="ES">Espírito Santo</option>
+                            <option value="GO">Goiás</option>
+                            <option value="MA">Maranhão</option>
+                            <option value="MT">Mato Grosso</option>
+                            <option value="MS">Mato Grosso do Sul</option>
+                            <option value="MG">Minas Gerais</option>
+                            <option value="PA">Pará</option>
+                            <option value="PB">Paraíba</option>
+                            <option value="PR">Paraná</option>
+                            <option value="PE">Pernambuco</option>
+                            <option value="PI">Piauí</option>
+                            <option value="RJ">Rio de Janeiro</option>
+                            <option value="RN">Rio Grande do Norte</option>
+                            <option value="RS">Rio Grande do Sul</option>
+                            <option value="RO">Rondônia</option>
+                            <option value="RR">Roraima</option>
+                            <option value="SC">Santa Catarina</option>
+                            <option value="SP">São Paulo</option>
+                            <option value="SE">Sergipe</option>
+                            <option value="TO">Tocantins</option>
+                        </select>
+                    </div>
+
+                    <div class="d-flex justify-content-end">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" wicket:id="principal" id="flexSwitchCheckDefault">
+                            <label class="form-check-label" for="flexSwitchCheckDefault">Endereço Principal</label>
+                        </div>
+                    </div>
+
+                    <input class="btn btn-primary" type="submit" value="Cadastrar">
+                </div>
+            </form>
+        </div>
+    </wicket:extend>
+</body>
+</html>
