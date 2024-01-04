@@ -10,7 +10,7 @@ public class Monitorador implements Serializable {
     private Long id;
     private TipoPessoa tipoPessoa;
     private String email;
-    private LocalDate dataNascimento; // TODO Resolver problemas
+    private String dataNascimento;
     private String inscricaoEstadual;
     private List<Endereco> enderecoList;
     private String cpf;
@@ -44,11 +44,11 @@ public class Monitorador implements Serializable {
         this.email = email;
     }
 
-    public LocalDate getDataNascimento() {
+    public String getDataNascimento() {
         return dataNascimento;
     }
 
-    public void setDataNascimento(LocalDate dataNascimento) {
+    public void setDataNascimento(String dataNascimento) {
         this.dataNascimento = dataNascimento;
     }
 

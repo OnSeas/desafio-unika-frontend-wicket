@@ -29,7 +29,7 @@ public class CadastroPessoaFisica extends SelecaoCadastro {
         
         cpfInput.setLabel(Model.of("CPF")).setRequired(true).add(StringValidator.lengthBetween(11, 14));
         nomeInput.setLabel(Model.of("Nome")).setRequired(true).add(StringValidator.lengthBetween(3, 200));
-        rgInput.setLabel(Model.of("RG")).setRequired(true).add(StringValidator.exactLength(9));
+        rgInput.setLabel(Model.of("RG")).setRequired(true).add(StringValidator.lengthBetween(9, 12));
 
         add(new FeedbackPanel("FeedbackMessage", new ErrorLevelFeedbackMessageFilter(FeedbackMessage.ERROR)));
     }

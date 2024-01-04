@@ -5,13 +5,15 @@ import com.unika.apiService.MonitoradorApi;
 import com.unika.components.Index;
 import com.unika.model.Monitorador;
 import com.unika.model.TipoPessoa;
-import org.apache.wicket.extensions.markup.html.form.datetime.LocalDateTextField;
+import org.apache.wicket.extensions.markup.html.form.DateTextField;
 import org.apache.wicket.markup.html.form.EmailTextField;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.validation.validator.EmailAddressValidator;
+
+import java.util.Date;
 
 public class SelecaoCadastro extends BasePage {
     private static final long serialVersionUID = 5334566601860196755L;
@@ -29,13 +31,12 @@ public class SelecaoCadastro extends BasePage {
             @Override
             public void onSubmit(){
                 try {
-                    System.out.println(this);
                     Monitorador monitoradorSubmetido = getModelObject();
                     monitoradorSubmetido.setTipoPessoa(tipoPessoa); // Define o tipo de pessoa.
                     System.out.println("Monitorador submetido: " + monitoradorSubmetido);
                     salvar(monitoradorSubmetido);
                     setResponsePage(Index.class);
-                }catch (Exception e){
+                } catch (Exception e){
                     System.out.println(e.getMessage());
                 }
             }
@@ -44,14 +45,14 @@ public class SelecaoCadastro extends BasePage {
 
         TextField<String> emailInput = new EmailTextField("email");
         // TODO Resolver problemas de data, não está funfando
-        LocalDateTextField dataNascimentoInput = new LocalDateTextField("dataNascimento", "yyyy-MM-dd");
+        TextField<Date> dataNascimentoInput = new DateTextField("dataNascimento", "yyyy-MM-dd");
         monitoradorForm.add(emailInput, dataNascimentoInput); // Add inputs genéricos
 
 
         // Validaçoẽs Genéricas
         emailInput.setLabel(Model.of("Email")).setRequired(true).add(EmailAddressValidator.getInstance());
         // TODO Validação de Data de Nascimento
-        
+
         return monitoradorForm;
     }
 
