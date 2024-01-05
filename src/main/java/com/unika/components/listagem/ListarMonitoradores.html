@@ -8,6 +8,7 @@
     <body>
         <wicket:extend>
             <div>
+
                 <h2 class="d-flex justify-content-center" wicket:id="ListarMonitorador">Teste!</h2>
 
                 <div>
@@ -19,20 +20,21 @@
                             <th>Data de Nascimento</th>
                             <th>Opções</th>
                         </tr>
-                        <tr wicket:id="Monitoradores">
+                        <tr wicket:id="monitoradores">
                             <td wicket:id="id">[Count]</td>
                             <td wicket:id="tipoPessoa">[tipo pessoa]</td>
                             <td wicket:id="email">[email]</td>
                             <td wicket:id="dataNascimento">[cpf]</td>
                             <td>
                                 <div class="d-grid gap-2 d-md-block">
-                                    <button class="btn btn-secondary" type="button">Editar</button>
-                                    <button class="btn btn-danger" type="button">Excluir</button>
+                                    <button wicket:id="botaoEditar" class="btn btn-secondary" type="button">Editar</button>
+                                    <button wicket:id="botaoExcluir" class="btn btn-danger" type="button">Excluir</button>
                                 </div>
                             </td>
                         </tr>
                     </table>
                 </div>
+
             </div>
         </wicket:extend>
     </body>
