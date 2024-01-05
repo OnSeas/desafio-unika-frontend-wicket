@@ -48,8 +48,6 @@ public class CadastroEndereco extends BasePage{
         TextField<String> telefoneInput = new TextField<>("telefone");
         TextField<String> cidadeInput = new TextField<>("cidade");
 
-        //TextField<String> selectEstado = new TextField<>("estado"); // TODO Transformar em DropDown com select de estados
-
         DropDownChoice<UF> dropEstado = new DropDownChoice<>("estado",
             Arrays.asList(UF.values()),
             new ChoiceRenderer<UF>(){
