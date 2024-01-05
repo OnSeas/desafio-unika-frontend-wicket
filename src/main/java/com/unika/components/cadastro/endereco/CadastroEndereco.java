@@ -4,11 +4,13 @@ import com.unika.BasePage;
 import com.unika.apiService.MonitoradorApi;
 import com.unika.components.Index;
 import com.unika.model.Endereco;
-import org.apache.wicket.extensions.markup.html.form.select.Select;
+import com.unika.model.UF;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.*;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.Model;
+
+import java.util.Arrays;
 
 public class CadastroEndereco extends BasePage{
     private static final long serialVersionUID = 1978102769724181321L;
@@ -45,11 +47,23 @@ public class CadastroEndereco extends BasePage{
         TextField<String> bairroInput = new TextField<>("bairro");
         TextField<String> telefoneInput = new TextField<>("telefone");
         TextField<String> cidadeInput = new TextField<>("cidade");
-        Select<String> dropEstado = new Select<>("estado"); // TODO Não está recebendo uma String
+
+        //TextField<String> selectEstado = new TextField<>("estado"); // TODO Transformar em DropDown com select de estados
+
+        DropDownChoice<UF> dropEstado = new DropDownChoice<>("estado",
+            Arrays.asList(UF.values()),
+            new ChoiceRenderer<UF>(){
+            private static final long serialVersionUID = 2254888871382690067L;
+
+            @Override
+            public Object getDisplayValue(UF estado){
+                return estado.getSigla();
+            }
+        });
+
         CheckBox principalCheckBox = new CheckBox("principal");
 
         enderecoForm.add(enderecoInput, numeroInput, cepInput, bairroInput, telefoneInput, cidadeInput, dropEstado, principalCheckBox);
-
     }
 
     void salvar(Endereco endereco){

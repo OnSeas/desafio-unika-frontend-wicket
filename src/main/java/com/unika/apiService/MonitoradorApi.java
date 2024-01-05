@@ -7,7 +7,6 @@ import com.unika.model.Monitorador;
 import okhttp3.Response;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.util.List;
 

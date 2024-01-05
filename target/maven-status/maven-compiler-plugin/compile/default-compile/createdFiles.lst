@@ -11,8 +11,10 @@ com/unika/model/Endereco.class
 com/unika/WicketApplication.class
 com/unika/components/Index.class
 com/unika/BasePage.class
+com/unika/components/cadastro/endereco/CadastroEndereco.class
 com/unika/apiService/MonitoradorApi.class
 com/unika/components/listagem/ListarMonitoradores.class
 com/unika/apiService/EnderecoApi$1.class
 com/unika/model/Monitorador.class
+com/unika/components/cadastro/endereco/CadastroEndereco$1.class
 com/unika/components/cadastro/CadastroPessoaJuridica.class
