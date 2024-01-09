@@ -10,22 +10,4 @@ import org.apache.wicket.model.Model;
 
 public class Index extends BasePage {
     private static final long serialVersionUID = 7306463745845254610L;
-
-    public Index(){
-        add(new Label("id", Model.of("Teste!")));
-
-        final ModalWindow modal = new ModalWindow("modal");
-        modal.add(new DefaultTheme());
-        Label label = new Label(ModalWindow.CONTENT_ID, "I'm a modal window!");
-
-        modal.setContent(label);
-
-        add(modal);
-        add(new AjaxLink<Void>("open") {
-            @Override
-            public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                modal.show(ajaxRequestTarget);
-            }
-        });
-    }
 }

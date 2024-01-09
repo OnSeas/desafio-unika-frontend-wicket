@@ -3,18 +3,18 @@ package com.unika.apiService;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.unika.model.Endereco;
-import com.unika.model.Monitorador;
-import okhttp3.*;
+import okhttp3.Response;
 
 import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.util.List;
 
-public class EnderecoApi {
+public class EnderecoApi implements Serializable {
+    private static final long serialVersionUID = -7535406383524934607L;
     final String apiUrl = "http://localhost:8080/endereco";
-
     ApiService apiService = new ApiService();
+
     Gson gson = new Gson();
 
     public Endereco buscarEnderecoPrincipal(Long idMonitor) throws IOException {

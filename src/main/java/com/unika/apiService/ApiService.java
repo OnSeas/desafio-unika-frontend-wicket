@@ -3,8 +3,11 @@ package com.unika.apiService;
 import okhttp3.*;
 
 import java.io.IOException;
+import java.io.Serializable;
 
-public class ApiService {
+public class ApiService implements Serializable {
+
+    private static final long serialVersionUID = 6231254149020498841L;
 
     public Response conectarApiPOST(String jsonBody, String url) throws IOException {
         return conectarApiSendingBody(jsonBody, url, "POST");

@@ -7,10 +7,12 @@ import com.unika.model.Monitorador;
 import okhttp3.Response;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.util.List;
 
-public class MonitoradorApi{ //TODO lidar com exeções
+public class MonitoradorApi implements Serializable {
+    private static final long serialVersionUID = 5631808027154437803L; //TODO lidar com exeções
     final String apiUrl = "http://localhost:8080/monitorador";
 
     ApiService apiService = new ApiService();
