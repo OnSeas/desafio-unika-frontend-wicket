@@ -29,7 +29,7 @@ public class CadastroPessoaJuridica extends SelecaoCadastro{
 
         razaoSocialInput.setLabel(Model.of("Razão Social")).setRequired(true).add(StringValidator.lengthBetween(3, 200));
         cnpjInput.setLabel(Model.of("CNPJ")).setRequired(true).add(StringValidator.lengthBetween(14, 18));
-        inscricaoEstadualInput.setLabel(Model.of("Inscrição Estadual")).setRequired(true).add(StringValidator.exactLength(14));
+        inscricaoEstadualInput.setLabel(Model.of("Inscrição Estadual")).setRequired(true).add(StringValidator.maximumLength(18));
 
         add(new FeedbackPanel("FeedbackMessage", new ErrorLevelFeedbackMessageFilter(FeedbackMessage.ERROR)));
     }

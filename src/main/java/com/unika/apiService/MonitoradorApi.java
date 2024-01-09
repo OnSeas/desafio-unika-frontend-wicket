@@ -126,37 +126,40 @@ public class MonitoradorApi{ //TODO lidar com exeções
         }
     }
 
-    public Monitorador buscarMonitoradorPorEmail(String email) throws IOException {
+    public List<Monitorador> buscarMonitoradoresPorEmail(String email) throws IOException {
         Response response = apiService.conectarApiGET(apiUrl + "/buscar/email/" + email);
 
         if (response.isSuccessful()){
             assert response.body() != null;
             String json = response.body().string();
-            return gson.fromJson(json, Monitorador.class);
+            Type listType = new TypeToken<List<Monitorador>>() {}.getType();
+            return gson.fromJson(json, listType);
         } else {
             throw new RuntimeException(response.body().string());
         }
     }
 
-    public Monitorador buscarMonitoradorPorCpf(String cpf) throws IOException {
+    public List<Monitorador> buscarMonitoradorPorCpf(String cpf) throws IOException {
         Response response = apiService.conectarApiGET(apiUrl + "/buscar/cpf/" + cpf);
 
         if (response.isSuccessful()){
             assert response.body() != null;
             String json = response.body().string();
-            return gson.fromJson(json, Monitorador.class);
+            Type listType = new TypeToken<List<Monitorador>>() {}.getType();
+            return gson.fromJson(json, listType);
         } else {
             throw new RuntimeException(response.body().string());
         }
     }
 
-    public Monitorador buscarMonitoradorPorCnpj(String cnpj) throws IOException {
+    public List<Monitorador> buscarMonitoradorPorCnpj(String cnpj) throws IOException {
         Response response = apiService.conectarApiGET(apiUrl + "/buscar/cnpj/" + cnpj);
 
         if (response.isSuccessful()){
             assert response.body() != null;
             String json = response.body().string();
-            return gson.fromJson(json, Monitorador.class);
+            Type listType = new TypeToken<List<Monitorador>>() {}.getType();
+            return gson.fromJson(json, listType);
         } else {
             throw new RuntimeException(response.body().string());
         }

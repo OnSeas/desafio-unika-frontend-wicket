@@ -25,7 +25,6 @@ public class SelecaoCadastro extends BasePage {
 
         // Criação do Form
         Form<Monitorador> monitoradorForm = new Form<>(id, monitoradorCompoundPropertyModel){ // Cria o form conforme o id passado.
-
             private static final long serialVersionUID = 5445788925241821951L;
 
             @Override
@@ -44,13 +43,13 @@ public class SelecaoCadastro extends BasePage {
 
 
         TextField<String> emailInput = new EmailTextField("email");
-        // TODO Resolver problemas de data, não está funfando
         TextField<Date> dataNascimentoInput = new DateTextField("dataNascimento", "yyyy-MM-dd");
         monitoradorForm.add(emailInput, dataNascimentoInput); // Add inputs genéricos
 
 
         // Validaçoẽs Genéricas
         emailInput.setLabel(Model.of("Email")).setRequired(true).add(EmailAddressValidator.getInstance());
+        dataNascimentoInput.setLabel(Model.of("Data de Nascimento")).setRequired(true);
         // TODO Validação de Data de Nascimento
 
         return monitoradorForm;
