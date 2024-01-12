@@ -1,8 +1,15 @@
 package com.unika.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.io.Serializable;
 import java.util.List;
 
+@Getter
+@Setter
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Monitorador implements Serializable {
     private static final long serialVersionUID = -6007073673347568740L;
 
@@ -17,4 +24,21 @@ public class Monitorador implements Serializable {
     private String rg;
     private String cnpj;
     private String razaoSocial;
+
+    @Override
+    public String toString() {
+        return "Monitorador{" +
+                "id=" + id +
+                ", tipoPessoa=" + tipoPessoa +
+                ", email='" + email + '\'' +
+                ", dataNascimento='" + dataNascimento + '\'' +
+                ", inscricaoEstadual='" + inscricaoEstadual + '\'' +
+                ", enderecoList=" + enderecoList +
+                ", cpf='" + cpf + '\'' +
+                ", nome='" + nome + '\'' +
+                ", rg='" + rg + '\'' +
+                ", cnpj='" + cnpj + '\'' +
+                ", razaoSocial='" + razaoSocial + '\'' +
+                '}';
+    }
 }

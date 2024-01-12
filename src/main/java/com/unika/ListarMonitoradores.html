@@ -6,7 +6,28 @@
 </head>
 <body>
     <wicket:extend>
-        <h1 wicket:id="ListLabel">[título da página]</h1>
+        <h1 class="d-flex justify-content-center" style="color: #ffffff" wicket:id="ListLabel">[título da página]</h1>
+
+        <div style="width: 80%; margin: auto" wicket:id="listWMC">
+            <table class="table table-dark table-striped table-hover">
+                <tr>
+                    <th>#</th>
+                    <th>Tipo pessoa</th>
+                    <th>Email</th>
+                    <th>Data de Nascimento</th>
+                    <th>Op&ccedil;&otilde;es</th>
+                </tr>
+                <tr wicket:id="monitoradores">
+                    <td wicket:id="index">[Count]</td>
+                    <td wicket:id="tipoPessoa">[tipo pessoa]</td>
+                    <td wicket:id="email">[email]</td>
+                    <td wicket:id="dataNascimento">[data nascimento]</td>
+                    <td>
+                        <button wicket:id="ajaxEcluirMonitorador" class="btn btn-danger">Excluir</button>
+                    </td>
+                </tr>
+            </table>
+        </div>
     </wicket:extend>
 </body>
 </html>
