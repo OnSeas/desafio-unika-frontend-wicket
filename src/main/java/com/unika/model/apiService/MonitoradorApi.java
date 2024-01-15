@@ -6,6 +6,7 @@ import okhttp3.Response;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class MonitoradorApi implements Serializable {
@@ -37,7 +38,7 @@ public class MonitoradorApi implements Serializable {
             String json = response.body().string();
             return converterDados.obterLista(json, Monitorador.class);
         } else {
-            throw new RuntimeException(response.body().string());
+            return null;
         }
     }
 
@@ -49,7 +50,7 @@ public class MonitoradorApi implements Serializable {
             String json = response.body().string();
             return converterDados.obterDados(json, Monitorador.class);
         } else {
-            throw new RuntimeException(response.body().string());
+            return null;
         }
     }
 
@@ -59,8 +60,8 @@ public class MonitoradorApi implements Serializable {
                 apiUrl + "/atualizar/" + id
         );
 
+        assert response.body() != null;
         if (response.isSuccessful()){
-            assert response.body() != null;
             String json = response.body().string();
             return converterDados.obterDados(json, Monitorador.class);
         } else {
@@ -78,6 +79,46 @@ public class MonitoradorApi implements Serializable {
             return response.body().string();
         } else {
             throw new RuntimeException(response.body().string());
+        }
+    }
+
+
+    // Buscas
+    public List<Monitorador> buscarMonitoradoresPorEmail(String email) throws IOException {
+        Response response = apiService.conectarApiGET(apiUrl + "/buscar/email/" + email);
+
+        assert response.body() != null;
+        if (response.isSuccessful()){
+            String json = response.body().string();
+
+            return converterDados.obterLista(json, Monitorador.class);
+        } else {
+            return listarMonitoradores();
+        }
+    }
+
+    public List<Monitorador> buscarMonitoradorPorCpf(String cpf) throws IOException {
+        Response response = apiService.conectarApiGET(apiUrl + "/buscar/cpf/" + cpf);
+
+        assert response.body() != null;
+        if (response.isSuccessful()){
+            String json = response.body().string();
+
+            return converterDados.obterLista(json, Monitorador.class);
+        } else {
+            return listarMonitoradores();
+        }
+    }
+
+    public List<Monitorador> buscarMonitoradorPorCnpj(String cnpj) throws IOException {
+        Response response = apiService.conectarApiGET(apiUrl + "/buscar/cnpj/" + cnpj);
+
+        assert response.body() != null;
+        if (response.isSuccessful()){
+            String json = response.body().string();
+            return converterDados.obterLista(json, Monitorador.class);
+        } else {
+            return listarMonitoradores();
         }
     }
 }
