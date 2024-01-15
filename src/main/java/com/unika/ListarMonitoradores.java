@@ -84,10 +84,14 @@ public class ListarMonitoradores extends HomePage{
 
                             @Override
                             public Page createPage() {
-                                return new FormularioMonitorador(
-                                        ListarMonitoradores.this,
-                                        modalWindow,
-                                        listItem.getModelObject().getId());
+                                try {
+                                    return new FormularioMonitorador(
+                                            ListarMonitoradores.this,
+                                            modalWindow,
+                                            listItem.getModelObject().getId());
+                                } catch (IOException e) {
+                                    throw new RuntimeException(e);
+                                }
                             }
                         });
                         modalWindow.show(target);

@@ -10,58 +10,67 @@
         <h1 class="d-flex justify-content-center" wicket:id="monitoradorForm">[título]</h1>
 
         <div>
-            <form name="formMonitorador">
+            <form wicket:id="formMonitorador" name="formMonitorador">
                 <div class="d-grid gap-3 col-6 mx-auto">
 
                     <div class="btn-group d-flex justify-content-center" role="group" aria-label="Basic radio toggle button group">
-                        <input type="radio" class="btn-check" name="btnradio" id="pf" autocomplete="off">
-                        <label class="btn btn-primary" for="pf">Pessoa F&iacute;sica</label>
-
-                        <input type="radio" class="btn-check" name="btnradio" id="pj" autocomplete="off">
-                        <label class="btn btn-primary" for="pj">Pessoa Jur&iacute;dica</label>
-                    </div>
-
-                    <div>
-                        <label for="inputRazaoSocialForm" class="form-label">Razão Social</label>
-                        <input type="text" class="form-control" id="inputRazaoSocialForm" placeholder="Empresa X">
-                    </div>
-
-                    <div>
-                        <label for="inputNomeForm" class="form-label">Nome</label>
-                        <input type="text" class="form-control" id="inputNomeForm" placeholder="Seu Nome">
+                        <span wicket:id="tipoPessoa">
+                            <input wicket:id="pf" class="btn-check" id="pf" type="radio"/>
+                            <label wicket:id="showPf" class="btn btn-primary" for="pf">Pessoa F&iacute;sica</label>
+                            <input wicket:id="pj" class="btn-check" name="btnradio" id="pj" type="radio"/>
+                            <label wicket:id="showPj" class="btn btn-primary" for="pj">Pessoa Jur&iacute;dica</label>
+                        </span>
                     </div>
 
                     <div>
                         <label for="inputEmailForm" class="form-label">Email</label>
-                        <input type="email" class="form-control" id="inputEmailForm" placeholder="nome@email.com">
+                        <input wicket:id="email" type="email" class="form-control" id="inputEmailForm" placeholder="nome@email.com">
                     </div>
 
                     <div>
                         <label for="inputDataNascimentoForm" class="form-label">Data de Nascimento</label>
-                        <input type="date" class="form-control" data-date-format="yyyy-MM-dd" id="inputDataNascimentoForm">
+                        <input wicket:id="dataNascimento" type="date" class="form-control" data-date-format="yyyy-MM-dd" id="inputDataNascimentoForm">
                     </div>
 
-                    <div>
-                        <label for="inputCpfForm" class="form-label">CPF</label>
-                        <input type="text" class="form-control" id="inputCpfForm" placeholder="000.000.000-00">
+                    <!-- Pessoa Física -->
+                    <div wicket:id="pfWMC">
+                        <div>
+                            <label for="inputNomeForm" class="form-label">Nome</label>
+                            <input wicket:id="nome" type="text" class="form-control" id="inputNomeForm" placeholder="Seu Nome">
+                        </div>
+
+                        <div>
+                            <label for="inputCpfForm" class="form-label">CPF</label>
+                            <input wicket:id="cpf" type="text" class="form-control" id="inputCpfForm" placeholder="000.000.000-00">
+                        </div>
+
+                        <div>
+                            <label for="inputRgForm" class="form-label">RG</label>
+                            <input wicket:id="rg" type="text" class="form-control" id="inputRgForm" placeholder="00.000.000-0">
+                        </div>
                     </div>
 
-                    <div>
-                        <label for="inputRgForm" class="form-label">RG</label>
-                        <input type="text" class="form-control" id="inputRgForm" placeholder="00.000.000-0">
+
+                    <!-- Pessoa Jurídica-->
+                    <div wicket:id="pjWMC">
+                        <div>
+                            <label for="inputRazaoSocialForm" class="form-label">Razão Social</label>
+                            <input wicket:id="razaoSocial" type="text" class="form-control" id="inputRazaoSocialForm" placeholder="Empresa X">
+                        </div>
+
+                        <div>
+                            <label for="inputCnpjForm" class="form-label">CNPJ</label>
+                            <input wicket:id="cnpj" type="text" class="form-control" id="inputCnpjForm" placeholder="00.000.000/0000-00">
+                        </div>
+
+                        <div>
+                            <label for="inputInscricaoEstadualForm" class="form-label">Inscrição Estadual</label>
+                            <input wicket:id="inscricaoEstadual" type="text" class="form-control" id="inputInscricaoEstadualForm" placeholder="00.000.000-0">
+                        </div>
                     </div>
 
-                    <div>
-                        <label for="inputCnpjForm" class="form-label">CNPJ</label>
-                        <input type="text" class="form-control" id="inputCnpjForm" placeholder="00.000.000/0000-00">
-                    </div>
 
-                    <div>
-                        <label for="inputInscricaoEstadualForm" class="form-label">Inscrição Estadual</label>
-                        <input type="text" class="form-control" id="inputInscricaoEstadualForm" placeholder="00.000.000-0">
-                    </div>
-
-                    <input class="btn btn-primary" type="submit" value="Cadastrar">
+                    <input class="btn btn-primary" type="submit" value="Salvar">
 
                 </div>
             </form>

@@ -8,7 +8,5 @@ public class HomePage extends WebPage {
 
 	public HomePage(final PageParameters parameters) {
 		super(parameters);
-
-		// TODO Add your page's components here
     }
 }

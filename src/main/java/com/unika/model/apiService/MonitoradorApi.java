@@ -41,6 +41,33 @@ public class MonitoradorApi implements Serializable {
         }
     }
 
+    public Monitorador buscarMonitorador(Long id) throws IOException {
+        Response response = apiService.conectarApiGET(apiUrl + "/buscar/" + id);
+
+        assert response.body() != null;
+        if (response.isSuccessful()){
+            String json = response.body().string();
+            return converterDados.obterDados(json, Monitorador.class);
+        } else {
+            throw new RuntimeException(response.body().string());
+        }
+    }
+
+    public Monitorador atualizarMonitorador(Monitorador monitorador, Long id) throws IOException {
+        Response response = apiService.conectarApiPUT(
+                converterDados.obterJason(monitorador),
+                apiUrl + "/atualizar/" + id
+        );
+
+        if (response.isSuccessful()){
+            assert response.body() != null;
+            String json = response.body().string();
+            return converterDados.obterDados(json, Monitorador.class);
+        } else {
+            throw new RuntimeException(response.body().string());
+        }
+    }
+
     public String deletarMonitorador(Long id) throws IOException {
         Response response = apiService.conectarApiDELETE(
                 apiUrl + "/deletar/" + id
