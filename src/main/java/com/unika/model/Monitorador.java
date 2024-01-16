@@ -1,10 +1,13 @@
 package com.unika.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 @Getter
@@ -16,7 +19,9 @@ public class Monitorador implements Serializable {
     private Long id;
     private TipoPessoa tipoPessoa;
     private String email;
-    private String dataNascimento;
+
+    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="dd/MM/yyyy")
+    private Date dataNascimento;
     private String inscricaoEstadual;
     private List<Endereco> enderecoList;
     private String cpf;

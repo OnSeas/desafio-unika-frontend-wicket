@@ -29,6 +29,7 @@
                         <th>Tipo pessoa</th>
                         <th>Email</th>
                         <th>Data de Nascimento</th>
+                        <th>CPF/CNPJ</th>
                         <th>Op&ccedil;&otilde;es</th>
                     </tr>
                     <tr wicket:id="monitoradores">
@@ -36,6 +37,10 @@
                         <td wicket:id="tipoPessoa">[tipo pessoa]</td>
                         <td wicket:id="email">[email]</td>
                         <td wicket:id="dataNascimento">[data nascimento]</td>
+                        <td>
+                            <div wicket:id="cpf">[cpf]</div>
+                            <div wicket:id="cnpj">[cnpj]</div>
+                        </td>
                         <td>
                             <div class="btn-group" role="group" aria-label="Basic example">
                                 <button wicket:id="formEditarMonitorador" class="btn btn-primary">Editar</button>

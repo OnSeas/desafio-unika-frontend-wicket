@@ -2,13 +2,12 @@ package com.unika;
 
 import com.unika.model.Monitorador;
 import com.unika.model.apiService.MonitoradorApi;
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
-import org.apache.wicket.feedback.ErrorLevelFeedbackMessageFilter;
-import org.apache.wicket.feedback.FeedbackMessage;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.DropDownChoice;
@@ -16,7 +15,6 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
-import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
@@ -56,7 +54,7 @@ public class ListarMonitoradores extends HomePage{
 
         final WebMarkupContainer listWMC = new WebMarkupContainer("listWMC");
         listWMC.setOutputMarkupId(true);
-        listWMC.add(construirLista(listWMC, monitoradorApi.listarMonitoradores() ,modalWindow));
+        listWMC.add(construirLista(listWMC, monitoradorApi.listarMonitoradores(), modalWindow));
         add(listWMC);
 
         // Search form
@@ -88,7 +86,6 @@ public class ListarMonitoradores extends HomePage{
         };
         pesquisarForm.add(inputPesquisa, inputTipo, ajaxButton);
 
-
         inputTipo.setLabel(Model.of("O tipo da pesquisa")).setRequired(true);
     }
 
@@ -103,7 +100,10 @@ public class ListarMonitoradores extends HomePage{
                 listItem.add(new Label("tipoPessoa", new PropertyModel<Monitorador>(listItem.getModel(),"tipoPessoa")));
                 listItem.add(new Label("email", new PropertyModel<Monitorador>(listItem.getModel(),"email")));
                 listItem.add(new Label("dataNascimento", new PropertyModel<Monitorador>(listItem.getModel(),"dataNascimento")));
-                listItem.add(new AjaxLink<Void>("ajaxEcluirMonitorador") {
+                listItem.add(new Label("cpf", new PropertyModel<Monitorador>(listItem.getModel(),"cpf")));
+                listItem.add(new Label("cnpj", new PropertyModel<Monitorador>(listItem.getModel(),"cnpj")));
+
+                AjaxLink<Void> ajaxLink = new AjaxLink<Void>("ajaxEcluirMonitorador") {
                     private static final long serialVersionUID = -1679276620382639682L;
 
                     @Override
@@ -113,7 +113,9 @@ public class ListarMonitoradores extends HomePage{
                         ((ListView<?>) listItem.getParent()).getList().remove(listItem.getModelObject());
                         target.add(wmc);
                     }
-                });
+                };
+                ajaxLink.add(new AttributeModifier("onclick", "return confirm('Delete ?');"));
+                listItem.add(ajaxLink);
                 listItem.add(new AjaxLink<Void>("formEditarMonitorador") {
                     private static final long serialVersionUID = -387605849215267697L;
                     @Override
@@ -148,6 +150,7 @@ public class ListarMonitoradores extends HomePage{
         }
     }
 
+    // Para o filtro
     private List<Monitorador> getListaMonitoradores(String tipo, String busca) throws IOException { // TODO lidar com exceções
         switch (tipo){
             case "email":
@@ -159,5 +162,4 @@ public class ListarMonitoradores extends HomePage{
             default: throw new InvalidPropertiesFormatException("Tipo de pesquisa inválida!");
         }
     }
-
 }
