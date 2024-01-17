@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
-import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -29,6 +28,7 @@ public class Monitorador implements Serializable {
     private String rg;
     private String cnpj;
     private String razaoSocial;
+    private Boolean ativo;
 
     @Override
     public String toString() {

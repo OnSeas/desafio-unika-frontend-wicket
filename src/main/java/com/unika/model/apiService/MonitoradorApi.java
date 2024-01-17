@@ -82,6 +82,35 @@ public class MonitoradorApi implements Serializable {
         }
     }
 
+    // Funcionalidades
+    public String ativarMonitorador(Long id) throws IOException {
+        Response response = apiService.conectarApiPUT(
+                "",
+                apiUrl + "/ativar/" + id
+        );
+
+        assert response.body() != null;
+        if (response.isSuccessful()){
+            return response.body().string();
+        } else {
+            throw new RuntimeException(response.body().string());
+        }
+    }
+
+    public String desativarMonitorador(Long id) throws IOException {
+        Response response = apiService.conectarApiPUT(
+                "",
+                apiUrl + "/desativar/" + id
+        );
+
+        assert response.body() != null;
+        if (response.isSuccessful()){
+            return response.body().string();
+        } else {
+            throw new RuntimeException(response.body().string());
+        }
+    }
+
 
     // Buscas
     public List<Monitorador> buscarMonitoradoresPorEmail(String email) throws IOException {

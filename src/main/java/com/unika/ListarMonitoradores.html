@@ -8,6 +8,9 @@
         <wicket:extend>
             <div style="width: 80%; margin: auto">
                 <h1 class="d-flex justify-content-center" style="color: #ffffff; margin: 0 0 20px 0" wicket:id="ListLabel">[título da página]</h1>
+
+                <div wicket:id="FeedBackMessages"></div>
+
                 <div class=" d-md-flex justify-content-md-end" style="margin: 0 0 10px 0">
                     <button wicket:id="formNovoMonitorador" class="btn btn-primary fw-bold" type="button">Novo Monitorador</button>
                 </div>
@@ -45,8 +48,8 @@
                             <div class="btn-group" role="group" aria-label="Basic example">
                                 <button wicket:id="formEditarMonitorador" class="btn btn-primary">Editar</button>
                                 <button wicket:id="ajaxEcluirMonitorador" class="btn btn-danger">Excluir</button>
-<!--                                <button type="button" class="btn btn-secondary">Desativar</button>-->
-<!--                                <button type="button" class="btn btn-success">Ativar</button>-->
+                                <button wicket:id="Destivar" type="button" class="btn btn-secondary">Desativar</button>
+                                <button wicket:id="Ativar" type="button" class="btn btn-success">Ativar</button>
                             </div>
                         </td>
                     </tr>

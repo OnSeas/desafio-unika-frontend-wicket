@@ -1,8 +1,8 @@
 package com.unika;
 
+import com.unika.dialogs.ConfirmationModal;
 import com.unika.model.Monitorador;
 import com.unika.model.apiService.MonitoradorApi;
-import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -15,6 +15,7 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
+import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
@@ -27,15 +28,23 @@ import java.util.List;
 public class ListarMonitoradores extends HomePage{
     private static final long serialVersionUID = 2178207601281324056L;
     final MonitoradorApi monitoradorApi = new MonitoradorApi();
+    final FeedbackPanel feedbackPanel = new FeedbackPanel("FeedBackMessages");
 
     public ListarMonitoradores(PageParameters parameters) throws IOException {
         super(parameters);
 
+        feedbackPanel.setOutputMarkupId(true);
+        add(feedbackPanel);
+
         add(new Label("ListLabel", Model.of("Lista de monitoradores")));
 
+        // Modal que é usado em todos os pop-ups
         final ModalWindow modalWindow = new ModalWindow("modawFormMonitorador");
         modalWindow.setCookieName("modalWindow-1");
+        modalWindow.setResizable(false);
         add(modalWindow);
+
+        // Botão de criar novo monitorador
         AjaxLink<Void> ajaxNovoMonitorador = new AjaxLink<Void>("formNovoMonitorador") {
             private static final long serialVersionUID = -387605849215267697L;
             @Override
@@ -52,13 +61,28 @@ public class ListarMonitoradores extends HomePage{
         };
         add(ajaxNovoMonitorador);
 
+        // WMC que envolve a lista já inciando a lista geral
         final WebMarkupContainer listWMC = new WebMarkupContainer("listWMC");
         listWMC.setOutputMarkupId(true);
         listWMC.add(construirLista(listWMC, monitoradorApi.listarMonitoradores(), modalWindow));
         add(listWMC);
 
-        // Search form
+        // Função quando alguma modal window é fechada.
+        modalWindow.setWindowClosedCallback(new ModalWindow.WindowClosedCallback(){
+            private static final long serialVersionUID = 1L;
+            @Override
+            public void onClose(AjaxRequestTarget target){
+                try {
+                    listWMC.removeAll();
+                    listWMC.add(construirLista(listWMC, monitoradorApi.listarMonitoradores(), modalWindow));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                target.add(listWMC);
+            }
+        });
 
+        // FORM DE PESQUISAR
         Form<String> pesquisarForm = new Form<>("pesquisarForm");
         add(pesquisarForm);
 
@@ -67,7 +91,6 @@ public class ListarMonitoradores extends HomePage{
         DropDownChoice<String> inputTipo = new DropDownChoice<>("inputTipo", new Model<>(), tipos);
         AjaxButton ajaxButton = new AjaxButton("searchButton", pesquisarForm) {
             private static final long serialVersionUID = -3533755636036242218L;
-
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 try {
@@ -79,9 +102,14 @@ public class ListarMonitoradores extends HomePage{
                             modalWindow));
 
                     target.add(listWMC);
+                    target.add(feedbackPanel);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
+            }
+            @Override
+            protected void onError(AjaxRequestTarget target, Form<?> form) {
+                target.add(feedbackPanel);
             }
         };
         pesquisarForm.add(inputPesquisa, inputTipo, ajaxButton);
@@ -93,7 +121,6 @@ public class ListarMonitoradores extends HomePage{
     private ListView<Monitorador> construirLista(WebMarkupContainer wmc, List<Monitorador> enderecos, ModalWindow modalWindow) throws IOException {
         return new ListView<Monitorador>("monitoradores", enderecos) {
             private static final long serialVersionUID = -7313164500893623865L;
-
             @Override
             protected void populateItem(final ListItem<Monitorador> listItem) {
                 listItem.add(new Label("index", Model.of(listItem.getIndex() + 1)));
@@ -102,27 +129,35 @@ public class ListarMonitoradores extends HomePage{
                 listItem.add(new Label("dataNascimento", new PropertyModel<Monitorador>(listItem.getModel(),"dataNascimento")));
                 listItem.add(new Label("cpf", new PropertyModel<Monitorador>(listItem.getModel(),"cpf")));
                 listItem.add(new Label("cnpj", new PropertyModel<Monitorador>(listItem.getModel(),"cnpj")));
-
-                AjaxLink<Void> ajaxLink = new AjaxLink<Void>("ajaxEcluirMonitorador") {
+                listItem.add(new AjaxLink<Void>("ajaxEcluirMonitorador") {
                     private static final long serialVersionUID = -1679276620382639682L;
-
                     @Override
                     public void onClick(AjaxRequestTarget target) {
-                        System.out.println("Excluindo o monitorador: " + listItem.getModelObject());
-                        deletar(listItem.getModelObject().getId());
-                        ((ListView<?>) listItem.getParent()).getList().remove(listItem.getModelObject());
-                        target.add(wmc);
+                        try {
+                            modalWindow.setPageCreator(new ModalWindow.PageCreator() {
+                                private static final long serialVersionUID = 6452198188800512805L;
+                                @Override
+                                public Page createPage() {
+                                    return new ConfirmationModal(
+                                            listItem,
+                                            "Deseja excluir o monitorador " + listItem.getModelObject().getId() + "?",
+                                            "excluir"
+                                    );
+                                }
+                            });
+                            target.add(wmc);
+                        } catch (Exception e){
+                            System.out.println("Não excluíu!");
+                        }
+                        modalWindow.show(target);
                     }
-                };
-                ajaxLink.add(new AttributeModifier("onclick", "return confirm('Delete ?');"));
-                listItem.add(ajaxLink);
+                });
                 listItem.add(new AjaxLink<Void>("formEditarMonitorador") {
                     private static final long serialVersionUID = -387605849215267697L;
                     @Override
                     public void onClick(AjaxRequestTarget target) {
                         modalWindow.setPageCreator(new ModalWindow.PageCreator() {
                             private static final long serialVersionUID = -4592416407253742093L;
-
                             @Override
                             public Page createPage() {
                                 try {
@@ -138,16 +173,64 @@ public class ListarMonitoradores extends HomePage{
                         modalWindow.show(target);
                     }
                 });
+                AjaxLink<Void> desativarAjax = new AjaxLink<Void>("Destivar") {
+                    private static final long serialVersionUID = -505817807318118040L;
+                    @Override
+                    public void onClick(AjaxRequestTarget target) {
+                        try {
+                            modalWindow.setPageCreator(new ModalWindow.PageCreator() {
+                                private static final long serialVersionUID = -488870408406200986L;
+
+                                @Override
+                                public Page createPage() {
+                                    return new ConfirmationModal(
+                                            listItem,
+                                            "Deseja desativar o monitorador " + listItem.getModelObject().getId() + "?",
+                                            "desativar"
+                                    );
+                                }
+                            });
+                            target.add(wmc);
+                        } catch (Exception e){
+                            System.out.println("Não desativou!");
+                        }
+                        modalWindow.show(target);
+                    }
+                };
+                AjaxLink<Void> ativarAjax = new AjaxLink<Void>("Ativar") {
+                        private static final long serialVersionUID = -505817807318118040L;
+                        @Override
+                        public void onClick(AjaxRequestTarget target) {
+                            try {
+                                modalWindow.setPageCreator(new ModalWindow.PageCreator() { // TODO Talvez compensa criar uma dunção para isso
+                                    private static final long serialVersionUID = -6353631616791952939L;
+
+                                    @Override
+                                    public Page createPage() {
+                                        return new ConfirmationModal(
+                                                listItem,
+                                                "Deseja ativar o monitorador " + listItem.getModelObject().getId() + "?",
+                                                "ativar"
+                                        );
+                                    }
+                                });
+                                target.add(wmc);
+                            } catch (Exception e){
+                                System.out.println("Não ativou!");
+                            }
+                            modalWindow.show(target);
+                        }
+                    };
+                if (listItem.getModelObject().getAtivo()){
+                    ativarAjax.setVisible(false);
+                } else {
+                    desativarAjax.setVisible(false);
+                }
+
+                listItem.add(desativarAjax, ativarAjax);
+
             }
         };
-    }
-
-    private void deletar(Long idMonitorador){
-        try {
-            monitoradorApi.deletarMonitorador(idMonitorador);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     // Para o filtro
@@ -161,5 +244,12 @@ public class ListarMonitoradores extends HomePage{
                 return monitoradorApi.buscarMonitoradorPorCnpj(busca);
             default: throw new InvalidPropertiesFormatException("Tipo de pesquisa inválida!");
         }
+    }
+
+    // TODO mensagens de sucesso
+    public void mostrarMsg(String m){
+        feedbackPanel.info(m);
+        System.out.println("Mandou a msg " + m + " para o feedbackPanel");
+        System.out.println(feedbackPanel.getFeedbackMessages());
     }
 }
