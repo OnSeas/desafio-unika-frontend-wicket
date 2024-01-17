@@ -5,10 +5,9 @@ import com.unika.model.TipoPessoa;
 import com.unika.model.apiService.MonitoradorApi;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.apache.wicket.extensions.markup.html.form.DateTextField;
-import org.apache.wicket.feedback.ErrorLevelFeedbackMessageFilter;
-import org.apache.wicket.feedback.FeedbackMessage;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
@@ -27,8 +26,11 @@ public class FormularioMonitorador extends WebPage {
 
     MonitoradorApi monitoradorApi = new MonitoradorApi();
 
+    ListarMonitoradores listarMonitoradores;
+
     FormularioMonitorador(ListarMonitoradores listarMonitoradores, ModalWindow modalWindow){
         add(new Label("monitoradorForm", Model.of("Cadastrar um novo monitorador")));
+        this.listarMonitoradores = listarMonitoradores;
 
         Form<Monitorador> monitoradorForm = getForm();
         add(monitoradorForm);
@@ -36,27 +38,16 @@ public class FormularioMonitorador extends WebPage {
 
     FormularioMonitorador(ListarMonitoradores listarMonitoradores, ModalWindow modalWindow, Long idMonitorador) throws IOException {
         add(new Label("monitoradorForm", Model.of("Editar info do monitorador")));
+        this.listarMonitoradores = listarMonitoradores;
 
         Form<Monitorador> monitoradorForm = getForm();
-        System.out.println(monitoradorApi.buscarMonitorador(idMonitorador));
-        monitoradorForm.setModelObject(monitoradorApi.buscarMonitorador(idMonitorador));
-//        monitoradorForm.visitFormComponents() TODO ao abrir formulário trazer inputs corretos.
+        Monitorador monitorador = monitoradorApi.buscarMonitorador(idMonitorador);
+        monitoradorForm.setModelObject(monitorador);
         add(monitoradorForm);
     }
 
     private Form<Monitorador> getForm(){ // TODO SPLIT IN MORE METHODS
-        Form<Monitorador> monitoradorForm = new Form<Monitorador>("formMonitorador", new CompoundPropertyModel<>(new Monitorador())){
-            private static final long serialVersionUID = -7175314782218355274L;
-
-            @Override
-            protected void onSubmit() {
-                System.out.println(getModelObject());
-                Monitorador monitorador = getModelObject();
-                System.out.println("Monitorador submetido" + monitorador);
-                monitorador = salvar(getModelObject());
-                System.out.println("Monitorador salvo no BD" + monitorador);
-            }
-        };
+        Form<Monitorador> monitoradorForm = new Form<Monitorador>("formMonitorador", new CompoundPropertyModel<>(new Monitorador()));
 
         RadioGroup<TipoPessoa> radioTipoPessoa = new RadioGroup<>("tipoPessoa");
         radioTipoPessoa.add(new Radio<>("pf", new Model<>(TipoPessoa.PESSOA_FISICA)));
@@ -86,7 +77,7 @@ public class FormularioMonitorador extends WebPage {
         pjWMC.add(inputRazaoSocial, inputCnpj, inputInscricaoEstadual);
 
 
-        //  -- -- -- Validações em campos
+        // -- -- -- Validações em campos
         radioTipoPessoa.setLabel(Model.of("Tipo de pessoa")).setRequired(true);
         inputEmail.setLabel(Model.of("Email do contato")).setRequired(true).add(EmailAddressValidator.getInstance());
         inputDataNascimento.setLabel(Model.of("Data nascimento")).setRequired(true);
@@ -97,7 +88,31 @@ public class FormularioMonitorador extends WebPage {
         inputCnpj.setLabel(Model.of("CNPJ")).setRequired(true).add(StringValidator.lengthBetween(14, 18));
         inputInscricaoEstadual.setLabel(Model.of("Inscrição Estadual")).setRequired(true).add(StringValidator.maximumLength(18));
 
-        add(new FeedbackPanel("FeedbackMessage", new ErrorLevelFeedbackMessageFilter(FeedbackMessage.ERROR)));
+        FeedbackPanel feedbackPanel = new FeedbackPanel("FeedbackMessage");
+        feedbackPanel.setOutputMarkupId(true);
+        add(feedbackPanel);
+
+        monitoradorForm.add(new AjaxButton("ajaxSubmit") {
+            private static final long serialVersionUID = -8806215908629462715L;
+            @Override
+            protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+                target.add(feedbackPanel);
+                try {
+                    Monitorador monitorador = monitoradorForm.getModelObject();
+                    System.out.println("Monitorador submetido: " + monitorador);
+                    salvar(monitorador);
+                    listarMonitoradores.mostrarMsg("Monitorador Salvo com sucesso!");
+                    ModalWindow.closeCurrent(target);
+                } catch (Exception e){
+                    feedbackPanel.info(e.getMessage());
+                    target.add(feedbackPanel);
+                }
+            }
+            @Override
+            protected void onError(AjaxRequestTarget target, Form<?> form) {
+                target.add(feedbackPanel);
+            }
+        });
 
         AjaxLink<Void> showPf = new AjaxLink<Void>("showPf") {
             private static final long serialVersionUID = -7872773929920444908L;
@@ -109,7 +124,6 @@ public class FormularioMonitorador extends WebPage {
                 System.out.println("Mostrar inputs de Pessoa Física!");
             }
         };
-
         AjaxLink<Void> showPj = new AjaxLink<Void>("showPj") {
             private static final long serialVersionUID = -7468546216784505534L;
             @Override
@@ -127,16 +141,15 @@ public class FormularioMonitorador extends WebPage {
         return monitoradorForm;
     }
 
-    private Monitorador salvar(Monitorador monitorador){
+    private void salvar(Monitorador monitorador){
         try {
             if(monitorador.getId() == null){
-                return monitoradorApi.cadastrarMonitorador(monitorador);
+                monitoradorApi.cadastrarMonitorador(monitorador);
             } else {
-                return monitoradorApi.atualizarMonitorador(monitorador, monitorador.getId());
+                monitoradorApi.atualizarMonitorador(monitorador, monitorador.getId());
             }
         } catch (Exception e){
-            System.out.println(e.getMessage());
-            throw new RuntimeException("Não salvei o que vc pediu!");
+            throw new RuntimeException(e.getMessage());
         }
     }
 }
