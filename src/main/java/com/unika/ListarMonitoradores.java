@@ -137,8 +137,8 @@ public class ListarMonitoradores extends HomePage{
 
 
     // CONSTRÓI A LISTA
-    private PageableListView<Monitorador> construirLista(WebMarkupContainer wmc, List<Monitorador> enderecos, ModalWindow modalWindow) throws IOException {
-        return new PageableListView<Monitorador>("monitoradores", enderecos, 10) {
+    private PageableListView<Monitorador> construirLista(WebMarkupContainer wmc, List<Monitorador> monitoradores, ModalWindow modalWindow) throws IOException {
+        return new PageableListView<Monitorador>("monitoradores", monitoradores, 10) {
             private static final long serialVersionUID = -7313164500893623865L;
             @Override
             protected void populateItem(final ListItem<Monitorador> listItem) {
