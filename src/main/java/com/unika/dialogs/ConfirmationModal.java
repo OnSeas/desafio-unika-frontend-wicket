@@ -39,7 +39,6 @@ public class ConfirmationModal extends WebPage {
                 } catch (Exception e){
                     System.out.println(e.getMessage());
                 }
-
             }
         });
         add(new AjaxLink<Void>("cancelarAjax") {

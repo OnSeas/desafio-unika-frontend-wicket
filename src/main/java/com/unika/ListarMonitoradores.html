@@ -3,6 +3,12 @@
     <head>
         <meta charset="UTF-8">
         <title>Lista de monitoradores</title>
+
+        <!-- TODO descobrir porque não funciona -->
+        <style>
+
+        </style>
+
     </head>
     <body>
         <wicket:extend>
@@ -23,7 +29,7 @@
                 </div>
             </div>
 
-            <div wicket:id="modawFormMonitorador"></div>
+            <div wicket:id="modaw"></div>
 
             <div wicket:id="listWMC" style="width: 80%; margin: auto; border-radius: 10px; overflow: hidden;">
                 <table class="table table-dark table-striped table-hover">
@@ -54,6 +60,9 @@
                         </td>
                     </tr>
                 </table>
+
+                <div wicket:id="pageNavigator" style="text-align: end">
+                </div>
             </div>
         </wicket:extend>
     </body>

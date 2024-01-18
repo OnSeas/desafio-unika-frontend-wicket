@@ -23,15 +23,13 @@ import java.util.Date;
 
 public class FormularioMonitorador extends WebPage {
     private static final long serialVersionUID = 8415273463108359061L;
-
     MonitoradorApi monitoradorApi = new MonitoradorApi();
-
     ListarMonitoradores listarMonitoradores;
-
+    ModalWindow modal;
     FormularioMonitorador(ListarMonitoradores listarMonitoradores, ModalWindow modalWindow){
         add(new Label("monitoradorForm", Model.of("Cadastrar um novo monitorador")));
         this.listarMonitoradores = listarMonitoradores;
-
+        this.modal = modalWindow;
         Form<Monitorador> monitoradorForm = getForm();
         add(monitoradorForm);
     }
@@ -39,10 +37,23 @@ public class FormularioMonitorador extends WebPage {
     FormularioMonitorador(ListarMonitoradores listarMonitoradores, ModalWindow modalWindow, Long idMonitorador) throws IOException {
         add(new Label("monitoradorForm", Model.of("Editar info do monitorador")));
         this.listarMonitoradores = listarMonitoradores;
+        this.modal = modalWindow;
 
         Form<Monitorador> monitoradorForm = getForm();
+
+        // Preencher os dados do monitorador
         Monitorador monitorador = monitoradorApi.buscarMonitorador(idMonitorador);
         monitoradorForm.setModelObject(monitorador);
+
+        // Mostrar os inputs certos
+        WebMarkupContainer wmc;
+        if (monitorador.getTipoPessoa().equals(TipoPessoa.PESSOA_FISICA)){
+            wmc = (WebMarkupContainer) monitoradorForm.get("pfWMC");
+        } else{
+            wmc = (WebMarkupContainer) monitoradorForm.get("pjWMC");
+        }
+        wmc.setVisible(true);
+
         add(monitoradorForm);
     }
 
@@ -53,7 +64,7 @@ public class FormularioMonitorador extends WebPage {
         radioTipoPessoa.add(new Radio<>("pf", new Model<>(TipoPessoa.PESSOA_FISICA)));
         radioTipoPessoa.add(new Radio<>("pj", new Model<>(TipoPessoa.PESSOA_JURIDICA)));
         EmailTextField inputEmail = new EmailTextField("email");
-        TextField<Date> inputDataNascimento = new DateTextField("dataNascimento", "yyyy-MM-dd"); // TODO não vem preenchido
+        TextField<Date> inputDataNascimento = new DateTextField("dataNascimento", "yyyy-MM-dd");
         monitoradorForm.add(radioTipoPessoa, inputEmail, inputDataNascimento);
 
         TextField<String> inputNome = new TextField<>("nome");
@@ -101,8 +112,7 @@ public class FormularioMonitorador extends WebPage {
                     Monitorador monitorador = monitoradorForm.getModelObject();
                     System.out.println("Monitorador submetido: " + monitorador);
                     salvar(monitorador);
-                    listarMonitoradores.mostrarMsg("Monitorador Salvo com sucesso!");
-                    ModalWindow.closeCurrent(target);
+                    modal.close(target);
                 } catch (Exception e){
                     feedbackPanel.info(e.getMessage());
                     target.add(feedbackPanel);

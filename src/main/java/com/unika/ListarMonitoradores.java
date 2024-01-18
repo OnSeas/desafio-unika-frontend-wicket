@@ -7,6 +7,7 @@ import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.ajax.markup.html.navigation.paging.AjaxPagingNavigator;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
@@ -14,7 +15,7 @@ import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.list.ListItem;
-import org.apache.wicket.markup.html.list.ListView;
+import org.apache.wicket.markup.html.list.PageableListView;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
@@ -29,23 +30,30 @@ public class ListarMonitoradores extends HomePage{
     private static final long serialVersionUID = 2178207601281324056L;
     final MonitoradorApi monitoradorApi = new MonitoradorApi();
     final FeedbackPanel feedbackPanel = new FeedbackPanel("FeedBackMessages");
+    final ModalWindow modalWindow = new ModalWindow("modaw");
+    final WebMarkupContainer listWMC = new WebMarkupContainer("listWMC");
 
     public ListarMonitoradores(PageParameters parameters) throws IOException {
         super(parameters);
 
+        // TODO Ainda não retorna as mensagens
         feedbackPanel.setOutputMarkupId(true);
         add(feedbackPanel);
 
-        add(new Label("ListLabel", Model.of("Lista de monitoradores")));
-
         // Modal que é usado em todos os pop-ups
-        final ModalWindow modalWindow = new ModalWindow("modawFormMonitorador");
         modalWindow.setCookieName("modalWindow-1");
-        modalWindow.setResizable(false);
+        modalWindow.setAutoSize(true);
         add(modalWindow);
 
+        // WMC que envolve a lista já inciando a lista geral
+        listWMC.setOutputMarkupId(true);
+        putPageableList(monitoradorApi.listarMonitoradores());
+        add(listWMC);
+
+        add(new Label("ListLabel", Model.of("Lista de monitoradores")));
+
         // Botão de criar novo monitorador
-        AjaxLink<Void> ajaxNovoMonitorador = new AjaxLink<Void>("formNovoMonitorador") {
+        add( new AjaxLink<Void>("formNovoMonitorador") {
             private static final long serialVersionUID = -387605849215267697L;
             @Override
             public void onClick(AjaxRequestTarget target) {
@@ -58,14 +66,7 @@ public class ListarMonitoradores extends HomePage{
                 });
                 modalWindow.show(target);
             }
-        };
-        add(ajaxNovoMonitorador);
-
-        // WMC que envolve a lista já inciando a lista geral
-        final WebMarkupContainer listWMC = new WebMarkupContainer("listWMC");
-        listWMC.setOutputMarkupId(true);
-        listWMC.add(construirLista(listWMC, monitoradorApi.listarMonitoradores(), modalWindow));
-        add(listWMC);
+        });
 
         // Função quando alguma modal window é fechada.
         modalWindow.setWindowClosedCallback(new ModalWindow.WindowClosedCallback(){
@@ -73,16 +74,24 @@ public class ListarMonitoradores extends HomePage{
             @Override
             public void onClose(AjaxRequestTarget target){
                 try {
-                    listWMC.removeAll();
-                    listWMC.add(construirLista(listWMC, monitoradorApi.listarMonitoradores(), modalWindow));
+                    putPageableList(monitoradorApi.listarMonitoradores());
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
                 target.add(listWMC);
+
+                // TODO Adcionar a mensagem de sucesso!
             }
         });
 
-        // FORM DE PESQUISAR
+        // Adciona o Form de pesquisar
+        add(getFormPesquisa());
+
+    }
+
+    // --- METÓDOS INTERNOS ---
+    // PEGA O FORM
+    private Form<String> getFormPesquisa(){
         Form<String> pesquisarForm = new Form<>("pesquisarForm");
         add(pesquisarForm);
 
@@ -94,13 +103,7 @@ public class ListarMonitoradores extends HomePage{
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 try {
-                    listWMC.remove("monitoradores");
-
-                    listWMC.add(construirLista(
-                            listWMC,
-                            getListaMonitoradores(inputTipo.getModelObject(), inputPesquisa.getModelObject()),
-                            modalWindow));
-
+                    putPageableList(getListaMonitoradores(inputTipo.getModelObject(), inputPesquisa.getModelObject()));
                     target.add(listWMC);
                     target.add(feedbackPanel);
                 } catch (IOException e) {
@@ -115,11 +118,27 @@ public class ListarMonitoradores extends HomePage{
         pesquisarForm.add(inputPesquisa, inputTipo, ajaxButton);
 
         inputTipo.setLabel(Model.of("O tipo da pesquisa")).setRequired(true);
+
+        return pesquisarForm;
     }
 
-    // --- METÓDOS INTERNOS ---
-    private ListView<Monitorador> construirLista(WebMarkupContainer wmc, List<Monitorador> enderecos, ModalWindow modalWindow) throws IOException {
-        return new ListView<Monitorador>("monitoradores", enderecos) {
+    // ADCIONA A LISTA COM PAGING
+    private void putPageableList(List<Monitorador> monitoradores) throws IOException {
+        // remove se já existir algum
+        listWMC.removeAll();
+
+        // Adciona o PageableListView de acordo com a lista gerada
+        PageableListView<Monitorador> monitoradorListView = construirLista(listWMC, monitoradores, modalWindow);
+        listWMC.add(monitoradorListView);
+        // Adciona o pagingNavigator
+        AjaxPagingNavigator pagingNavigation = new AjaxPagingNavigator("pageNavigator", monitoradorListView);
+        listWMC.add(pagingNavigation);
+    }
+
+
+    // CONSTRÓI A LISTA
+    private PageableListView<Monitorador> construirLista(WebMarkupContainer wmc, List<Monitorador> enderecos, ModalWindow modalWindow) throws IOException {
+        return new PageableListView<Monitorador>("monitoradores", enderecos, 10) {
             private static final long serialVersionUID = -7313164500893623865L;
             @Override
             protected void populateItem(final ListItem<Monitorador> listItem) {
@@ -202,7 +221,7 @@ public class ListarMonitoradores extends HomePage{
                         @Override
                         public void onClick(AjaxRequestTarget target) {
                             try {
-                                modalWindow.setPageCreator(new ModalWindow.PageCreator() { // TODO Talvez compensa criar uma dunção para isso
+                                modalWindow.setPageCreator(new ModalWindow.PageCreator() { // TODO Talvez compensa criar uma função para isso
                                     private static final long serialVersionUID = -6353631616791952939L;
 
                                     @Override
@@ -228,7 +247,6 @@ public class ListarMonitoradores extends HomePage{
                 }
 
                 listItem.add(desativarAjax, ativarAjax);
-
             }
         };
     }
@@ -244,12 +262,5 @@ public class ListarMonitoradores extends HomePage{
                 return monitoradorApi.buscarMonitoradorPorCnpj(busca);
             default: throw new InvalidPropertiesFormatException("Tipo de pesquisa inválida!");
         }
-    }
-
-    // TODO mensagens de sucesso
-    public void mostrarMsg(String m){
-        feedbackPanel.info(m);
-        System.out.println("Mandou a msg " + m + " para o feedbackPanel");
-        System.out.println(feedbackPanel.getFeedbackMessages());
     }
 }
