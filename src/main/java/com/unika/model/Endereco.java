@@ -1,5 +1,6 @@
 package com.unika.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -7,6 +8,7 @@ import java.io.Serializable;
 
 @Getter
 @Setter
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Endereco implements Serializable {
     private static final long serialVersionUID = 192787022611302892L;
 
@@ -19,4 +21,5 @@ public class Endereco implements Serializable {
     private String cidade;
     private UF estado;
     private Boolean principal;
+    private Long monitoradorId;
 }

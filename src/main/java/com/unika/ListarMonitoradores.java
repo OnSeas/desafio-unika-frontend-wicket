@@ -86,7 +86,6 @@ public class ListarMonitoradores extends HomePage{
 
         // Adciona o Form de pesquisar
         add(getFormPesquisa());
-
     }
 
     // --- METÓDOS INTERNOS ---

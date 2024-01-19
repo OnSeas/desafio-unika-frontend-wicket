@@ -26,14 +26,17 @@ public class FormularioMonitorador extends WebPage {
     MonitoradorApi monitoradorApi = new MonitoradorApi();
     ListarMonitoradores listarMonitoradores;
     ModalWindow modal;
+
+    // Criar novo monitorador
     FormularioMonitorador(ListarMonitoradores listarMonitoradores, ModalWindow modalWindow){
         add(new Label("monitoradorForm", Model.of("Cadastrar um novo monitorador")));
         this.listarMonitoradores = listarMonitoradores;
         this.modal = modalWindow;
         Form<Monitorador> monitoradorForm = getForm();
-        add(monitoradorForm);
+        add(monitoradorForm, new EnderecoListPanel("enderecoPanel", -1L));
     }
 
+    // Editar um monitorador existente
     FormularioMonitorador(ListarMonitoradores listarMonitoradores, ModalWindow modalWindow, Long idMonitorador) throws IOException {
         add(new Label("monitoradorForm", Model.of("Editar info do monitorador")));
         this.listarMonitoradores = listarMonitoradores;
@@ -54,7 +57,7 @@ public class FormularioMonitorador extends WebPage {
         }
         wmc.setVisible(true);
 
-        add(monitoradorForm);
+        add(monitoradorForm, new EnderecoListPanel("enderecoPanel", monitorador.getId()));
     }
 
     private Form<Monitorador> getForm(){ // TODO SPLIT IN MORE METHODS
