@@ -1,6 +1,8 @@
 package com.unika.dialogs;
 
+import com.unika.model.Endereco;
 import com.unika.model.Monitorador;
+import com.unika.model.apiService.EnderecoApi;
 import com.unika.model.apiService.MonitoradorApi;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -15,6 +17,7 @@ import java.io.IOException;
 public class ConfirmationModal extends WebPage {
     private static final long serialVersionUID = -2628184519158280658L;
     MonitoradorApi monitoradorApi = new MonitoradorApi();
+    EnderecoApi enderecoApi = new EnderecoApi();
 
     public ConfirmationModal(ListItem<?> listItem, String msg, String action){ // TODO resolver o action
         add(new Label("deleteMsg", Model.of(msg)));
@@ -34,6 +37,8 @@ public class ConfirmationModal extends WebPage {
                         case "ativar":
                             ativarMontorador(((Monitorador) listItem.getModelObject()).getId());
                             break;
+                        case "excluirEndereco":
+                            deletarEndereco(((Endereco) listItem.getModelObject()).getId());
                     }
                     ModalWindow.closeCurrent(target);
                 } catch (Exception e){
@@ -54,7 +59,7 @@ public class ConfirmationModal extends WebPage {
         try {
             System.out.println("Excluindo o monitorador: " + id);
             monitoradorApi.deletarMonitorador(id);
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
@@ -63,7 +68,7 @@ public class ConfirmationModal extends WebPage {
         try {
             System.out.println("Desativando o monitorador: " + id);
             monitoradorApi.desativarMonitorador(id);
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
@@ -72,7 +77,16 @@ public class ConfirmationModal extends WebPage {
         try {
             System.out.println("Ativando o monitorador: " + id);
             monitoradorApi.ativarMonitorador(id);
-        } catch (IOException e) {
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void deletarEndereco(Long id){
+        try {
+            System.out.println("Excluindo o endereço: " + id);
+            enderecoApi.deletarEndereco(id);
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }

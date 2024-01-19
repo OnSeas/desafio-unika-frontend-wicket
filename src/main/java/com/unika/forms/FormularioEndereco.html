@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt" xmlns:wicket="http://wicket.apache.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>Formul&aacute;rio Endere&ccedil;o</title>
+
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    </head>
+    <body>
+        <div>
+            <h2 wicket:id="enderecoFormTitle" style="text-align: center">[Endere&ccedil;o Form title]</h2>
+
+            <div wicket:id="feedbackMessage" style="color: red"></div>
+
+            <form wicket:id="enderecoForm">
+                <div class="d-grid gap-7 col-9 mx-auto">
+                    <div>
+                        <label for="inputEnderecoForm" class="form-label">Endere&ccedil;o</label>
+                        <textarea class="form-control" wicket:id="endereco" placeholder="Rua 01, Qd 00 Lt 02..." id="inputEnderecoForm"></textarea>
+                    </div>
+
+                    <div>
+                        <label for="inputNumberForm" class="form-label">N&uacute;mero</label>
+                        <input type="text" class="form-control" wicket:id="numero" id="inputNumberForm" placeholder="000">
+                    </div>
+
+                    <div>
+                        <label for="inputCepForm" class="form-label">CEP</label>
+                        <input type="text" class="form-control" wicket:id="cep" id="inputCepForm" placeholder="00000-000">
+                    </div>
+
+                    <div>
+                        <label for="inputBairroForm" class="form-label">Bairro</label>
+                        <input type="text" class="form-control" wicket:id="bairro" id="inputBairroForm" placeholder="São João">
+                    </div>
+
+                    <div>
+                        <label for="inputTelefoneForm" class="form-label">Telefone</label>
+                        <input type="text" class="form-control" wicket:id="telefone" id="inputTelefoneForm" placeholder="(00)00000-0000">
+                    </div>
+
+                    <div>
+                        <label for="inputCidadeForm" class="form-label">Cidade</label>
+                        <input type="text" class="form-control" wicket:id="cidade" id="inputCidadeForm" placeholder="São Paulo">
+                    </div>
+
+                    <div>
+                        <label for="inputEstadoForm" class="form-label">Estado</label>
+                        <select class="form-select form-select-lg mb-3" aria-label="Default select example" wicket:id="estado" id="inputEstadoForm">
+                        </select>
+                    </div>
+
+                    <div class="d-flex justify-content-end">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" wicket:id="principal" id="flexSwitchCheckDefault">
+                            <label class="form-check-label" for="flexSwitchCheckDefault">Endereço Principal</label>
+                        </div>
+                    </div>
+
+                    <input wicket:id="submitAjax" class="btn btn-primary" type="submit" value="Cadastrar">
+                </div>
+            </form>
+        </div>
+
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    </body>
+</html>

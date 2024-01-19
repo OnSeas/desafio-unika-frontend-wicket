@@ -1,5 +1,6 @@
 package com.unika.model.apiService;
 
+import com.unika.model.Endereco;
 import com.unika.model.Monitorador;
 import com.unika.model.apiService.converters.ConverterDados;
 import okhttp3.Response;
@@ -50,7 +51,7 @@ public class MonitoradorApi implements Serializable {
             String json = response.body().string();
             return converterDados.obterDados(json, Monitorador.class);
         } else {
-            return null;
+            throw new RuntimeException(response.body().string());
         }
     }
 
@@ -72,6 +73,21 @@ public class MonitoradorApi implements Serializable {
     public String deletarMonitorador(Long id) throws IOException {
         Response response = apiService.conectarApiDELETE(
                 apiUrl + "/deletar/" + id
+        );
+
+        assert response.body() != null;
+        if (response.isSuccessful()){
+            return response.body().string();
+        } else {
+            throw new RuntimeException(response.body().string());
+        }
+    }
+
+    // Adcionar Endereço
+    public String adcionarEndereco(Long idMonitorador, Endereco endereco) throws IOException {
+        Response response = apiService.conectarApiPOST(
+                converterDados.obterJason(endereco),
+                apiUrl + "/" + idMonitorador + "/endereco"
         );
 
         assert response.body() != null;

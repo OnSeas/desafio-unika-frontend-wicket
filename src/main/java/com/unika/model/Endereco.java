@@ -22,4 +22,20 @@ public class Endereco implements Serializable {
     private UF estado;
     private Boolean principal;
     private Long monitoradorId;
+
+    @Override
+    public String toString() {
+        return "Endereco{" +
+                "id=" + id +
+                ", endereco='" + endereco + '\'' +
+                ", numero='" + numero + '\'' +
+                ", cep='" + cep + '\'' +
+                ", bairro='" + bairro + '\'' +
+                ", telefone='" + telefone + '\'' +
+                ", cidade='" + cidade + '\'' +
+                ", estado=" + estado +
+                ", principal=" + principal +
+                ", monitoradorId=" + monitoradorId +
+                '}';
+    }
 }

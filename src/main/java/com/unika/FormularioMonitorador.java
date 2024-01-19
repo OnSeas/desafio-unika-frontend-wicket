@@ -110,7 +110,6 @@ public class FormularioMonitorador extends WebPage {
             private static final long serialVersionUID = -8806215908629462715L;
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                target.add(feedbackPanel);
                 try {
                     Monitorador monitorador = monitoradorForm.getModelObject();
                     System.out.println("Monitorador submetido: " + monitorador);
