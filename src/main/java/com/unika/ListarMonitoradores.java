@@ -2,6 +2,7 @@ package com.unika;
 
 import com.unika.dialogs.ConfirmationModal;
 import com.unika.model.Monitorador;
+import com.unika.model.TipoPessoa;
 import com.unika.model.apiService.MonitoradorApi;
 import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -142,7 +143,7 @@ public class ListarMonitoradores extends HomePage{
             @Override
             protected void populateItem(final ListItem<Monitorador> listItem) {
                 listItem.add(new Label("index", Model.of(listItem.getIndex() + 1)));
-                listItem.add(new Label("tipoPessoa", new PropertyModel<Monitorador>(listItem.getModel(),"tipoPessoa")));
+                listItem.add(new Label("tipoPessoa", new PropertyModel<TipoPessoa>(listItem.getModel(),"tipoPessoa").getObject().getLabel()));
                 listItem.add(new Label("email", new PropertyModel<Monitorador>(listItem.getModel(),"email")));
                 listItem.add(new Label("dataNascimento", new PropertyModel<Monitorador>(listItem.getModel(),"dataNascimento")));
                 listItem.add(new Label("cpf", new PropertyModel<Monitorador>(listItem.getModel(),"cpf")));

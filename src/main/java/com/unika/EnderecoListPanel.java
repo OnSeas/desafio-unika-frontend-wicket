@@ -1,6 +1,7 @@
 package com.unika;
 
 import com.unika.model.Endereco;
+import com.unika.model.UF;
 import com.unika.model.apiService.EnderecoApi;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
@@ -38,7 +39,7 @@ public class EnderecoListPanel extends Panel {
                     listItem.add(new Label("cep", new PropertyModel<Endereco>(listItem.getModel(),"cep")));
                     listItem.add(new Label("bairro", new PropertyModel<Endereco>(listItem.getModel(),"bairro")));
                     listItem.add(new Label("cidade", new PropertyModel<Endereco>(listItem.getModel(),"cidade")));
-                    listItem.add(new Label("estado", new PropertyModel<Endereco>(listItem.getModel(),"estado")));
+                    listItem.add(new Label("estado", new PropertyModel<UF>(listItem.getModel(),"estado").getObject().getSigla()));
                 }
             };
         } catch (Exception e){
