@@ -23,11 +23,13 @@ public class MonitoradorApi implements Serializable {
         );
 
         assert response.body() != null;
+        String res = response.body().string();
+        response.close();
+
         if(response.isSuccessful()){
-            String json = response.body().string();
-            return converterDados.obterDados(json, Monitorador.class);
+            return converterDados.obterDados(res, Monitorador.class);
         } else {
-            throw new RuntimeException(response.body().string());
+            throw new RuntimeException(res);
         }
     }
 
@@ -35,11 +37,13 @@ public class MonitoradorApi implements Serializable {
         Response response = apiService.conectarApiGET(apiUrl + "/listar");
 
         assert response.body() != null;
+        String res = response.body().string();
+        response.close();
+
         if (response.isSuccessful()){
-            String json = response.body().string();
-            return converterDados.obterLista(json, Monitorador.class);
+            return converterDados.obterLista(res, Monitorador.class);
         } else {
-            return null;
+            return new ArrayList<>();
         }
     }
 
@@ -47,11 +51,13 @@ public class MonitoradorApi implements Serializable {
         Response response = apiService.conectarApiGET(apiUrl + "/buscar/" + id);
 
         assert response.body() != null;
+        String res = response.body().string();
+        response.close();
+
         if (response.isSuccessful()){
-            String json = response.body().string();
-            return converterDados.obterDados(json, Monitorador.class);
+            return converterDados.obterDados(res, Monitorador.class);
         } else {
-            throw new RuntimeException(response.body().string());
+            throw new RuntimeException(res);
         }
     }
 
@@ -62,11 +68,13 @@ public class MonitoradorApi implements Serializable {
         );
 
         assert response.body() != null;
+        String res = response.body().string();
+        response.close();
+
         if (response.isSuccessful()){
-            String json = response.body().string();
-            return converterDados.obterDados(json, Monitorador.class);
+            return converterDados.obterDados(res, Monitorador.class);
         } else {
-            throw new RuntimeException(response.body().string());
+            throw new RuntimeException(res);
         }
     }
 
@@ -76,10 +84,13 @@ public class MonitoradorApi implements Serializable {
         );
 
         assert response.body() != null;
+        String res = response.body().string();
+        response.close();
+
         if (response.isSuccessful()){
-            return response.body().string();
+            return res;
         } else {
-            throw new RuntimeException(response.body().string());
+            throw new RuntimeException(res);
         }
     }
 
@@ -91,10 +102,13 @@ public class MonitoradorApi implements Serializable {
         );
 
         assert response.body() != null;
+        String res = response.body().string();
+        response.close();
+
         if (response.isSuccessful()){
-            return response.body().string();
+            return res;
         } else {
-            throw new RuntimeException(response.body().string());
+            throw new RuntimeException(res);
         }
     }
 
@@ -106,10 +120,13 @@ public class MonitoradorApi implements Serializable {
         );
 
         assert response.body() != null;
+        String res = response.body().string();
+        response.close();
+
         if (response.isSuccessful()){
-            return response.body().string();
+            return res;
         } else {
-            throw new RuntimeException(response.body().string());
+            throw new RuntimeException(res);
         }
     }
 
@@ -120,10 +137,13 @@ public class MonitoradorApi implements Serializable {
         );
 
         assert response.body() != null;
+        String res = response.body().string();
+        response.close();
+
         if (response.isSuccessful()){
-            return response.body().string();
+            return res;
         } else {
-            throw new RuntimeException(response.body().string());
+            throw new RuntimeException(res);
         }
     }
 
@@ -133,10 +153,11 @@ public class MonitoradorApi implements Serializable {
         Response response = apiService.conectarApiGET(apiUrl + "/buscar/email/" + email);
 
         assert response.body() != null;
-        if (response.isSuccessful()){
-            String json = response.body().string();
+        String res = response.body().string();
+        response.close();
 
-            return converterDados.obterLista(json, Monitorador.class);
+        if (response.isSuccessful()){
+            return converterDados.obterLista(res, Monitorador.class);
         } else {
             return listarMonitoradores();
         }
@@ -146,10 +167,11 @@ public class MonitoradorApi implements Serializable {
         Response response = apiService.conectarApiGET(apiUrl + "/buscar/cpf/" + cpf);
 
         assert response.body() != null;
-        if (response.isSuccessful()){
-            String json = response.body().string();
+        String res = response.body().string();
+        response.close();
 
-            return converterDados.obterLista(json, Monitorador.class);
+        if (response.isSuccessful()){
+            return converterDados.obterLista(res, Monitorador.class);
         } else {
             return listarMonitoradores();
         }
@@ -159,9 +181,11 @@ public class MonitoradorApi implements Serializable {
         Response response = apiService.conectarApiGET(apiUrl + "/buscar/cnpj/" + cnpj);
 
         assert response.body() != null;
+        String res = response.body().string();
+        response.close();
+
         if (response.isSuccessful()){
-            String json = response.body().string();
-            return converterDados.obterLista(json, Monitorador.class);
+            return converterDados.obterLista(res, Monitorador.class);
         } else {
             return listarMonitoradores();
         }

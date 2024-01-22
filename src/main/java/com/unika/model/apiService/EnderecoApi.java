@@ -1,7 +1,6 @@
 package com.unika.model.apiService;
 
 import com.unika.model.Endereco;
-import com.unika.model.Monitorador;
 import com.unika.model.apiService.converters.ConverterDados;
 import okhttp3.Response;
 
@@ -20,21 +19,25 @@ public class EnderecoApi implements Serializable {
         Response response = apiService.conectarApiGET(apiUrl + "/buscar/" + id);
 
         assert response.body() != null;
+        String res = response.body().string();
+        response.close();
+
         if (response.isSuccessful()){
-            String json = response.body().string();
-            return converterDados.obterDados(json, Endereco.class);
+            return converterDados.obterDados(res, Endereco.class);
         } else {
-            throw new RuntimeException(response.body().string());
+            throw new RuntimeException(res);
         }
     }
 
     public List<Endereco> listarEnderecos(Long idMonitor) throws IOException {
         Response response = apiService.conectarApiGET(apiUrl + "/listar/" + idMonitor);
 
+        assert response.body() != null;
+        String res = response.body().string();
+        response.close();
+
         if (response.isSuccessful()){
-            assert response.body() != null;
-            String json = response.body().string();
-            return converterDados.obterLista(json, Endereco.class);
+            return converterDados.obterLista(res, Endereco.class);
         } else {
             return new ArrayList<>();
         }
@@ -47,11 +50,13 @@ public class EnderecoApi implements Serializable {
         );
 
         assert response.body() != null;
+        String res = response.body().string();
+        response.close();
+
         if (response.isSuccessful()){
-            String json = response.body().string();
-            return converterDados.obterDados(json, Endereco.class);
+            return converterDados.obterDados(res, Endereco.class);
         } else {
-            throw new RuntimeException(response.body().string());
+            throw new RuntimeException(res);
         }
     }
 
@@ -61,10 +66,13 @@ public class EnderecoApi implements Serializable {
         );
 
         assert response.body() != null;
+        String res = response.body().string();
+        response.close();
+
         if (response.isSuccessful()){
-            return response.body().string();
+            return res;
         } else {
-            throw new RuntimeException(response.body().string());
+            throw new RuntimeException(res);
         }
     }
 }
