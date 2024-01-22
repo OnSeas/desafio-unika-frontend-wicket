@@ -22,7 +22,6 @@ public class FormularioEndereco extends WebPage {
     private static final long serialVersionUID = -1829624338524145673L;
     MonitoradorApi monitoradorApi = new MonitoradorApi();
     EnderecoApi enderecoApi = new EnderecoApi();
-
     final ModalWindow modal;
     final Long idMonitorador; // Monitorador a qual o endereço pertence.
 
@@ -40,7 +39,7 @@ public class FormularioEndereco extends WebPage {
         this.modal = modalWindow;
         this.idMonitorador = idMontorador;
 
-        add(new Label("enderecoFormTitle", Model.of("Editar novo endereço"))); // TODO Unicode
+        add(new Label("enderecoFormTitle", Model.of("Editar endereço"))); // TODO Unicode
         Form<Endereco> enderecoForm = getForm();
         enderecoForm.setModelObject(enderecoApi.buscarEndereco(idEndereco));
         add(enderecoForm);

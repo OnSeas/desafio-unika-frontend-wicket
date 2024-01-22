@@ -2,36 +2,11 @@
 <html lang="pt" xmlns:wicket="http://wicket.apache.org">
     <head>
         <meta charset="UTF-8">
-        <title>Lista de monitoradores</title>
-
-        <!-- TODO descobrir porque não funciona -->
-        <style>
-
-        </style>
-
+        <title></title>
     </head>
     <body>
-        <wicket:extend>
-            <div style="width: 80%; margin: auto">
-                <h1 class="d-flex justify-content-center" style="color: #ffffff; margin: 0 0 20px 0" wicket:id="ListLabel">[título da página]</h1>
-
-                <div wicket:id="FeedBackMessages"></div>
-
-                <div class=" d-md-flex justify-content-md-end" style="margin: 0 0 10px 0">
-                    <button wicket:id="formNovoMonitorador" class="btn btn-primary fw-bold" type="button">Novo Monitorador</button>
-                </div>
-                <div class=" d-md-flex justify-content-md-end" style="margin: 0 0 10px 0">
-                    <form wicket:id="pesquisarForm" class="d-flex">
-                        <select wicket:id="inputTipo"></select>
-                        <input wicket:id="inputPesquisa" class="form-control me-2" type="text" placeholder="Search" aria-label="Search">
-                        <button wicket:id="searchButton" class="btn btn-success" type="submit">Search</button>
-                    </form>
-                </div>
-            </div>
-
-            <div wicket:id="modaw"></div>
-
-            <div wicket:id="listWMC" style="width: 80%; margin: auto; border-radius: 10px; overflow: hidden;">
+        <wicket:panel>
+            <div wicket:id="monitoradorListWMC">
                 <table class="table table-dark table-striped table-hover">
                     <tr>
                         <th>#</th>
@@ -64,6 +39,9 @@
                 <div wicket:id="pageNavigator" style="text-align: end">
                 </div>
             </div>
-        </wicket:extend>
+
+
+            <div wicket:id="modawOpcoes"></div>
+        </wicket:panel>
     </body>
 </html>

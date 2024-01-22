@@ -1,4 +1,4 @@
-package com.unika;
+package com.unika.Panels;
 
 import com.unika.dialogs.ConfirmationModal;
 import com.unika.forms.FormularioEndereco;
@@ -51,22 +51,6 @@ public class EnderecoListPanel extends Panel {
                 target.add(enderecoListWMC);
             }
         });
-
-        // Botão criar novo monitorador
-        add(new AjaxLink<Void>("criarEndereco") {
-            private static final long serialVersionUID = 7923685135874148873L;
-            @Override
-            public void onClick(AjaxRequestTarget target) {
-                modalWindow.setPageCreator(new ModalWindow.PageCreator() {
-                    private static final long serialVersionUID = 2885579755021559024L;
-                    @Override
-                    public Page createPage() {
-                        return new FormularioEndereco(modalWindow, idMonitorador);
-                    }
-                });
-                modalWindow.show(target);
-            }
-        });
     }
 
     // Construir a lista de endereços
@@ -115,7 +99,7 @@ public class EnderecoListPanel extends Panel {
                                             listItem,
                                             "Tem certeza que deseja excluir o endereço: " + listItem.getModelObject().getId(),
                                             "excluirEndereco"
-                                            );
+                                    );
                                 }
                             });
                             modalWindow.show(target);

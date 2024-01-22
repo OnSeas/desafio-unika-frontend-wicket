@@ -18,7 +18,7 @@ public class WicketApplication extends WebApplication
 	@Override
 	public Class<? extends WebPage> getHomePage()
 	{
-		return ListarMonitoradores.class;
+		return ControleMonitoradores.class;
 	}
 
 	/**

@@ -12,8 +12,6 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.model.Model;
 
-import java.io.IOException;
-
 public class ConfirmationModal extends WebPage {
     private static final long serialVersionUID = -2628184519158280658L;
     MonitoradorApi monitoradorApi = new MonitoradorApi();

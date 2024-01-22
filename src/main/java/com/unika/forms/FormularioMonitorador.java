@@ -1,8 +1,11 @@
-package com.unika;
+package com.unika.forms;
 
+import com.unika.Panels.EnderecoListPanel;
+import com.unika.model.Endereco;
 import com.unika.model.Monitorador;
 import com.unika.model.TipoPessoa;
 import com.unika.model.apiService.MonitoradorApi;
+import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
@@ -19,27 +22,32 @@ import org.apache.wicket.validation.validator.EmailAddressValidator;
 import org.apache.wicket.validation.validator.StringValidator;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class FormularioMonitorador extends WebPage {
     private static final long serialVersionUID = 8415273463108359061L;
     MonitoradorApi monitoradorApi = new MonitoradorApi();
-    ListarMonitoradores listarMonitoradores;
     ModalWindow modal;
+    List<Endereco> enderecoList = new ArrayList<>();
 
     // Criar novo monitorador
-    FormularioMonitorador(ListarMonitoradores listarMonitoradores, ModalWindow modalWindow){
+    public FormularioMonitorador(ModalWindow modalWindow){
         add(new Label("monitoradorForm", Model.of("Cadastrar um novo monitorador")));
-        this.listarMonitoradores = listarMonitoradores;
         this.modal = modalWindow;
         Form<Monitorador> monitoradorForm = getForm();
+
+        // TODO entender como fazer para adiconar o endereço antes de o monitorador estar criado.
         add(monitoradorForm, new EnderecoListPanel("enderecoPanel", -1L));
+        AjaxLink<Void> novoEndereco = addCriarEndButton(-1L);
+        novoEndereco.setVisible(false);
+        add(novoEndereco);
     }
 
     // Editar um monitorador existente
-    FormularioMonitorador(ListarMonitoradores listarMonitoradores, ModalWindow modalWindow, Long idMonitorador) throws IOException {
+    public FormularioMonitorador(ModalWindow modalWindow, Long idMonitorador) throws IOException {
         add(new Label("monitoradorForm", Model.of("Editar info do monitorador")));
-        this.listarMonitoradores = listarMonitoradores;
         this.modal = modalWindow;
 
         Form<Monitorador> monitoradorForm = getForm();
@@ -57,7 +65,7 @@ public class FormularioMonitorador extends WebPage {
         }
         wmc.setVisible(true);
 
-        add(monitoradorForm, new EnderecoListPanel("enderecoPanel", monitorador.getId()));
+        add(monitoradorForm, addCriarEndButton(idMonitorador), new EnderecoListPanel("enderecoPanel", monitorador.getId()));
     }
 
     private Form<Monitorador> getForm(){ // TODO SPLIT IN MORE METHODS
@@ -153,7 +161,26 @@ public class FormularioMonitorador extends WebPage {
         return monitoradorForm;
     }
 
+    // Botão criar novo monitorador
+    private AjaxLink<Void> addCriarEndButton(Long idMonitorador){
+        return new AjaxLink<Void>("criarEndereco") {
+            private static final long serialVersionUID = 7923685135874148873L;
+            @Override
+            public void onClick(AjaxRequestTarget target) {
+                modal.setPageCreator(new ModalWindow.PageCreator() {
+                    private static final long serialVersionUID = 2885579755021559024L;
+                    @Override
+                    public Page createPage() {
+                        return new FormularioEndereco(modal, idMonitorador);
+                    }
+                });
+                modal.show(target);
+            }
+        };
+    }
+
     private void salvar(Monitorador monitorador){
+        monitorador.setEnderecoList(enderecoList); // Endereço List
         try {
             if(monitorador.getId() == null){
                 monitoradorApi.cadastrarMonitorador(monitorador);
