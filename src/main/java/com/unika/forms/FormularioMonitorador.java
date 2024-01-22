@@ -59,6 +59,7 @@ public class FormularioMonitorador extends WebPage {
         // Preencher os dados do monitorador
         Monitorador monitorador = monitoradorApi.buscarMonitorador(idMonitorador);
         monitoradorForm.setModelObject(monitorador);
+        this.enderecoList = monitorador.getEnderecoList();
 
         // Mostrar os inputs certos
         WebMarkupContainer wmc;
