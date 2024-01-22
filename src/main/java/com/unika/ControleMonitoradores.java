@@ -57,7 +57,7 @@ public class ControleMonitoradores extends HomePage{
                     private static final long serialVersionUID = -4592416407253742093L;
                     @Override
                     public Page createPage() {
-                        return new FormularioMonitorador(modalWindow);
+                        return new FormularioMonitorador();
                     }
                 });
                 modalWindow.show(target);
@@ -79,9 +79,6 @@ public class ControleMonitoradores extends HomePage{
                 // TODO Adcionar a mensagem de sucesso!
             }
         });
-
-        // Adciona o Form de pesquisar
-        add(getFormPesquisa());
     }
 
     // --- METÓDOS INTERNOS ---
@@ -119,6 +116,12 @@ public class ControleMonitoradores extends HomePage{
     private void putPageableList(List<Monitorador> monitoradores) throws IOException {
         // remove se já existir alguma coisa
         listWMC.removeAll();
+
+        // Adiciona o form na lista (só aparecer se tiver algum valor
+        Form<String> searchForm = getFormPesquisa();
+        searchForm.setVisible(!monitoradores.isEmpty());
+        listWMC.add(searchForm);
+
         // Adciona a lista paginada (Panel)
         listWMC.add(new MonitoradorListPanel("monitoradorListPanel", monitoradores));
     }

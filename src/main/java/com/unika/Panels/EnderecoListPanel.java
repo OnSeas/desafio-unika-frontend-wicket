@@ -17,23 +17,28 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 
+import java.util.List;
+
 public class EnderecoListPanel extends Panel {
     private static final long serialVersionUID = -1429184536413087837L;
     EnderecoApi enderecoApi = new EnderecoApi();
     WebMarkupContainer enderecoListWMC = new WebMarkupContainer("enderecoListWMC");
     ModalWindow modalWindow = new ModalWindow("modalEndereco");
 
+    Long idMonitorador;
+    List<Endereco> enderecoList;
+
     // Editar Monitorador
-    public EnderecoListPanel(String id, Long idMonitorador) {
+    public EnderecoListPanel(String id, List<Endereco> enderecoList, Long idMonitorador) {
         super(id);
+        this.enderecoList = enderecoList;
+        this.idMonitorador = idMonitorador;
 
         // Para poder aparecer se não tiver nenhum
         enderecoListWMC.setOutputMarkupId(true);
         enderecoListWMC.setOutputMarkupPlaceholderTag(true);
 
-        ListView<Endereco> enderecoListView = construirLista(idMonitorador);
-        enderecoListWMC.add(enderecoListView);
-        enderecoListWMC.setVisible(!enderecoListView.getList().isEmpty());
+        addList();
         add(enderecoListWMC);
 
         modalWindow.setOutputMarkupId(true);
@@ -44,20 +49,33 @@ public class EnderecoListPanel extends Panel {
             private static final long serialVersionUID = 7800205096545281286L;
             @Override
             public void onClose(AjaxRequestTarget target) {
-                enderecoListWMC.removeAll();
-                ListView<Endereco> enderecoListView = construirLista(idMonitorador);
-                enderecoListWMC.add(enderecoListView);
-                enderecoListWMC.setVisible(!enderecoListView.getList().isEmpty());
+                recarregarList();
+                addList();
                 target.add(enderecoListWMC);
             }
         });
     }
 
+    private void recarregarList(){
+        try {
+            enderecoList = enderecoApi.listarEnderecos(idMonitorador);
+        } catch (Exception e){
+            System.out.println("Erro ao recarregar a lista de enderecos");
+        }
+    }
+
+    private void addList(){
+        enderecoListWMC.removeAll();
+
+        ListView<Endereco> enderecoListView = construirLista();
+        enderecoListWMC.add(enderecoListView);
+        enderecoListWMC.setVisible(!enderecoListView.getList().isEmpty());
+    }
+
     // Construir a lista de endereços
-    private ListView<Endereco> construirLista(Long idMonitorador){
+    private ListView<Endereco> construirLista(){
         try{
-            System.out.println(enderecoApi.listarEnderecos(idMonitorador));
-            return new ListView<Endereco>("enderecos", enderecoApi.listarEnderecos(idMonitorador)) {
+            return new ListView<Endereco>("enderecos", enderecoList) {
                 private static final long serialVersionUID = 7611437418587202266L;
                 @Override
                 protected void populateItem(ListItem<Endereco> listItem) {

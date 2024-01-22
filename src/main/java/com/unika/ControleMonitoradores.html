@@ -19,19 +19,21 @@
                 <div class=" d-md-flex justify-content-md-end" style="margin: 0 0 10px 0">
                     <button wicket:id="formNovoMonitorador" class="btn btn-primary fw-bold" type="button">Novo Monitorador</button>
                 </div>
-                <div class=" d-md-flex justify-content-md-end" style="margin: 0 0 10px 0">
-                    <form wicket:id="pesquisarForm" class="d-flex">
-                        <select wicket:id="inputTipo"></select>
-                        <input wicket:id="inputPesquisa" class="form-control me-2" type="text" placeholder="Search" aria-label="Search">
-                        <button wicket:id="searchButton" class="btn btn-success" type="submit">Search</button>
-                    </form>
+
+                <div wicket:id="listWMC" style="margin: auto; border-radius: 10px; overflow: hidden;">
+
+                    <div class=" d-md-flex justify-content-md-end" style="margin: 0 0 10px 0">
+                        <form wicket:id="pesquisarForm" class="d-flex">
+                            <select wicket:id="inputTipo"></select>
+                            <input wicket:id="inputPesquisa" class="form-control me-2" type="text" placeholder="Search" aria-label="Search">
+                            <button wicket:id="searchButton" class="btn btn-success" type="submit">Search</button>
+                        </form>
+                    </div>
+
+                    <span wicket:id="monitoradorListPanel">[lista de monitoradores com páginação]</span>
                 </div>
-            </div>
 
-            <div wicket:id="modaw"></div>
-
-            <div wicket:id="listWMC" style="width: 80%; margin: auto; border-radius: 10px; overflow: hidden;">
-                <span wicket:id="monitoradorListPanel">[lista de monitoradores com páginação]</span>
+                <div wicket:id="modaw"></div>
             </div>
         </wicket:extend>
     </body>

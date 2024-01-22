@@ -107,8 +107,7 @@ public class MonitoradorListPanel extends Panel {
                                 @Override
                                 public Page createPage() {
                                     try {
-                                        return new FormularioMonitorador(
-                                                modalWindow,
+                                        return new FormularioMonitorador (
                                                 listItem.getModelObject().getId());
                                     } catch (IOException e) {
                                         throw new RuntimeException(e);

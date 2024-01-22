@@ -4,6 +4,7 @@ import com.unika.Panels.EnderecoListPanel;
 import com.unika.model.Endereco;
 import com.unika.model.Monitorador;
 import com.unika.model.TipoPessoa;
+import com.unika.model.apiService.EnderecoApi;
 import com.unika.model.apiService.MonitoradorApi;
 import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -29,26 +30,29 @@ import java.util.List;
 public class FormularioMonitorador extends WebPage {
     private static final long serialVersionUID = 8415273463108359061L;
     MonitoradorApi monitoradorApi = new MonitoradorApi();
-    ModalWindow modal;
+    WebMarkupContainer listaEnderecoWMC = new WebMarkupContainer("listaEnderecoWMC");
     List<Endereco> enderecoList = new ArrayList<>();
 
     // Criar novo monitorador
-    public FormularioMonitorador(ModalWindow modalWindow){
+    public FormularioMonitorador(){
         add(new Label("monitoradorForm", Model.of("Cadastrar um novo monitorador")));
-        this.modal = modalWindow;
-        Form<Monitorador> monitoradorForm = getForm();
+        add(getForm());
 
         // TODO entender como fazer para adiconar o endereço antes de o monitorador estar criado.
-        add(monitoradorForm, new EnderecoListPanel("enderecoPanel", -1L));
-        AjaxLink<Void> novoEndereco = addCriarEndButton(-1L);
-        novoEndereco.setVisible(false);
-        add(novoEndereco);
+        add(addCriarEndButton(-1L));
+
+        listaEnderecoWMC.setOutputMarkupId(true);
+        listaEnderecoWMC.setOutputMarkupPlaceholderTag(true);
+
+        addListaEndereco(-1L);
+        listaEnderecoWMC.setVisible(false);
+        add(listaEnderecoWMC);
     }
 
+
     // Editar um monitorador existente
-    public FormularioMonitorador(ModalWindow modalWindow, Long idMonitorador) throws IOException {
+    public FormularioMonitorador(Long idMonitorador) throws IOException {
         add(new Label("monitoradorForm", Model.of("Editar info do monitorador")));
-        this.modal = modalWindow;
 
         Form<Monitorador> monitoradorForm = getForm();
 
@@ -65,7 +69,19 @@ public class FormularioMonitorador extends WebPage {
         }
         wmc.setVisible(true);
 
-        add(monitoradorForm, addCriarEndButton(idMonitorador), new EnderecoListPanel("enderecoPanel", monitorador.getId()));
+        add(addCriarEndButton(idMonitorador));
+        listaEnderecoWMC.setOutputMarkupId(true);
+        listaEnderecoWMC.setOutputMarkupPlaceholderTag(true);
+
+        addListaEndereco(idMonitorador);
+        add(monitoradorForm, listaEnderecoWMC);
+    }
+
+
+    private void addListaEndereco(Long idMonitorador){
+        listaEnderecoWMC.removeAll();
+        listaEnderecoWMC.setVisible(!enderecoList.isEmpty());
+        listaEnderecoWMC.add(new EnderecoListPanel("enderecoPanel", enderecoList, idMonitorador));
     }
 
     private Form<Monitorador> getForm(){ // TODO SPLIT IN MORE METHODS
@@ -122,7 +138,7 @@ public class FormularioMonitorador extends WebPage {
                     Monitorador monitorador = monitoradorForm.getModelObject();
                     System.out.println("Monitorador submetido: " + monitorador);
                     salvar(monitorador);
-                    modal.close(target);
+                    ModalWindow.closeCurrent(target);
                 } catch (Exception e){
                     feedbackPanel.info(e.getMessage());
                     target.add(feedbackPanel);
@@ -161,26 +177,48 @@ public class FormularioMonitorador extends WebPage {
         return monitoradorForm;
     }
 
-    // Botão criar novo monitorador
+
+    // Botão criar novo monitorador TODO arrumar esse método, olhar referência do outro
     private AjaxLink<Void> addCriarEndButton(Long idMonitorador){
+
+        // Modal window não deve estar aqui por questões de padrão.
+
+        ModalWindow modalWindow = new ModalWindow("criarEndModal");
+        modalWindow.setCookieName("criarendereco-modal");
+        add(modalWindow);
+        modalWindow.setWindowClosedCallback(new ModalWindow.WindowClosedCallback() {
+            private static final long serialVersionUID = 1989574373953651865L;
+            @Override
+            public void onClose(AjaxRequestTarget target) {
+                EnderecoApi enderecoApi = new EnderecoApi();
+                try {
+                    enderecoList = enderecoApi.listarEnderecos(idMonitorador);
+                } catch (Exception e) {
+                    throw new RuntimeException(e.getMessage());
+                }
+
+                addListaEndereco(idMonitorador);
+                target.add(listaEnderecoWMC);
+            }
+        });
         return new AjaxLink<Void>("criarEndereco") {
             private static final long serialVersionUID = 7923685135874148873L;
             @Override
             public void onClick(AjaxRequestTarget target) {
-                modal.setPageCreator(new ModalWindow.PageCreator() {
+                modalWindow.setPageCreator(new ModalWindow.PageCreator() {
                     private static final long serialVersionUID = 2885579755021559024L;
                     @Override
                     public Page createPage() {
-                        return new FormularioEndereco(modal, idMonitorador);
+                        return new FormularioEndereco(modalWindow, idMonitorador);
                     }
                 });
-                modal.show(target);
+                modalWindow.show(target);
             }
         };
     }
 
+    // Salvo o monitorador em POST (sem id) ou PUT (quando tem id).
     private void salvar(Monitorador monitorador){
-        monitorador.setEnderecoList(enderecoList); // Endereço List
         try {
             if(monitorador.getId() == null){
                 monitoradorApi.cadastrarMonitorador(monitorador);
