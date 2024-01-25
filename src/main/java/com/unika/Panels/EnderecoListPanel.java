@@ -95,7 +95,7 @@ public class EnderecoListPanel extends Panel {
                                 @Override
                                 public Page createPage() {
                                     try {
-                                        return new FormularioEndereco(modalWindow, idMonitorador, listItem.getModelObject().getId());
+                                        return new FormularioEndereco(idMonitorador, listItem.getModelObject().getId());
                                     } catch (Exception e) {
                                         throw new RuntimeException(e);
                                     }

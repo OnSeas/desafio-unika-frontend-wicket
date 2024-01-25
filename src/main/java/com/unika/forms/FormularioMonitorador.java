@@ -4,9 +4,7 @@ import com.unika.Panels.EnderecoListPanel;
 import com.unika.model.Endereco;
 import com.unika.model.Monitorador;
 import com.unika.model.TipoPessoa;
-import com.unika.model.apiService.EnderecoApi;
 import com.unika.model.apiService.MonitoradorApi;
-import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
@@ -16,6 +14,7 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.*;
+import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.Model;
@@ -38,7 +37,6 @@ public class FormularioMonitorador extends WebPage {
         add(new Label("monitoradorForm", Model.of("Cadastrar um novo monitorador")));
         add(getForm());
 
-        // TODO entender como fazer para adiconar o endereço antes de o monitorador estar criado.
         add(addCriarEndButton(-1L));
 
         listaEnderecoWMC.setOutputMarkupId(true);
@@ -95,21 +93,23 @@ public class FormularioMonitorador extends WebPage {
         TextField<Date> inputDataNascimento = new DateTextField("dataNascimento", "yyyy-MM-dd");
         monitoradorForm.add(radioTipoPessoa, inputEmail, inputDataNascimento);
 
+        // INPUTS DE PESSOA FÍSICA
         TextField<String> inputNome = new TextField<>("nome");
         TextField<String> inputCpf = new TextField<>("cpf");
         TextField<String> inputRg = new TextField<>("rg");
 
-        WebMarkupContainer pfWMC = new WebMarkupContainer("pfWMC");
+        WebMarkupContainer pfWMC = new WebMarkupContainer("pfWMC"); // Container a ser mostrado ao cadastrar uma pessoa física.
         pfWMC.setVisible(false);
         pfWMC.setOutputMarkupId(true);
         pfWMC.setOutputMarkupPlaceholderTag(true);
         pfWMC.add(inputNome, inputCpf, inputRg);
 
+        // INPUTS DE PESSOA JURÍDICA
         TextField<String> inputRazaoSocial = new TextField<>("razaoSocial");
         TextField<String> inputCnpj = new TextField<>("cnpj");
         TextField<String> inputInscricaoEstadual = new TextField<>("inscricaoEstadual");
 
-        WebMarkupContainer pjWMC = new WebMarkupContainer("pjWMC");
+        WebMarkupContainer pjWMC = new WebMarkupContainer("pjWMC"); // Container a ser mostrado ao cadastrar uma pessoa Júridica
         pjWMC.setVisible(false);
         pjWMC.setOutputMarkupId(true);
         pjWMC.setOutputMarkupPlaceholderTag(true);
@@ -151,6 +151,7 @@ public class FormularioMonitorador extends WebPage {
             }
         });
 
+        // Botões que mostram os inputs de acordo com o Tipo de Pessoa selecionado.
         AjaxLink<Void> showPf = new AjaxLink<Void>("showPf") {
             private static final long serialVersionUID = -7872773929920444908L;
             @Override
@@ -158,7 +159,6 @@ public class FormularioMonitorador extends WebPage {
                 pfWMC.setVisible(true);
                 pjWMC.setVisible(false);
                 target.add(pfWMC, pjWMC);
-                System.out.println("Mostrar inputs de Pessoa Física!");
             }
         };
         AjaxLink<Void> showPj = new AjaxLink<Void>("showPj") {
@@ -168,7 +168,6 @@ public class FormularioMonitorador extends WebPage {
                 pfWMC.setVisible(false);
                 pjWMC.setVisible(true);
                 target.add(pfWMC, pjWMC);
-                System.out.println("Mostrar inputs de Pessoa Jurídica!");
             }
         };
 
@@ -182,46 +181,40 @@ public class FormularioMonitorador extends WebPage {
     // Botão criar novo monitorador TODO arrumar esse método, olhar referência do outro
     private AjaxLink<Void> addCriarEndButton(Long idMonitorador){
 
-        // Modal window não deve estar aqui por questões de padrão.
-
+        // Modal Window que abre o formulário de endereço
         ModalWindow modalWindow = new ModalWindow("criarEndModal");
         modalWindow.setCookieName("criarendereco-modal");
         add(modalWindow);
         modalWindow.setWindowClosedCallback(new ModalWindow.WindowClosedCallback() {
             private static final long serialVersionUID = 1989574373953651865L;
             @Override
-            public void onClose(AjaxRequestTarget target) {
-                EnderecoApi enderecoApi = new EnderecoApi();
-                try {
-                    enderecoList = enderecoApi.listarEnderecos(idMonitorador);
-                } catch (Exception e) {
-                    throw new RuntimeException(e.getMessage());
-                }
+            public void onClose(AjaxRequestTarget target){
+                System.out.println(enderecoList);
 
                 addListaEndereco(idMonitorador);
                 target.add(listaEnderecoWMC);
             }
         });
-        return new AjaxLink<Void>("criarEndereco") {
+
+        AjaxLink<Void> criarEnderecoAjax =  new AjaxLink<Void>("criarEndereco") {
             private static final long serialVersionUID = 7923685135874148873L;
             @Override
             public void onClick(AjaxRequestTarget target) {
-                modalWindow.setPageCreator(new ModalWindow.PageCreator() {
-                    private static final long serialVersionUID = 2885579755021559024L;
-                    @Override
-                    public Page createPage() {
-                        return new FormularioEndereco(modalWindow, idMonitorador);
-                    }
-                });
+
+                modalWindow.setContent(new EmptyPanel(modalWindow.getContentId()));
+                modalWindow.setPageCreator(() -> new FormularioEndereco(FormularioMonitorador.this, idMonitorador));
                 modalWindow.show(target);
             }
         };
+
+        return criarEnderecoAjax;
     }
 
     // Salvo o monitorador em POST (sem id) ou PUT (quando tem id).
     private void salvar(Monitorador monitorador){
         try {
             if(monitorador.getId() == null){
+                monitorador.setEnderecoList(enderecoList);
                 monitoradorApi.cadastrarMonitorador(monitorador);
             } else {
                 monitoradorApi.atualizarMonitorador(monitorador, monitorador.getId());

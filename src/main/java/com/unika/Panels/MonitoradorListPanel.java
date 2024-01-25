@@ -77,8 +77,6 @@ public class MonitoradorListPanel extends Panel {
         pagingNavigation.setVisible(monitoradorListView.getList().size() >= 10);
         monitoradorListWMC.setVisible(!monitoradorListView.getList().isEmpty());
 
-        System.out.println(monitoradorListView.getList());
-
         monitoradorListWMC.add(monitoradorListView, pagingNavigation);
     }
 

@@ -53,13 +53,7 @@ public class ControleMonitoradores extends HomePage{
             private static final long serialVersionUID = -387605849215267697L;
             @Override
             public void onClick(AjaxRequestTarget target) {
-                modalWindow.setPageCreator(new ModalWindow.PageCreator() {
-                    private static final long serialVersionUID = -4592416407253742093L;
-                    @Override
-                    public Page createPage() {
-                        return new FormularioMonitorador();
-                    }
-                });
+                modalWindow.setPageCreator(FormularioMonitorador::new);
                 modalWindow.show(target);
             }
         });
