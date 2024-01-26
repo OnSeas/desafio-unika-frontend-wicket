@@ -1,6 +1,5 @@
 package com.unika.forms;
 
-import com.unika.Panels.EnderecoListPanel;
 import com.unika.model.Endereco;
 import com.unika.model.Monitorador;
 import com.unika.model.TipoPessoa;
@@ -11,87 +10,39 @@ import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.apache.wicket.extensions.markup.html.form.DateTextField;
 import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.html.WebPage;
-import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.*;
-import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.validation.validator.EmailAddressValidator;
 import org.apache.wicket.validation.validator.StringValidator;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class FormularioMonitorador extends WebPage {
-    private static final long serialVersionUID = 8415273463108359061L;
+public class MonitoradorForm extends Form<Monitorador> {
+    private static final long serialVersionUID = 7577476616317116878L;
+    Boolean submited;
     MonitoradorApi monitoradorApi = new MonitoradorApi();
-    WebMarkupContainer listaEnderecoWMC = new WebMarkupContainer("listaEnderecoWMC");
-    List<Endereco> enderecoList = new ArrayList<>();
+    public List<Endereco> enderecoList = new ArrayList<>();
 
-    // Criar novo monitorador
-    public FormularioMonitorador(){
-        add(new Label("monitoradorForm", Model.of("Cadastrar um novo monitorador")));
-        add(getForm());
+    public MonitoradorForm(String id, Monitorador monitorador) {
+        super(id, new CompoundPropertyModel<>(monitorador));
 
-        add(addCriarEndButton(-1L));
+        submited = Boolean.FALSE;
 
-        listaEnderecoWMC.setOutputMarkupId(true);
-        listaEnderecoWMC.setOutputMarkupPlaceholderTag(true);
-
-        addListaEndereco(-1L);
-        listaEnderecoWMC.setVisible(false);
-        add(listaEnderecoWMC);
-    }
-
-
-    // Editar um monitorador existente
-    public FormularioMonitorador(Long idMonitorador) throws IOException {
-        add(new Label("monitoradorForm", Model.of("Editar info do monitorador")));
-
-        Form<Monitorador> monitoradorForm = getForm();
-
-        // Preencher os dados do monitorador
-        Monitorador monitorador = monitoradorApi.buscarMonitorador(idMonitorador);
-        monitoradorForm.setModelObject(monitorador);
-        this.enderecoList = monitorador.getEnderecoList();
-
-        // Mostrar os inputs certos
-        WebMarkupContainer wmc;
-        if (monitorador.getTipoPessoa().equals(TipoPessoa.PESSOA_FISICA)){
-            wmc = (WebMarkupContainer) monitoradorForm.get("pfWMC");
-        } else{
-            wmc = (WebMarkupContainer) monitoradorForm.get("pjWMC");
+        if(monitorador.getId() != null){
+            enderecoList = monitorador.getEnderecoList();
         }
-        wmc.setVisible(true);
-
-        add(addCriarEndButton(idMonitorador));
-        listaEnderecoWMC.setOutputMarkupId(true);
-        listaEnderecoWMC.setOutputMarkupPlaceholderTag(true);
-
-        addListaEndereco(idMonitorador);
-        add(monitoradorForm, listaEnderecoWMC);
-    }
-
-
-    private void addListaEndereco(Long idMonitorador){
-        listaEnderecoWMC.removeAll();
-        listaEnderecoWMC.setVisible(!enderecoList.isEmpty());
-        listaEnderecoWMC.add(new EnderecoListPanel("enderecoPanel", enderecoList, idMonitorador));
-    }
-
-    private Form<Monitorador> getForm(){ // TODO SPLIT IN MORE METHODS
-        Form<Monitorador> monitoradorForm = new Form<Monitorador>("formMonitorador", new CompoundPropertyModel<>(new Monitorador()));
 
         RadioGroup<TipoPessoa> radioTipoPessoa = new RadioGroup<>("tipoPessoa");
         radioTipoPessoa.add(new Radio<>("pf", new Model<>(TipoPessoa.PESSOA_FISICA)));
         radioTipoPessoa.add(new Radio<>("pj", new Model<>(TipoPessoa.PESSOA_JURIDICA)));
         EmailTextField inputEmail = new EmailTextField("email");
         TextField<Date> inputDataNascimento = new DateTextField("dataNascimento", "yyyy-MM-dd");
-        monitoradorForm.add(radioTipoPessoa, inputEmail, inputDataNascimento);
+        add(radioTipoPessoa, inputEmail, inputDataNascimento);
+
 
         // INPUTS DE PESSOA FÍSICA
         TextField<String> inputNome = new TextField<>("nome");
@@ -103,6 +54,7 @@ public class FormularioMonitorador extends WebPage {
         pfWMC.setOutputMarkupId(true);
         pfWMC.setOutputMarkupPlaceholderTag(true);
         pfWMC.add(inputNome, inputCpf, inputRg);
+
 
         // INPUTS DE PESSOA JURÍDICA
         TextField<String> inputRazaoSocial = new TextField<>("razaoSocial");
@@ -131,14 +83,13 @@ public class FormularioMonitorador extends WebPage {
         feedbackPanel.setOutputMarkupId(true);
         add(feedbackPanel);
 
-        monitoradorForm.add(new AjaxButton("ajaxSubmit") {
+        add(new AjaxButton("ajaxSubmit", this) {
             private static final long serialVersionUID = -8806215908629462715L;
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 try {
-                    Monitorador monitorador = monitoradorForm.getModelObject();
-                    System.out.println("Monitorador submetido: " + monitorador);
-                    salvar(monitorador);
+                    salvar(MonitoradorForm.this.getModelObject());
+                    submited = Boolean.TRUE;
                     ModalWindow.closeCurrent(target);
                 } catch (Exception e){
                     feedbackPanel.info(e.getMessage());
@@ -173,48 +124,13 @@ public class FormularioMonitorador extends WebPage {
 
         radioTipoPessoa.add(showPf, showPj);
 
-        monitoradorForm.add(pfWMC, pjWMC);
-        return monitoradorForm;
+        add(pfWMC, pjWMC);
     }
 
-
-    // Botão criar novo monitorador TODO arrumar esse método, olhar referência do outro
-    private AjaxLink<Void> addCriarEndButton(Long idMonitorador){
-
-        // Modal Window que abre o formulário de endereço
-        ModalWindow modalWindow = new ModalWindow("criarEndModal");
-        modalWindow.setCookieName("criarendereco-modal");
-        add(modalWindow);
-        modalWindow.setWindowClosedCallback(new ModalWindow.WindowClosedCallback() {
-            private static final long serialVersionUID = 1989574373953651865L;
-            @Override
-            public void onClose(AjaxRequestTarget target){
-                System.out.println(enderecoList);
-
-                addListaEndereco(idMonitorador);
-                target.add(listaEnderecoWMC);
-            }
-        });
-
-        AjaxLink<Void> criarEnderecoAjax =  new AjaxLink<Void>("criarEndereco") {
-            private static final long serialVersionUID = 7923685135874148873L;
-            @Override
-            public void onClick(AjaxRequestTarget target) {
-
-                modalWindow.setContent(new EmptyPanel(modalWindow.getContentId()));
-                modalWindow.setPageCreator(() -> new FormularioEndereco(FormularioMonitorador.this, idMonitorador));
-                modalWindow.show(target);
-            }
-        };
-
-        return criarEnderecoAjax;
-    }
-
-    // Salvo o monitorador em POST (sem id) ou PUT (quando tem id).
     private void salvar(Monitorador monitorador){
         try {
             if(monitorador.getId() == null){
-                monitorador.setEnderecoList(enderecoList);
+                monitorador.setEnderecoList(enderecoList); // Seta a lista de endereços Para ser salvos juntos com o monitorador.
                 monitoradorApi.cadastrarMonitorador(monitorador);
             } else {
                 monitoradorApi.atualizarMonitorador(monitorador, monitorador.getId());

@@ -1,11 +1,10 @@
 package com.unika.Panels;
 
 import com.unika.dialogs.ConfirmationModal;
-import com.unika.forms.FormularioEndereco;
+import com.unika.forms.EnderecoForm;
 import com.unika.model.Endereco;
 import com.unika.model.UF;
 import com.unika.model.apiService.EnderecoApi;
-import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
@@ -13,6 +12,7 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
+import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
@@ -90,17 +90,8 @@ public class EnderecoListPanel extends Panel {
                         private static final long serialVersionUID = -660882723667008281L;
                         @Override
                         public void onClick(AjaxRequestTarget target) {
-                            modalWindow.setPageCreator(new ModalWindow.PageCreator() {
-                                private static final long serialVersionUID = 2885579755021559024L;
-                                @Override
-                                public Page createPage() {
-                                    try {
-                                        return new FormularioEndereco(idMonitorador, listItem.getModelObject().getId());
-                                    } catch (Exception e) {
-                                        throw new RuntimeException(e);
-                                    }
-                                }
-                            });
+                            modalWindow.setContent(new EnderecoFormPanel(ModalWindow.CONTENT_ID,
+                                    new EnderecoForm("enderecoForm", listItem.getModelObject(), idMonitorador)));
                             modalWindow.show(target);
                         }
                     });
@@ -109,17 +100,12 @@ public class EnderecoListPanel extends Panel {
                         private static final long serialVersionUID = -660882723667008281L;
                         @Override
                         public void onClick(AjaxRequestTarget target) {
-                            modalWindow.setPageCreator(new ModalWindow.PageCreator() {
-                                private static final long serialVersionUID = 2885579755021559024L;
-                                @Override
-                                public Page createPage() {
-                                    return new ConfirmationModal(
+                            modalWindow.setContent(new ConfirmationModal(
+                                            ModalWindow.CONTENT_ID,
                                             listItem,
                                             "Tem certeza que deseja excluir o endereço: " + listItem.getModelObject().getId(),
                                             "excluirEndereco"
-                                    );
-                                }
-                            });
+                                    ));
                             modalWindow.show(target);
                         }
                     });

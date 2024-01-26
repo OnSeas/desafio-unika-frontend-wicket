@@ -7,17 +7,18 @@ import com.unika.model.apiService.MonitoradorApi;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
-import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
+import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
 
-public class ConfirmationModal extends WebPage {
+public class ConfirmationModal extends Panel {
     private static final long serialVersionUID = -2628184519158280658L;
     MonitoradorApi monitoradorApi = new MonitoradorApi();
     EnderecoApi enderecoApi = new EnderecoApi();
 
-    public ConfirmationModal(ListItem<?> listItem, String msg, String action){ // TODO resolver o action
+    public ConfirmationModal(String id, ListItem<?> listItem, String msg, String action){ // TODO resolver o action
+        super(id);
         add(new Label("deleteMsg", Model.of(msg)));
 
         add(new AjaxLink<Void>("confirmAjax") {

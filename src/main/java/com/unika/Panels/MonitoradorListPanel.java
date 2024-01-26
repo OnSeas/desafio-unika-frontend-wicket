@@ -1,11 +1,10 @@
 package com.unika.Panels;
 
 import com.unika.dialogs.ConfirmationModal;
-import com.unika.forms.FormularioMonitorador;
+import com.unika.forms.MonitoradorForm;
 import com.unika.model.Monitorador;
 import com.unika.model.TipoPessoa;
 import com.unika.model.apiService.MonitoradorApi;
-import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.navigation.paging.AjaxPagingNavigator;
@@ -18,7 +17,6 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 
-import java.io.IOException;
 import java.util.List;
 
 public class MonitoradorListPanel extends Panel {
@@ -47,7 +45,7 @@ public class MonitoradorListPanel extends Panel {
         modalWindow.setWindowClosedCallback(new ModalWindow.WindowClosedCallback() {
             private static final long serialVersionUID = 7800205096545281286L;
             @Override
-            public void onClose(AjaxRequestTarget target) {
+            public void onClose(AjaxRequestTarget target) { // TODO checkar se foi submetido antes de atualziar a lista
                 recarregarMonitoradores(); // Ao Atualizar, Excluir, Desativar, Ativar.
                 addPageableList();
                 target.add(monitoradorListWMC);
@@ -100,18 +98,9 @@ public class MonitoradorListPanel extends Panel {
                     @Override
                     public void onClick(AjaxRequestTarget target) {
                         try {
-                            modalWindow.setPageCreator(new ModalWindow.PageCreator() {
-                                private static final long serialVersionUID = -4592416407253742093L;
-                                @Override
-                                public Page createPage() {
-                                    try {
-                                        return new FormularioMonitorador (
-                                                listItem.getModelObject().getId());
-                                    } catch (IOException e) {
-                                        throw new RuntimeException(e);
-                                    }
-                                }
-                            });
+                            modalWindow.setContent(new MonitoradorFormPanel(
+                                    ModalWindow.CONTENT_ID,
+                                    new MonitoradorForm("formMonitorador", monitoradorApi.buscarMonitorador(listItem.getModelObject().getId()))));
                         } catch (Exception e){
                             System.out.println("Não Editou!");
                         }
@@ -123,17 +112,12 @@ public class MonitoradorListPanel extends Panel {
                     @Override
                     public void onClick(AjaxRequestTarget target) {
                         try {
-                            modalWindow.setPageCreator(new ModalWindow.PageCreator() {
-                                private static final long serialVersionUID = 6452198188800512805L;
-                                @Override
-                                public Page createPage() {
-                                    return new ConfirmationModal(
-                                            listItem,
-                                            "Deseja excluir o monitorador " + listItem.getModelObject().getId() + "?",
-                                            "excluir"
-                                    );
-                                }
-                            });
+                            modalWindow.setContent(new ConfirmationModal(
+                                    ModalWindow.CONTENT_ID,
+                                    listItem,
+                                    "Deseja excluir o monitorador " + listItem.getModelObject().getId() + "?",
+                                    "excluir"
+                            ));
                         } catch (Exception e){
                             System.out.println("Não excluíu!");
                         }
@@ -145,17 +129,12 @@ public class MonitoradorListPanel extends Panel {
                     @Override
                     public void onClick(AjaxRequestTarget target) {
                         try {
-                            modalWindow.setPageCreator(new ModalWindow.PageCreator() {
-                                private static final long serialVersionUID = -488870408406200986L;
-                                @Override
-                                public Page createPage() {
-                                    return new ConfirmationModal(
+                            modalWindow.setContent(new ConfirmationModal(
+                                    ModalWindow.CONTENT_ID,
                                             listItem,
                                             "Deseja desativar o monitorador " + listItem.getModelObject().getId() + "?",
                                             "desativar"
-                                    );
-                                }
-                            });
+                                    ));
                         } catch (Exception e){
                             System.out.println("Não desativou!");
                         }
@@ -167,17 +146,12 @@ public class MonitoradorListPanel extends Panel {
                     @Override
                     public void onClick(AjaxRequestTarget target) {
                         try {
-                            modalWindow.setPageCreator(new ModalWindow.PageCreator() { // TODO Talvez compensa criar uma função para isso
-                                private static final long serialVersionUID = -6353631616791952939L;
-                                @Override
-                                public Page createPage() {
-                                    return new ConfirmationModal(
+                            modalWindow.setContent(new ConfirmationModal(
+                                            ModalWindow.CONTENT_ID,
                                             listItem,
                                             "Deseja ativar o monitorador " + listItem.getModelObject().getId() + "?",
                                             "ativar"
-                                    );
-                                }
-                            });
+                                    ));
                         } catch (Exception e){
                             System.out.println("Não ativou!");
                         }

@@ -1,10 +1,10 @@
 package com.unika;
 
+import com.unika.Panels.MonitoradorFormPanel;
 import com.unika.Panels.MonitoradorListPanel;
-import com.unika.forms.FormularioMonitorador;
+import com.unika.forms.MonitoradorForm;
 import com.unika.model.Monitorador;
 import com.unika.model.apiService.MonitoradorApi;
-import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
@@ -53,7 +53,7 @@ public class ControleMonitoradores extends HomePage{
             private static final long serialVersionUID = -387605849215267697L;
             @Override
             public void onClick(AjaxRequestTarget target) {
-                modalWindow.setPageCreator(FormularioMonitorador::new);
+                modalWindow.setContent(new MonitoradorFormPanel(ModalWindow.CONTENT_ID, new MonitoradorForm("formMonitorador", new Monitorador())));
                 modalWindow.show(target);
             }
         });

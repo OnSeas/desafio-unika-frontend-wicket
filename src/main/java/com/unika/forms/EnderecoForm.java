@@ -1,61 +1,37 @@
 package com.unika.forms;
 
 import com.unika.model.Endereco;
+import com.unika.model.Monitorador;
 import com.unika.model.UF;
 import com.unika.model.apiService.EnderecoApi;
 import com.unika.model.apiService.MonitoradorApi;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
-import org.apache.wicket.markup.html.WebPage;
-import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.*;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.validation.validator.StringValidator;
 
-import java.io.IOException;
 import java.util.Arrays;
 
-public class FormularioEndereco extends WebPage {
-    private static final long serialVersionUID = -1829624338524145673L;
+public class EnderecoForm extends Form<Endereco> {
+    private static final long serialVersionUID = -5152812808250771426L;
+    Boolean submited;
     MonitoradorApi monitoradorApi = new MonitoradorApi();
     EnderecoApi enderecoApi = new EnderecoApi();
-    final Long idMonitorador; // Monitorador a qual o endereço pertence. Por padrão quando é -1 quer dizer que é um monitorador que está sendo criado.
-    FormularioMonitorador formularioMonitorador;
+    Long idMonitorador;
 
-    // Criar novo Form
-    public FormularioEndereco(FormularioMonitorador formularioMonitorador, Long idMontorador){
-        this.idMonitorador = idMontorador;
+    public EnderecoForm(String id, Endereco endereco, Long idMonitorador){
+        super(id, new CompoundPropertyModel<>(endereco));
+        submited = Boolean.FALSE;
+        this.idMonitorador = idMonitorador; // Retirar ao enviar lista de endereços para update tbm;
 
-        this.formularioMonitorador = formularioMonitorador;
-
-        add(new Label("enderecoFormTitle", Model.of("Criar novo endereço"))); // TODO Unicode
-        add(getForm());
-
-        addToList(new Endereco());
-    }
-
-    // Editar um form
-    public FormularioEndereco(Long idMontorador, Long idEndereco) throws IOException {
-        this.idMonitorador = idMontorador;
-
-        add(new Label("enderecoFormTitle", Model.of("Editar endereço"))); // TODO Unicode
-        Form<Endereco> enderecoForm = getForm();
-        enderecoForm.setModelObject(enderecoApi.buscarEndereco(idEndereco));
-        add(enderecoForm);
-    }
-
-    // Construir o Form
-    private Form<Endereco> getForm(){
         // Mensagens de erro
         FeedbackPanel feedbackPanel = new FeedbackPanel("feedbackMessage");
         feedbackPanel.setOutputMarkupId(true);
         add(feedbackPanel);
-
-        // Construção do formulário
-        Form<Endereco> enderecoForm = new Form<>("enderecoForm", new CompoundPropertyModel<>(new Endereco()));
 
         TextArea<String> inputEndereco = new TextArea<>("endereco");
         TextField<String> inputNumero = new TextField<>("numero");
@@ -76,12 +52,12 @@ public class FormularioEndereco extends WebPage {
 
         CheckBox checkBoxPrincipal = new CheckBox("principal");
 
-        AjaxButton submitAjax = new AjaxButton("submitAjax", enderecoForm) {
+        AjaxButton submitAjax = new AjaxButton("submitAjax") {
             private static final long serialVersionUID = 3333211378039191514L;
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 try {
-                    salvar(enderecoForm.getModelObject());
+                    salvar(EnderecoForm.this.getModelObject());
                     ModalWindow.closeCurrent(target);
                 } catch (Exception e){
                     feedbackPanel.error(e.getMessage());
@@ -95,7 +71,7 @@ public class FormularioEndereco extends WebPage {
                 target.add(feedbackPanel);
             }
         };
-        enderecoForm.add(inputEndereco, inputNumero, inputCep, inputBairro, inputTelefone, inputCidade, dropEstado, checkBoxPrincipal, submitAjax);
+        add(inputEndereco, inputNumero, inputCep, inputBairro, inputTelefone, inputCidade, dropEstado, checkBoxPrincipal, submitAjax);
 
 
         // Validações do formulário
@@ -106,8 +82,6 @@ public class FormularioEndereco extends WebPage {
         inputTelefone.setLabel(Model.of("Telefone")).setRequired(true).add(StringValidator.lengthBetween(10, 14));
         inputCidade.setLabel(Model.of("Cidade")).setRequired(true).add(StringValidator.lengthBetween(3, 20));
         dropEstado.setLabel(Model.of("Estado")).setRequired(true);
-
-        return enderecoForm;
     }
 
     // Metódo salvar usado para adcionar ou editar um endereço ao banco de dados
@@ -115,7 +89,7 @@ public class FormularioEndereco extends WebPage {
         try {
             if(endereco.getId() == null){ // Criando novo endereço
                 if (idMonitorador == -1L){ // Monitorador está sendo criado
-                    addToList(endereco);
+                    // TODO nothing?
                 } else { // Monitorador já existe
                     monitoradorApi.adcionarEndereco(idMonitorador, endereco);
                     System.out.println("Salvou novo!");
@@ -127,11 +101,5 @@ public class FormularioEndereco extends WebPage {
         } catch(Exception e){
             throw new RuntimeException(e.getMessage());
         }
-    }
-
-    // TODO deve adcionar um endereço na lista Formulario monitorador
-    private void addToList(Endereco endereco){
-        System.out.println(endereco);
-        this.formularioMonitorador.enderecoList.add(endereco);
     }
 }
