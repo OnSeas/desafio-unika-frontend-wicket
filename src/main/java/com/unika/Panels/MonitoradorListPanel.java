@@ -167,6 +167,22 @@ public class MonitoradorListPanel extends Panel {
                 }
 
                 listItem.add(desativarAjax, ativarAjax);
+
+                listItem.add(new AjaxLink<Void>("report") {
+                    private static final long serialVersionUID = 2182163427384641040L;
+                    @Override
+                    public void onClick(AjaxRequestTarget ajaxRequestTarget) {
+                        System.out.println("Tem que abrir o relatório"); // TODO
+                    }
+                });
+                listItem.add(new AjaxLink<Void>("export") {
+                    private static final long serialVersionUID = 7878631882100442474L;
+
+                    @Override
+                    public void onClick(AjaxRequestTarget ajaxRequestTarget) {
+                        System.out.println("Tem que exportar para excel"); // TODO
+                    }
+                });
             }
         };
     }
