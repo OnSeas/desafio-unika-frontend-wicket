@@ -9,6 +9,7 @@ import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
+import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
 
@@ -37,7 +38,9 @@ public class ConfirmationModal extends Panel {
                             ativarMontorador(((Monitorador) listItem.getModelObject()).getId());
                             break;
                         case "excluirEndereco":
-                            deletarEndereco(((Endereco) listItem.getModelObject()).getId());
+                            if (((Endereco) listItem.getModelObject()).getMonitoradorId() == null){
+                                ((ListView<?>) listItem.getParent()).getList().remove(listItem.getModelObject());
+                            } else deletarEndereco(((Endereco) listItem.getModelObject()).getId());
                     }
                     ModalWindow.closeCurrent(target);
                 } catch (Exception e){

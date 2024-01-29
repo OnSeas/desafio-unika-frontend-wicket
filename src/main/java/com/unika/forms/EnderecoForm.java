@@ -1,7 +1,6 @@
 package com.unika.forms;
 
 import com.unika.model.Endereco;
-import com.unika.model.Monitorador;
 import com.unika.model.UF;
 import com.unika.model.apiService.EnderecoApi;
 import com.unika.model.apiService.MonitoradorApi;
@@ -18,10 +17,10 @@ import java.util.Arrays;
 
 public class EnderecoForm extends Form<Endereco> {
     private static final long serialVersionUID = -5152812808250771426L;
-    Boolean submited;
+    public Boolean submited;
     MonitoradorApi monitoradorApi = new MonitoradorApi();
     EnderecoApi enderecoApi = new EnderecoApi();
-    Long idMonitorador;
+    public Long idMonitorador;
 
     public EnderecoForm(String id, Endereco endereco, Long idMonitorador){
         super(id, new CompoundPropertyModel<>(endereco));
@@ -58,6 +57,7 @@ public class EnderecoForm extends Form<Endereco> {
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 try {
                     salvar(EnderecoForm.this.getModelObject());
+                    submited = Boolean.TRUE;
                     ModalWindow.closeCurrent(target);
                 } catch (Exception e){
                     feedbackPanel.error(e.getMessage());
@@ -87,16 +87,14 @@ public class EnderecoForm extends Form<Endereco> {
     // Metódo salvar usado para adcionar ou editar um endereço ao banco de dados
     private void salvar(Endereco endereco){
         try {
-            if(endereco.getId() == null){ // Criando novo endereço
-                if (idMonitorador == -1L){ // Monitorador está sendo criado
-                    // TODO nothing?
-                } else { // Monitorador já existe
+            if (idMonitorador != -1L){
+                if(endereco.getId() == null){ // Criando novo endereço
                     monitoradorApi.adcionarEndereco(idMonitorador, endereco);
                     System.out.println("Salvou novo!");
+                } else { // Editando um endereçoi existente
+                    enderecoApi.editarEndereco(endereco.getId(), endereco);
+                    System.out.println("Editou um existente!");
                 }
-            } else { // Editando um endereçoi existente
-                enderecoApi.editarEndereco(endereco.getId(), endereco);
-                System.out.println("Editou um existente!");
             }
         } catch(Exception e){
             throw new RuntimeException(e.getMessage());

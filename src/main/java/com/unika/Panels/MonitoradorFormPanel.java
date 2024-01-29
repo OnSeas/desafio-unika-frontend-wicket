@@ -4,6 +4,7 @@ import com.unika.forms.EnderecoForm;
 import com.unika.forms.MonitoradorForm;
 import com.unika.model.Endereco;
 import com.unika.model.TipoPessoa;
+import com.unika.model.apiService.EnderecoApi;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
@@ -12,10 +13,15 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
 
+import java.io.IOException;
+
 public class MonitoradorFormPanel extends Panel {
     private static final long serialVersionUID = -8284617783524484913L;
     WebMarkupContainer listaEnderecoWMC = new WebMarkupContainer("listaEnderecoWMC");
     final MonitoradorForm monitoradorForm;
+    EnderecoApi enderecoApi = new EnderecoApi();
+
+    Long idMonitorador;
 
     public MonitoradorFormPanel(String id, MonitoradorForm monitoradorForm) {
         super(id);
@@ -24,8 +30,9 @@ public class MonitoradorFormPanel extends Panel {
         // Criando um novo monitorador
         if(monitoradorForm.getModelObject().getId() == null) {
             add(new Label("monitoradorFormTitle", Model.of("Cadastrar um novo monitorador")));
+            this.idMonitorador = -1L;
 
-            add(addCriarEndButton(-1L));
+            add(addCriarEndButton());
         }
         // Editando um monitorador existente
         else {
@@ -39,7 +46,9 @@ public class MonitoradorFormPanel extends Panel {
             }
             wmc.setVisible(true);
 
-            add(addCriarEndButton(monitoradorForm.getModelObject().getId()));
+            this.idMonitorador = monitoradorForm.getModelObject().getId();
+
+            add(addCriarEndButton());
         }
         add(monitoradorForm);
 
@@ -58,14 +67,13 @@ public class MonitoradorFormPanel extends Panel {
 
         listaEnderecoWMC.add(new EnderecoListPanel("enderecoPanel",
                 monitoradorForm.enderecoList,
-                monitoradorForm.getModelObject().getId()));
+                idMonitorador));
     }
 
     EnderecoForm enderecoForm;
 
-
     // Botão criar novo monitorador
-    private AjaxLink<Void> addCriarEndButton(Long idMonitorador){
+    private AjaxLink<Void> addCriarEndButton(){
 
         // Modal Window que abre o formulário de endereço
         ModalWindow modalWindow = new ModalWindow("endFormModal");
@@ -74,20 +82,25 @@ public class MonitoradorFormPanel extends Panel {
         modalWindow.setWindowClosedCallback(new ModalWindow.WindowClosedCallback() {
             private static final long serialVersionUID = 1989574373953651865L;
             @Override
-            public void onClose(AjaxRequestTarget target){ // TODO Conferir se monitorador foi submetido.
-                monitoradorForm.enderecoList.add(enderecoForm.getModelObject());
-                System.out.println(monitoradorForm.enderecoList);
-
+            public void onClose(AjaxRequestTarget target){
+                if (enderecoForm.submited == Boolean.TRUE && enderecoForm.idMonitorador == -1L){
+                    monitoradorForm.enderecoList.add(enderecoForm.getModelObject());
+                }else {
+                    try {
+                        monitoradorForm.enderecoList = enderecoApi.listarEnderecos(enderecoForm.idMonitorador);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
                 addListaEndereco();
                 target.add(listaEnderecoWMC);
             }
         });
 
-        AjaxLink<Void> criarEnderecoAjax =  new AjaxLink<Void>("criarEndereco") {
-            private static final long serialVersionUID = 7923685135874148873L;
+        return new AjaxLink<Void>("criarEndereco") {
+            private static final long serialVersionUID1 = 7923685135874148873L;
             @Override
             public void onClick(AjaxRequestTarget target) {
-
                 enderecoForm = new EnderecoForm(
                         "enderecoForm",
                         new Endereco(),
@@ -97,8 +110,6 @@ public class MonitoradorFormPanel extends Panel {
                 modalWindow.show(target);
             }
         };
-
-        return criarEnderecoAjax;
     }
 
 }

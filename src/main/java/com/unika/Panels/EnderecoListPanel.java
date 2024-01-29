@@ -12,7 +12,6 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
-import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
@@ -24,8 +23,7 @@ public class EnderecoListPanel extends Panel {
     EnderecoApi enderecoApi = new EnderecoApi();
     WebMarkupContainer enderecoListWMC = new WebMarkupContainer("enderecoListWMC");
     ModalWindow modalWindow = new ModalWindow("modalEndereco");
-
-    Long idMonitorador;
+    final Long idMonitorador;
     List<Endereco> enderecoList;
 
     // Editar Monitorador
@@ -44,14 +42,21 @@ public class EnderecoListPanel extends Panel {
         modalWindow.setOutputMarkupId(true);
         add(modalWindow);
 
-        // On Close de modal window
+        // Quando fecha o modal
         modalWindow.setWindowClosedCallback(new ModalWindow.WindowClosedCallback() {
             private static final long serialVersionUID = 7800205096545281286L;
             @Override
             public void onClose(AjaxRequestTarget target) {
-                recarregarList();
-                addList();
-                target.add(enderecoListWMC);
+                System.out.println(idMonitorador);
+                System.out.println(enderecoList);
+                if (idMonitorador != -1L){
+                    recarregarList();
+                    addList();
+                    target.add(enderecoListWMC);
+                } else {
+                    addList();
+                    target.add(enderecoListWMC);
+                }
             }
         });
     }

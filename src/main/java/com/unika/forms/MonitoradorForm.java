@@ -23,7 +23,7 @@ import java.util.List;
 
 public class MonitoradorForm extends Form<Monitorador> {
     private static final long serialVersionUID = 7577476616317116878L;
-    Boolean submited;
+    public Boolean submited;
     MonitoradorApi monitoradorApi = new MonitoradorApi();
     public List<Endereco> enderecoList = new ArrayList<>();
 
