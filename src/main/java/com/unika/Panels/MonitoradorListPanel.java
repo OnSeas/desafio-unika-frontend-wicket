@@ -13,10 +13,12 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.PageableListView;
+import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 
+import java.io.IOException;
 import java.util.List;
 
 public class MonitoradorListPanel extends Panel {
@@ -100,7 +102,9 @@ public class MonitoradorListPanel extends Panel {
                         try {
                             modalWindow.setContent(new MonitoradorFormPanel(
                                     ModalWindow.CONTENT_ID,
-                                    new MonitoradorForm("formMonitorador", monitoradorApi.buscarMonitorador(listItem.getModelObject().getId()))));
+                                    new MonitoradorForm("formMonitorador",
+                                            monitoradorApi.buscarMonitorador(listItem.getModelObject().getId()),
+                                            new FeedbackPanel("teste")))); // TODO tem que mudar aqui o feedback panel.
                         } catch (Exception e){
                             System.out.println("Não Editou!");
                         }
@@ -171,15 +175,18 @@ public class MonitoradorListPanel extends Panel {
                 listItem.add(new AjaxLink<Void>("report") {
                     private static final long serialVersionUID = 2182163427384641040L;
                     @Override
-                    public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                        System.out.println("Tem que abrir o relatório"); // TODO
+                    public void onClick(AjaxRequestTarget target) {
+                        try {
+                            System.out.println(monitoradorApi.gerarRelatorio(listItem.getModelObject().getId()));
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
                     }
                 });
                 listItem.add(new AjaxLink<Void>("export") {
                     private static final long serialVersionUID = 7878631882100442474L;
-
                     @Override
-                    public void onClick(AjaxRequestTarget ajaxRequestTarget) {
+                    public void onClick(AjaxRequestTarget target) {
                         System.out.println("Tem que exportar para excel"); // TODO
                     }
                 });

@@ -47,10 +47,8 @@ public class EnderecoListPanel extends Panel {
             private static final long serialVersionUID = 7800205096545281286L;
             @Override
             public void onClose(AjaxRequestTarget target) {
-                System.out.println(idMonitorador);
-                System.out.println(enderecoList);
                 if (idMonitorador != -1L){
-                    recarregarList();
+                    recarregarList(); // Se pensar bem não precisava fazer isso, era só remover da lista além do BD
                     addList();
                     target.add(enderecoListWMC);
                 } else {
@@ -100,7 +98,6 @@ public class EnderecoListPanel extends Panel {
                             modalWindow.show(target);
                         }
                     });
-
                     listItem.add(new AjaxLink<Void>("ajaxExcluir") {
                         private static final long serialVersionUID = -660882723667008281L;
                         @Override

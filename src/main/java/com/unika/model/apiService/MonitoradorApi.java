@@ -190,4 +190,48 @@ public class MonitoradorApi implements Serializable {
             return listarMonitoradores();
         }
     }
+
+    public List<Monitorador> buscarPF() throws IOException {
+        Response response = apiService.conectarApiGET(apiUrl + "/buscar-pf");
+
+        assert response.body() != null;
+        String res = response.body().string();
+        response.close();
+
+        if (response.isSuccessful()){
+            return converterDados.obterLista(res, Monitorador.class);
+        } else {
+            throw new RuntimeException(res);
+        }
+    }
+
+    public List<Monitorador> buscarPJ() throws IOException {
+        Response response = apiService.conectarApiGET(apiUrl + "/buscar-pj");
+
+        assert response.body() != null;
+        String res = response.body().string();
+        response.close();
+
+        if (response.isSuccessful()){
+            return converterDados.obterLista(res, Monitorador.class);
+        } else {
+            throw new RuntimeException(res);
+        }
+    }
+
+
+    // Exports e Imports
+    public String gerarRelatorio(Long idMonitorador) throws IOException {
+        Response response = apiService.conectarApiGET(apiUrl + "/report/pdf/" + idMonitorador);
+
+        assert response.body() != null;
+        String res = response.body().string();
+        response.close();
+
+        if (response.isSuccessful()){
+            return res;
+        } else {
+            throw new RuntimeException(res);
+        }
+    }
 }

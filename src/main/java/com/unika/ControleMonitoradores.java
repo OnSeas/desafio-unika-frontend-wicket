@@ -53,7 +53,9 @@ public class ControleMonitoradores extends HomePage{
             private static final long serialVersionUID = -387605849215267697L;
             @Override
             public void onClick(AjaxRequestTarget target) {
-                modalWindow.setContent(new MonitoradorFormPanel(ModalWindow.CONTENT_ID, new MonitoradorForm("formMonitorador", new Monitorador())));
+                modalWindow.setContent(new MonitoradorFormPanel(ModalWindow.CONTENT_ID, new MonitoradorForm("formMonitorador",
+                        new Monitorador(),
+                        feedbackPanel)));
                 modalWindow.show(target);
             }
         });
@@ -65,6 +67,7 @@ public class ControleMonitoradores extends HomePage{
             public void onClose(AjaxRequestTarget target){
                 try {
                     putPageableList(monitoradorApi.listarMonitoradores());
+                    target.add(feedbackPanel);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
