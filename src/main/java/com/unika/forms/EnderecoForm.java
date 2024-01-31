@@ -22,10 +22,13 @@ public class EnderecoForm extends Form<Endereco> {
     EnderecoApi enderecoApi = new EnderecoApi();
     public Long idMonitorador;
 
-    public EnderecoForm(String id, Endereco endereco, Long idMonitorador){
+    FeedbackPanel previousFeedbackPanel;
+
+    public EnderecoForm(String id, Endereco endereco, Long idMonitorador, FeedbackPanel previousFeedbackPanel){
         super(id, new CompoundPropertyModel<>(endereco));
         submited = Boolean.FALSE;
         this.idMonitorador = idMonitorador; // Retirar ao enviar lista de endereços para update tbm;
+        this.previousFeedbackPanel = previousFeedbackPanel;
 
         // Mensagens de erro
         FeedbackPanel feedbackPanel = new FeedbackPanel("feedbackMessage");
@@ -58,6 +61,11 @@ public class EnderecoForm extends Form<Endereco> {
                 try {
                     salvar(EnderecoForm.this.getModelObject());
                     submited = Boolean.TRUE;
+                    if (EnderecoForm.this.getModelObject().getId() == null){
+                        previousFeedbackPanel.success("Endereço cadastrado com sucesso!");
+                    } else {
+                        previousFeedbackPanel.success("Endereço atualizado com sucesso!");
+                    }
                     ModalWindow.closeCurrent(target);
                 } catch (Exception e){
                     feedbackPanel.error(e.getMessage());

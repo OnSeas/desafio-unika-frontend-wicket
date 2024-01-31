@@ -12,6 +12,7 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
+import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
@@ -25,12 +26,14 @@ public class EnderecoListPanel extends Panel {
     ModalWindow modalWindow = new ModalWindow("modalEndereco");
     final Long idMonitorador;
     List<Endereco> enderecoList;
+    FeedbackPanel feedbackPanel;
 
     // Editar Monitorador
-    public EnderecoListPanel(String id, List<Endereco> enderecoList, Long idMonitorador) {
+    public EnderecoListPanel(String id, List<Endereco> enderecoList, Long idMonitorador, FeedbackPanel feedbackPanel) {
         super(id);
         this.enderecoList = enderecoList;
         this.idMonitorador = idMonitorador;
+        this.feedbackPanel = feedbackPanel;
 
         // Para poder aparecer se não tiver nenhum
         enderecoListWMC.setOutputMarkupId(true);
@@ -94,7 +97,10 @@ public class EnderecoListPanel extends Panel {
                         @Override
                         public void onClick(AjaxRequestTarget target) {
                             modalWindow.setContent(new EnderecoFormPanel(ModalWindow.CONTENT_ID,
-                                    new EnderecoForm("enderecoForm", listItem.getModelObject(), idMonitorador)));
+                                    new EnderecoForm("enderecoForm",
+                                            listItem.getModelObject(),
+                                            idMonitorador,
+                                            feedbackPanel)));
                             modalWindow.show(target);
                         }
                     });

@@ -20,7 +20,6 @@ public class MonitoradorFormPanel extends Panel {
     WebMarkupContainer listaEnderecoWMC = new WebMarkupContainer("listaEnderecoWMC");
     final MonitoradorForm monitoradorForm;
     EnderecoApi enderecoApi = new EnderecoApi();
-
     Long idMonitorador;
 
     public MonitoradorFormPanel(String id, MonitoradorForm monitoradorForm) {
@@ -67,7 +66,8 @@ public class MonitoradorFormPanel extends Panel {
 
         listaEnderecoWMC.add(new EnderecoListPanel("enderecoPanel",
                 monitoradorForm.enderecoList,
-                idMonitorador));
+                idMonitorador,
+                monitoradorForm.feedbackPanel));
     }
 
     EnderecoForm enderecoForm;
@@ -98,13 +98,15 @@ public class MonitoradorFormPanel extends Panel {
         });
 
         return new AjaxLink<Void>("criarEndereco") {
-            private static final long serialVersionUID1 = 7923685135874148873L;
+            private static final long serialVersionUID = -5987685929992738636L;
+
             @Override
             public void onClick(AjaxRequestTarget target) {
                 enderecoForm = new EnderecoForm(
                         "enderecoForm",
                         new Endereco(),
-                        idMonitorador);
+                        idMonitorador,
+                        monitoradorForm.feedbackPanel);
 
                 modalWindow.setContent(new EnderecoFormPanel(ModalWindow.CONTENT_ID, enderecoForm));
                 modalWindow.show(target);

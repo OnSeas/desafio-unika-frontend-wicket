@@ -5,19 +5,19 @@
         <title>Lista de monitoradores</title>
 
         <style>
-            /*TODO descobrir porque não funciona*/
+            /*TODO Não funciona por causa do bootstrap ao que tudo indica.*/
         </style>
-
     </head>
     <body>
         <wicket:extend>
             <div style="width: 80%; margin: auto">
                 <h1 wicket:id="ControlLabel" class="d-flex justify-content-center" style="color: #ffffff; margin: 0 0 20px 0">[título da página]</h1>
 
-                <div wicket:id="FeedBackMessages"></div>
+                <div wicket:id="feedbackPanel" class="alert alert-success"></div>
 
                 <div class=" d-md-flex justify-content-md-end" style="margin: 0 0 10px 0">
                     <button wicket:id="formNovoMonitorador" class="btn btn-primary fw-bold" type="button">Novo Monitorador</button>
+                    <button wicket:id="importarMonitoradores" class="btn btn-primary fw-bold" type="button">Importar monitoradores</button>
                 </div>
 
                 <div wicket:id="listWMC" style="margin: auto; border-radius: 10px; overflow: hidden;">

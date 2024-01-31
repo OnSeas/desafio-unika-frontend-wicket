@@ -2,6 +2,7 @@ package com.unika;
 
 import com.unika.Panels.MonitoradorFormPanel;
 import com.unika.Panels.MonitoradorListPanel;
+import com.unika.forms.ImportFormPanel;
 import com.unika.forms.MonitoradorForm;
 import com.unika.model.Monitorador;
 import com.unika.model.apiService.MonitoradorApi;
@@ -26,7 +27,7 @@ import java.util.List;
 public class ControleMonitoradores extends HomePage{
     private static final long serialVersionUID = 2178207601281324056L;
     final MonitoradorApi monitoradorApi = new MonitoradorApi();
-    final FeedbackPanel feedbackPanel = new FeedbackPanel("FeedBackMessages");
+    final FeedbackPanel feedbackPanel;
     final ModalWindow modalWindow = new ModalWindow("modaw");
     final WebMarkupContainer listWMC = new WebMarkupContainer("listWMC");
 
@@ -34,7 +35,15 @@ public class ControleMonitoradores extends HomePage{
         super(parameters);
 
         // TODO Ainda não retorna as mensagens de sucesso
-        feedbackPanel.setOutputMarkupId(true);
+        feedbackPanel = new FeedbackPanel("feedbackPanel"){
+            private static final long serialVersionUID = 8923533799419175857L;
+            @Override
+            protected void onConfigure() {
+                super.onConfigure();
+                this.setOutputMarkupId(true);
+                setVisible(anyMessage());
+            }
+        };
         add(feedbackPanel);
 
         // Modal que é usado em todos pop-ups
@@ -60,6 +69,16 @@ public class ControleMonitoradores extends HomePage{
             }
         });
 
+        add(new AjaxLink<Void>("importarMonitoradores") {
+            private static final long serialVersionUID = -7139346449600703225L;
+
+            @Override
+            public void onClick(AjaxRequestTarget target) {
+                modalWindow.setContent(new ImportFormPanel(modalWindow.getContentId()));
+                modalWindow.show(target);
+            }
+        });
+
         // Função quando alguma modal window é fechada.
         modalWindow.setWindowClosedCallback(new ModalWindow.WindowClosedCallback(){
             private static final long serialVersionUID = 1L;
@@ -72,8 +91,6 @@ public class ControleMonitoradores extends HomePage{
                     throw new RuntimeException(e);
                 }
                 target.add(listWMC);
-
-                // TODO Adcionar a mensagem de sucesso!
             }
         });
     }
@@ -120,7 +137,7 @@ public class ControleMonitoradores extends HomePage{
         listWMC.add(searchForm);
 
         // Adciona a lista paginada (Panel)
-        listWMC.add(new MonitoradorListPanel("monitoradorListPanel", monitoradores));
+        listWMC.add(new MonitoradorListPanel("monitoradorListPanel", monitoradores, feedbackPanel));
     }
 
     // Para o filtro

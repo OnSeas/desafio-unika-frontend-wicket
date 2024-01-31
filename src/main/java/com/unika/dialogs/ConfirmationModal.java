@@ -41,6 +41,7 @@ public class ConfirmationModal extends Panel {
                             if (((Endereco) listItem.getModelObject()).getMonitoradorId() == null){
                                 ((ListView<?>) listItem.getParent()).getList().remove(listItem.getModelObject());
                             } else deletarEndereco(((Endereco) listItem.getModelObject()).getId());
+                            info("Endereço excluído!"); // Doesn't really work
                     }
                     ModalWindow.closeCurrent(target);
                 } catch (Exception e){
@@ -61,6 +62,7 @@ public class ConfirmationModal extends Panel {
         try {
             System.out.println("Excluindo o monitorador: " + id);
             monitoradorApi.deletarMonitorador(id);
+            info("Monitorador excluído!");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -70,6 +72,7 @@ public class ConfirmationModal extends Panel {
         try {
             System.out.println("Desativando o monitorador: " + id);
             monitoradorApi.desativarMonitorador(id);
+            info("Monitorador Desativado!");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -79,6 +82,7 @@ public class ConfirmationModal extends Panel {
         try {
             System.out.println("Ativando o monitorador: " + id);
             monitoradorApi.ativarMonitorador(id);
+            info("Monitorador Ativado!");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

@@ -27,12 +27,14 @@ public class MonitoradorListPanel extends Panel {
     MonitoradorApi monitoradorApi = new MonitoradorApi();
     WebMarkupContainer monitoradorListWMC = new WebMarkupContainer("monitoradorListWMC");
     List<Monitorador> monitoradores;
+    FeedbackPanel feedbackPanel;
 
-    public MonitoradorListPanel(String id, List<Monitorador> monitoradores) {
+    public MonitoradorListPanel(String id, List<Monitorador> monitoradores, FeedbackPanel feedbackPanel) {
         super(id);
 
         // Inicia a Lista
         this.monitoradores = monitoradores;
+        this.feedbackPanel = feedbackPanel;
 
         monitoradorListWMC.setOutputMarkupId(true);
         monitoradorListWMC.setOutputMarkupPlaceholderTag(true);
@@ -104,7 +106,7 @@ public class MonitoradorListPanel extends Panel {
                                     ModalWindow.CONTENT_ID,
                                     new MonitoradorForm("formMonitorador",
                                             monitoradorApi.buscarMonitorador(listItem.getModelObject().getId()),
-                                            new FeedbackPanel("teste")))); // TODO tem que mudar aqui o feedback panel.
+                                            feedbackPanel))); // TODO tem que mudar aqui o feedback panel.
                         } catch (Exception e){
                             System.out.println("Não Editou!");
                         }
