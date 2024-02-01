@@ -18,7 +18,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 
-import java.io.IOException;
+import java.io.File;
 import java.util.List;
 
 public class MonitoradorListPanel extends Panel {
@@ -179,7 +179,9 @@ public class MonitoradorListPanel extends Panel {
                     @Override
                     public void onClick(AjaxRequestTarget target) {
                         try {
-                            System.out.println(monitoradorApi.gerarRelatorio(listItem.getModelObject().getId()));
+                            File file = monitoradorApi.gerarRelatorio(listItem.getModelObject().getId());
+                            System.out.println(file);
+                            System.out.println(file.getAbsolutePath());
                         } catch (Exception e) {
                             throw new RuntimeException(e);
                         }

@@ -5,6 +5,7 @@ import com.unika.model.Monitorador;
 import com.unika.model.apiService.converters.ConverterDados;
 import okhttp3.Response;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -221,8 +222,27 @@ public class MonitoradorApi implements Serializable {
 
 
     // Exports e Imports
-    public String gerarRelatorio(Long idMonitorador) throws IOException {
+    public File gerarRelatorio(Long idMonitorador) throws IOException {
         Response response = apiService.conectarApiGET(apiUrl + "/report/pdf/" + idMonitorador);
+
+        assert response.body() != null;
+        String res = response.body().string();
+        response.close();
+
+        File file = new File(res);
+
+        if (response.isSuccessful()){
+            return file;
+        } else {
+            throw new RuntimeException(res);
+        }
+    }
+
+    public String importarXLSX(File file) throws IOException {
+        Response response = apiService.conectarApiPOST(
+                converterDados.obterJason(file),
+                apiUrl + "/import"
+        );
 
         assert response.body() != null;
         String res = response.body().string();

@@ -46,11 +46,9 @@ public class MonitoradorFormPanel extends Panel {
             wmc.setVisible(true);
 
             this.idMonitorador = monitoradorForm.getModelObject().getId();
-
             add(addCriarEndButton());
         }
         add(monitoradorForm);
-
 
         // Configuração da lista de Endereços
         listaEnderecoWMC.setOutputMarkupId(true);

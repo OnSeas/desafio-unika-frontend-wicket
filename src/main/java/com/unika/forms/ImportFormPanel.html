@@ -7,11 +7,17 @@
             <div wicket:id="feedbackPanel"></div>
 
             <form wicket:id="importForm">
-                <input wicket:id="importField" type="file">
-                <input type="submit" value="Importar">
-            </form>
+                <div class="d-grid gap-7 col-9 mx-auto">
+                    <div>
+                        <label for="formFile" class="form-label">upload de arquivo xml</label>
+                        <input wicket:id="importField" class="form-control" type="file" id="formFile">
+                    </div>
 
-            <a href="#" wicket:id="pdf">Abrir o pdf?</a>
+                    <div>
+                        <input type="submit" value="Importar" class="btn btn-primary">
+                    </div>
+                </div>
+            </form>
         </wicket:panel>
     </body>
 </html>

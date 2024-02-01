@@ -1,5 +1,6 @@
 package com.unika.forms;
 
+import com.unika.model.apiService.MonitoradorApi;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
@@ -12,6 +13,7 @@ import java.io.File;
 
 public class ImportFormPanel extends Panel {
     private static final long serialVersionUID = 7680031748038474194L;
+    MonitoradorApi monitoradorApi = new MonitoradorApi();
 
     public ImportFormPanel(String id) {
         super(id);
@@ -41,7 +43,7 @@ public class ImportFormPanel extends Panel {
                     File file = new File(fileUpload.getClientFileName());
                     System.out.println(file.getAbsolutePath());
                     fileUpload.writeTo(file);
-                    success("Upload de arquivo concluido!");
+                    info(monitoradorApi.importarXLSX(file));
                 } catch (Exception e){
                     System.out.println(e.getMessage());
                     error(e.getMessage());
@@ -53,9 +55,5 @@ public class ImportFormPanel extends Panel {
         form.setMaxSize(Bytes.megabytes(2));
         form.add(fileUploadField);
         add(form);
-
-        // Teste para abrir o PDF
-        ExternalLink link = new ExternalLink("pdf", "file:///home/osmar/projetos/desafio-frontend-wicket/relatorioMonitorador.pdf", "relatorioMonitorador");
-        add(link);
     }
 }
