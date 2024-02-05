@@ -229,7 +229,7 @@ public class MonitoradorApi implements Serializable {
         String res = response.body().string();
         response.close();
 
-        File file = new File(res);
+        File file = converterDados.obterDados(res, File.class);
 
         if (response.isSuccessful()){
             return file;
