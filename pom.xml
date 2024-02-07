@@ -92,31 +92,6 @@
 			<scope>test</scope>
 		</dependency>
 
-		<!--   BIBLIOTECAS PARA UTILIZAR BOOTSTRAP - https://github.com/agile-coders/wicket-bootstrap  -->
-		<dependency>
-			<groupId>de.agilecoders.wicket</groupId>
-			<artifactId>wicket-bootstrap-core</artifactId>
-			<version>0.10.18</version>
-		</dependency>
-
-		<dependency>
-			<groupId>de.agilecoders.wicket</groupId>
-			<artifactId>wicket-bootstrap-extensions</artifactId>
-			<version>0.10.18</version>
-		</dependency>
-
-		<dependency>
-			<groupId>de.agilecoders.wicket</groupId>
-			<artifactId>wicket-bootstrap-themes</artifactId>
-			<version>0.10.18</version>
-		</dependency>
-
-		<dependency>
-			<groupId>de.agilecoders.wicket</groupId>
-			<artifactId>wicket-bootstrap-less</artifactId>
-			<version>0.10.18</version>
-		</dependency>
-
 		<!-- https://mvnrepository.com/artifact/com.squareup.okhttp3/okhttp -->
 		<dependency>
 			<groupId>com.squareup.okhttp3</groupId>

@@ -29,6 +29,5 @@ public class WicketApplication extends WebApplication
 	public void init()
 	{
 		super.init();
-		Bootstrap.install(this);
 	}
 }
