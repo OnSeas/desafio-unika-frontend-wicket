@@ -11,23 +11,49 @@
 		body{
 			background-color: #77777777
 		}
+
+		#pageNavigation a:link{
+			background-color: #0d6efd;
+			color: white;
+			text-align: center;
+			text-decoration: none;
+			border-radius: 5px;
+			padding: 5px 8px;
+			font-weight: bold;
+		}
+
+		#pageNavigation a:link:hover{
+			background-color: #0c4db6;
+		}
+
+		#pageNavigation a{
+			color: black;
+			text-align: center;
+			text-decoration: none;
+		}
 	</style>
 
 	<body>
 		<!-- NavBar -->
 		<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+
 			<div class="container-fluid">
 				<wicket:link>
 					<a class="navbar-brand" href="HomePage.html">Home</a>
-					<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+				</wicket:link>
+					<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 						<span class="navbar-toggler-icon"></span>
 					</button>
-					<div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-						<div class="navbar-nav">
-							<a class="nav-link" href="ControleMonitoradores.html">Controle de Monitoradores</a>
-						</div>
+					<div class="collapse navbar-collapse" id="navbarSupportedContent">
+						<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+							<li class="nav-item">
+								<wicket:link>
+									<a class="nav-link" aria-current="page" href="ControleMonitoradores.html">Controle de Monitoradores</a>
+								</wicket:link>
+							</li>
+						</ul>
 					</div>
-				</wicket:link>
+
 			</div>
 		</nav>
 		<!-- NavBar -->

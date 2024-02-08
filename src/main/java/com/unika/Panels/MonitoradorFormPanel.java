@@ -64,8 +64,7 @@ public class MonitoradorFormPanel extends Panel {
 
         listaEnderecoWMC.add(new EnderecoListPanel("enderecoPanel",
                 monitoradorForm.enderecoList,
-                idMonitorador,
-                monitoradorForm.feedbackPanel));
+                idMonitorador));
     }
 
     EnderecoForm enderecoForm;
@@ -103,8 +102,7 @@ public class MonitoradorFormPanel extends Panel {
                 enderecoForm = new EnderecoForm(
                         "enderecoForm",
                         new Endereco(),
-                        idMonitorador,
-                        monitoradorForm.feedbackPanel);
+                        idMonitorador);
 
                 modalWindow.setContent(new EnderecoFormPanel(ModalWindow.CONTENT_ID, enderecoForm));
                 modalWindow.show(target);

@@ -26,14 +26,12 @@ public class EnderecoListPanel extends Panel {
     ModalWindow modalWindow = new ModalWindow("modalEndereco");
     final Long idMonitorador;
     List<Endereco> enderecoList;
-    FeedbackPanel feedbackPanel;
 
     // Editar Monitorador
-    public EnderecoListPanel(String id, List<Endereco> enderecoList, Long idMonitorador, FeedbackPanel feedbackPanel) {
+    public EnderecoListPanel(String id, List<Endereco> enderecoList, Long idMonitorador) {
         super(id);
         this.enderecoList = enderecoList;
         this.idMonitorador = idMonitorador;
-        this.feedbackPanel = feedbackPanel;
 
         // Para poder aparecer se não tiver nenhum
         enderecoListWMC.setOutputMarkupId(true);
@@ -99,8 +97,7 @@ public class EnderecoListPanel extends Panel {
                             modalWindow.setContent(new EnderecoFormPanel(ModalWindow.CONTENT_ID,
                                     new EnderecoForm("enderecoForm",
                                             listItem.getModelObject(),
-                                            idMonitorador,
-                                            feedbackPanel)));
+                                            idMonitorador)));
                             modalWindow.show(target);
                         }
                     });

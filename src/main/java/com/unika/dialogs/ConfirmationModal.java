@@ -40,8 +40,8 @@ public class ConfirmationModal extends Panel {
                         case "excluirEndereco":
                             if (((Endereco) listItem.getModelObject()).getMonitoradorId() == null){
                                 ((ListView<?>) listItem.getParent()).getList().remove(listItem.getModelObject());
+                                success("Endereço excluído!");
                             } else deletarEndereco(((Endereco) listItem.getModelObject()).getId());
-                            info("Endereço excluído!"); // Doesn't really work
                     }
                     ModalWindow.closeCurrent(target);
                 } catch (Exception e){
@@ -62,9 +62,9 @@ public class ConfirmationModal extends Panel {
         try {
             System.out.println("Excluindo o monitorador: " + id);
             monitoradorApi.deletarMonitorador(id);
-            info("Monitorador excluído!");
+            success("Monitorador excluído!");
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            error(e.getMessage());
         }
     }
 
@@ -72,9 +72,9 @@ public class ConfirmationModal extends Panel {
         try {
             System.out.println("Desativando o monitorador: " + id);
             monitoradorApi.desativarMonitorador(id);
-            info("Monitorador Desativado!");
+            success("Monitorador Desativado!");
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            error(e.getMessage());
         }
     }
 
@@ -82,9 +82,9 @@ public class ConfirmationModal extends Panel {
         try {
             System.out.println("Ativando o monitorador: " + id);
             monitoradorApi.ativarMonitorador(id);
-            info("Monitorador Ativado!");
+            success("Monitorador Ativado!");
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            error(e.getMessage());
         }
     }
 
@@ -92,8 +92,9 @@ public class ConfirmationModal extends Panel {
         try {
             System.out.println("Excluindo o endereço: " + id);
             enderecoApi.deletarEndereco(id);
+            success("Endereço Excluído!");
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            error(e.getMessage());
         }
     }
 }

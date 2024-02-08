@@ -1,6 +1,5 @@
 package com.unika;
 
-import de.agilecoders.wicket.core.Bootstrap;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.protocol.http.WebApplication;
 

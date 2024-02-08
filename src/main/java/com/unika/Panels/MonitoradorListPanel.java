@@ -13,6 +13,7 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.PageableListView;
+import org.apache.wicket.markup.html.navigation.paging.PagingNavigation;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
@@ -27,14 +28,12 @@ public class MonitoradorListPanel extends Panel {
     MonitoradorApi monitoradorApi = new MonitoradorApi();
     WebMarkupContainer monitoradorListWMC = new WebMarkupContainer("monitoradorListWMC");
     List<Monitorador> monitoradores;
-    FeedbackPanel feedbackPanel;
 
-    public MonitoradorListPanel(String id, List<Monitorador> monitoradores, FeedbackPanel feedbackPanel) {
+    public MonitoradorListPanel(String id, List<Monitorador> monitoradores, List<FeedbackPanel> feedbackPanels) {
         super(id);
 
         // Inicia a Lista
         this.monitoradores = monitoradores;
-        this.feedbackPanel = feedbackPanel;
 
         monitoradorListWMC.setOutputMarkupId(true);
         monitoradorListWMC.setOutputMarkupPlaceholderTag(true);
@@ -49,9 +48,10 @@ public class MonitoradorListPanel extends Panel {
         modalWindow.setWindowClosedCallback(new ModalWindow.WindowClosedCallback() {
             private static final long serialVersionUID = 7800205096545281286L;
             @Override
-            public void onClose(AjaxRequestTarget target) { // TODO checkar se foi submetido antes de atualziar a lista
+            public void onClose(AjaxRequestTarget target) {
                 recarregarMonitoradores(); // Ao Atualizar, Excluir, Desativar, Ativar.
                 addPageableList();
+                feedbackPanels.forEach(target::add); // Lista com feedbackPanel success e error
                 target.add(monitoradorListWMC);
             }
         });
@@ -72,7 +72,7 @@ public class MonitoradorListPanel extends Panel {
 
         PageableListView<Monitorador> monitoradorListView = construirLista();
 
-        // Page navigator
+
         AjaxPagingNavigator pagingNavigation = new AjaxPagingNavigator("pageNavigator", monitoradorListView);
         pagingNavigation.setOutputMarkupId(true);
         pagingNavigation.setOutputMarkupPlaceholderTag(true);
@@ -84,7 +84,7 @@ public class MonitoradorListPanel extends Panel {
 
     // CONSTRÓI A LISTA
     private PageableListView<Monitorador> construirLista() {
-        return new PageableListView<Monitorador>("monitoradores", monitoradores, 10) {
+        return new PageableListView<Monitorador>("monitoradores", monitoradores, 8) {
             private static final long serialVersionUID = -7313164500893623865L;
             @Override
             protected void populateItem(final ListItem<Monitorador> listItem) {
@@ -103,10 +103,9 @@ public class MonitoradorListPanel extends Panel {
                     public void onClick(AjaxRequestTarget target) {
                         try {
                             modalWindow.setContent(new MonitoradorFormPanel(
-                                    ModalWindow.CONTENT_ID,
+                                    modalWindow.getContentId(),
                                     new MonitoradorForm("formMonitorador",
-                                            monitoradorApi.buscarMonitorador(listItem.getModelObject().getId()),
-                                            feedbackPanel))); // TODO tem que mudar aqui o feedback panel.
+                                            monitoradorApi.buscarMonitorador(listItem.getModelObject().getId()))));
                         } catch (Exception e){
                             System.out.println("Não Editou!");
                         }
@@ -119,7 +118,7 @@ public class MonitoradorListPanel extends Panel {
                     public void onClick(AjaxRequestTarget target) {
                         try {
                             modalWindow.setContent(new ConfirmationModal(
-                                    ModalWindow.CONTENT_ID,
+                                    modalWindow.getContentId(),
                                     listItem,
                                     "Deseja excluir o monitorador " + listItem.getModelObject().getId() + "?",
                                     "excluir"
@@ -136,7 +135,7 @@ public class MonitoradorListPanel extends Panel {
                     public void onClick(AjaxRequestTarget target) {
                         try {
                             modalWindow.setContent(new ConfirmationModal(
-                                    ModalWindow.CONTENT_ID,
+                                    modalWindow.getContentId(),
                                             listItem,
                                             "Deseja desativar o monitorador " + listItem.getModelObject().getId() + "?",
                                             "desativar"
@@ -153,7 +152,7 @@ public class MonitoradorListPanel extends Panel {
                     public void onClick(AjaxRequestTarget target) {
                         try {
                             modalWindow.setContent(new ConfirmationModal(
-                                            ModalWindow.CONTENT_ID,
+                                            modalWindow.getContentId(),
                                             listItem,
                                             "Deseja ativar o monitorador " + listItem.getModelObject().getId() + "?",
                                             "ativar"
@@ -178,7 +177,7 @@ public class MonitoradorListPanel extends Panel {
                     private static final long serialVersionUID = 7878631882100442474L;
                     @Override
                     public void onClick(AjaxRequestTarget target) {
-                        System.out.println("Tem que abrir o relatório para visualizar"); // TODO
+                        System.out.println("Tem que abrir o relatório para visualizar"); // TODO abrir para visualizar o relatório
                     }
                 });
 
@@ -188,7 +187,7 @@ public class MonitoradorListPanel extends Panel {
                     public void onClick(AjaxRequestTarget target) {
                         try {
                             File file = monitoradorApi.gerarRelatorio(listItem.getModelObject().getId());
-                            System.out.println(file);
+                            System.out.println(file); // TODO tem que salvar o relatório
                         } catch (Exception e) {
                             throw new RuntimeException(e);
                         }

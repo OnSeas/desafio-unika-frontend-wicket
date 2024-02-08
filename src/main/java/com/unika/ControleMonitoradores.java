@@ -6,6 +6,7 @@ import com.unika.forms.ImportFormPanel;
 import com.unika.forms.MonitoradorForm;
 import com.unika.model.Monitorador;
 import com.unika.model.apiService.MonitoradorApi;
+import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
@@ -20,6 +21,7 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.InvalidPropertiesFormatException;
 import java.util.List;
@@ -27,24 +29,61 @@ import java.util.List;
 public class ControleMonitoradores extends HomePage{
     private static final long serialVersionUID = 2178207601281324056L;
     final MonitoradorApi monitoradorApi = new MonitoradorApi();
-    final FeedbackPanel feedbackPanel;
     final ModalWindow modalWindow = new ModalWindow("modaw");
     final WebMarkupContainer listWMC = new WebMarkupContainer("listWMC");
+    FeedbackPanel feedbackPanelSuccess;
+    FeedbackPanel feedbackPanelError;
+    List<FeedbackPanel> feedbackPanels = new ArrayList<>();
 
     public ControleMonitoradores(PageParameters parameters) throws IOException {
         super(parameters);
 
-        // TODO Ainda não retorna as mensagens de sucesso
-        feedbackPanel = new FeedbackPanel("feedbackPanel"){
+
+        // FEEDBACK PANELS CONFIG
+        feedbackPanelSuccess = new FeedbackPanel("feedbackPanelSuccess"){
             private static final long serialVersionUID = 8923533799419175857L;
             @Override
             protected void onConfigure() {
                 super.onConfigure();
                 this.setOutputMarkupId(true);
-                setVisible(anyMessage());
+                this.setOutputMarkupPlaceholderTag(true);
+                setVisible(anyMessage(250)); // 250 é o level de success FeedbackMessage
             }
         };
-        add(feedbackPanel);
+        feedbackPanelSuccess.add(new AjaxEventBehavior("click") {
+            private static final long serialVersionUID = 3239147858404127676L;
+            @Override
+            protected void onEvent(AjaxRequestTarget target) {
+                feedbackPanelSuccess.setVisible(false);
+                target.add(feedbackPanelSuccess);
+            }
+        });
+        add(feedbackPanelSuccess);
+
+        feedbackPanelError = new FeedbackPanel("feedbackPanelError"){
+            private static final long serialVersionUID = -706855642723453811L;
+            @Override
+            protected void onConfigure() {
+                super.onConfigure();
+                this.setOutputMarkupId(true);
+                this.setOutputMarkupPlaceholderTag(true);
+                setVisible(anyErrorMessage());
+            }
+        };
+        feedbackPanelError.add(new AjaxEventBehavior("click") {
+            private static final long serialVersionUID = 4186326921821554339L;
+
+            @Override
+            protected void onEvent(AjaxRequestTarget target) {
+                feedbackPanelError.setVisible(false);
+                target.add(feedbackPanelError);
+            }
+        });
+        add(feedbackPanelError);
+
+        feedbackPanels.add(feedbackPanelSuccess);
+        feedbackPanels.add(feedbackPanelError);
+
 
         // Modal que é usado em todos pop-ups
         modalWindow.setCookieName("modalWindow-1");
@@ -63,8 +102,7 @@ public class ControleMonitoradores extends HomePage{
             @Override
             public void onClick(AjaxRequestTarget target) {
                 modalWindow.setContent(new MonitoradorFormPanel(ModalWindow.CONTENT_ID, new MonitoradorForm("formMonitorador",
-                        new Monitorador(),
-                        feedbackPanel)));
+                        new Monitorador())));
                 modalWindow.show(target);
             }
         });
@@ -86,7 +124,7 @@ public class ControleMonitoradores extends HomePage{
             public void onClose(AjaxRequestTarget target){
                 try {
                     putPageableList(monitoradorApi.listarMonitoradores());
-                    target.add(feedbackPanel);
+                    feedbackPanels.forEach(target::add); // Lista com feedbackPanel success e error
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
@@ -111,14 +149,14 @@ public class ControleMonitoradores extends HomePage{
                 try {
                     putPageableList(getListaMonitoradores(inputTipo.getModelObject(), inputPesquisa.getModelObject()));
                     target.add(listWMC);
-                    target.add(feedbackPanel);
+                    target.add(feedbackPanelError);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
             }
             @Override
             protected void onError(AjaxRequestTarget target, Form<?> form) {
-                target.add(feedbackPanel);
+                target.add(feedbackPanelError);
             }
         };
         pesquisarForm.add(inputPesquisa, inputTipo, ajaxButton);
@@ -137,7 +175,7 @@ public class ControleMonitoradores extends HomePage{
         listWMC.add(searchForm);
 
         // Adciona a lista paginada (Panel)
-        listWMC.add(new MonitoradorListPanel("monitoradorListPanel", monitoradores, feedbackPanel));
+        listWMC.add(new MonitoradorListPanel("monitoradorListPanel", monitoradores, feedbackPanels));
     }
 
     // Para o filtro

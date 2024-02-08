@@ -27,14 +27,12 @@ public class MonitoradorForm extends Form<Monitorador> {
     MonitoradorApi monitoradorApi = new MonitoradorApi();
     public List<Endereco> enderecoList = new ArrayList<>();
     public FeedbackPanel feedbackPanel = new FeedbackPanel("FeedbackMessage"); // Mostra os erros no form
-    FeedbackPanel previousFeedbackPanel; // Retornar o feedback para página anterior
 
 
-    public MonitoradorForm(String id, Monitorador monitorador, FeedbackPanel previousFeedbackPanel) {
+    public MonitoradorForm(String id, Monitorador monitorador) {
         super(id, new CompoundPropertyModel<>(monitorador));
 
         submited = Boolean.FALSE;
-        this.previousFeedbackPanel = previousFeedbackPanel;
 
         if(monitorador.getId() != null){
             enderecoList = monitorador.getEnderecoList();
@@ -95,9 +93,9 @@ public class MonitoradorForm extends Form<Monitorador> {
                     salvar(MonitoradorForm.this.getModelObject());
                     submited = Boolean.TRUE;
                     if (MonitoradorForm.this.getModelObject().getId() == null){
-                        previousFeedbackPanel.success("Monitorador Cadastrado com Sucesso!");
+                        success("Monitorador Cadastrado com Sucesso!");
                     } else {
-                        previousFeedbackPanel.success("Monitorador Atualizado com Sucesso!");
+                        success("Monitorador Atualizado com Sucesso!");
                     }
 
                     ModalWindow.closeCurrent(target);
