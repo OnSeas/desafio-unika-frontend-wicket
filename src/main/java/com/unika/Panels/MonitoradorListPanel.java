@@ -1,7 +1,8 @@
 package com.unika.Panels;
 
 import com.unika.dialogs.ConfirmationModal;
-import com.unika.forms.MonitoradorForm;
+import com.unika.forms.MonitoradorFormPanel;
+import com.unika.forms.PesquisaFormPanel;
 import com.unika.model.Monitorador;
 import com.unika.model.TipoPessoa;
 import com.unika.model.apiService.MonitoradorApi;
@@ -13,7 +14,6 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.PageableListView;
-import org.apache.wicket.markup.html.navigation.paging.PagingNavigation;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
@@ -34,10 +34,11 @@ public class MonitoradorListPanel extends Panel {
 
         // Inicia a Lista
         this.monitoradores = monitoradores;
+        PageableListView<Monitorador> monitoradorListView = construirLista();
 
         monitoradorListWMC.setOutputMarkupId(true);
         monitoradorListWMC.setOutputMarkupPlaceholderTag(true);
-        addPageableList();
+        addPageableList(monitoradorListView);
         add(monitoradorListWMC);
 
         // config do modaw
@@ -45,12 +46,22 @@ public class MonitoradorListPanel extends Panel {
         modalWindow.setOutputMarkupId(true);
         add(modalWindow);
 
+        add(new PesquisaFormPanel("searchForm", monitoradorListView, feedbackPanels){
+            private static final long serialVersionUID = 7497134965226070790L;
+
+            @Override
+            protected void onConfigure() {
+                super.onConfigure();
+                this.setVisible(!monitoradores.isEmpty());
+            }
+        });
+
         modalWindow.setWindowClosedCallback(new ModalWindow.WindowClosedCallback() {
             private static final long serialVersionUID = 7800205096545281286L;
             @Override
             public void onClose(AjaxRequestTarget target) {
                 recarregarMonitoradores(); // Ao Atualizar, Excluir, Desativar, Ativar.
-                addPageableList();
+                addPageableList(monitoradorListView);
                 feedbackPanels.forEach(target::add); // Lista com feedbackPanel success e error
                 target.add(monitoradorListWMC);
             }
@@ -62,16 +73,13 @@ public class MonitoradorListPanel extends Panel {
         try {
             monitoradores = monitoradorApi.listarMonitoradores();
         } catch (Exception e){
-            System.out.println("Erro ao atualizar lista de monitoradores: " + e.getMessage());
+            error("Erro ao atualizar lista de monitoradores: " + e.getMessage());
         }
     }
 
     // Coloca Páginação
-    private void addPageableList(){
+    private void addPageableList(PageableListView<Monitorador> monitoradorListView){
         monitoradorListWMC.removeAll(); // Remove se já existir uma lista
-
-        PageableListView<Monitorador> monitoradorListView = construirLista();
-
 
         AjaxPagingNavigator pagingNavigation = new AjaxPagingNavigator("pageNavigator", monitoradorListView);
         pagingNavigation.setOutputMarkupId(true);
@@ -102,12 +110,9 @@ public class MonitoradorListPanel extends Panel {
                     @Override
                     public void onClick(AjaxRequestTarget target) {
                         try {
-                            modalWindow.setContent(new MonitoradorFormPanel(
-                                    modalWindow.getContentId(),
-                                    new MonitoradorForm("formMonitorador",
-                                            monitoradorApi.buscarMonitorador(listItem.getModelObject().getId()))));
+                            modalWindow.setContent(new MonitoradorFormPanel(modalWindow.getContentId(), listItem.getModelObject()));
                         } catch (Exception e){
-                            System.out.println("Não Editou!");
+                            error(e.getMessage());
                         }
                         modalWindow.show(target);
                     }

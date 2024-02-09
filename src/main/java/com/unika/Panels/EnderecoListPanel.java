@@ -1,7 +1,7 @@
 package com.unika.Panels;
 
 import com.unika.dialogs.ConfirmationModal;
-import com.unika.forms.EnderecoForm;
+import com.unika.forms.EnderecoFormPanel;
 import com.unika.model.Endereco;
 import com.unika.model.UF;
 import com.unika.model.apiService.EnderecoApi;
@@ -28,7 +28,7 @@ public class EnderecoListPanel extends Panel {
     List<Endereco> enderecoList;
 
     // Editar Monitorador
-    public EnderecoListPanel(String id, List<Endereco> enderecoList, Long idMonitorador) {
+    public EnderecoListPanel(String id, List<Endereco> enderecoList, Long idMonitorador, List<FeedbackPanel> feedbackPanels) {
         super(id);
         this.enderecoList = enderecoList;
         this.idMonitorador = idMonitorador;
@@ -36,6 +36,16 @@ public class EnderecoListPanel extends Panel {
         // Para poder aparecer se não tiver nenhum
         enderecoListWMC.setOutputMarkupId(true);
         enderecoListWMC.setOutputMarkupPlaceholderTag(true);
+
+        add(new AjaxLink<Void>("criarEndereco") { // Criar novo endereço
+            private static final long serialVersionUID = -5987685929992738636L;
+
+            @Override
+            public void onClick(AjaxRequestTarget target) {
+                modalWindow.setContent(new EnderecoFormPanel(ModalWindow.CONTENT_ID, new Endereco(), idMonitorador));
+                modalWindow.show(target);
+            }
+        });
 
         addList();
         add(enderecoListWMC);
@@ -49,9 +59,10 @@ public class EnderecoListPanel extends Panel {
             @Override
             public void onClose(AjaxRequestTarget target) {
                 if (idMonitorador != -1L){
-                    recarregarList(); // Se pensar bem não precisava fazer isso, era só remover da lista além do BD
+                    recarregarList();
                     addList();
                     target.add(enderecoListWMC);
+                    feedbackPanels.forEach(target::add);
                 } else {
                     addList();
                     target.add(enderecoListWMC);
@@ -95,9 +106,8 @@ public class EnderecoListPanel extends Panel {
                         @Override
                         public void onClick(AjaxRequestTarget target) {
                             modalWindow.setContent(new EnderecoFormPanel(ModalWindow.CONTENT_ID,
-                                    new EnderecoForm("enderecoForm",
-                                            listItem.getModelObject(),
-                                            idMonitorador)));
+                                    listItem.getModelObject(),
+                                    idMonitorador)); // Endereco
                             modalWindow.show(target);
                         }
                     });

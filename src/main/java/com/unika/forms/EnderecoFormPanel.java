@@ -4,33 +4,60 @@ import com.unika.model.Endereco;
 import com.unika.model.UF;
 import com.unika.model.apiService.EnderecoApi;
 import com.unika.model.apiService.MonitoradorApi;
+import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.*;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
+import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.validation.validator.StringValidator;
 
 import java.util.Arrays;
 
-public class EnderecoForm extends Form<Endereco> {
-    private static final long serialVersionUID = -5152812808250771426L;
-    public Boolean submited;
+public class EnderecoFormPanel extends Panel {
+    private static final long serialVersionUID = 8787731904574781396L;
     MonitoradorApi monitoradorApi = new MonitoradorApi();
     EnderecoApi enderecoApi = new EnderecoApi();
-    public Long idMonitorador;
 
-    public EnderecoForm(String id, Endereco endereco, Long idMonitorador){
-        super(id, new CompoundPropertyModel<>(endereco));
-        submited = Boolean.FALSE;
-        this.idMonitorador = idMonitorador; // Retirar ao enviar lista de endereços para update tbm;
+    public EnderecoFormPanel(String id, Endereco endereco,Long idMonitorador) {
+        super(id);
 
-        // Mensagens de erro
-        FeedbackPanel feedbackPanel = new FeedbackPanel("feedbackMessage");
-        feedbackPanel.setOutputMarkupId(true);
+        // Config do FeedbackPanel para mensagens de erro
+        FeedbackPanel feedbackPanel = new FeedbackPanel("feedbackMessage"){
+            private static final long serialVersionUID = 1399754822422272539L;
+
+            @Override
+            protected void onConfigure() {
+                super.onConfigure();
+                this.setOutputMarkupId(true);
+                this.setOutputMarkupPlaceholderTag(true);
+                setVisible(anyErrorMessage());
+            }
+        };
+        feedbackPanel.add(new AjaxEventBehavior("click") {
+            private static final long serialVersionUID = 5765700798154888806L;
+            @Override
+            protected void onEvent(AjaxRequestTarget target) {
+                feedbackPanel.setVisible(false);
+                target.add(feedbackPanel);
+            }
+        });
         add(feedbackPanel);
+
+        // Criando um endereço
+        if(endereco.getId() == null){
+            add(new Label("enderecoFormTitle", Model.of("Criar novo endereço")));
+        }
+        // Editando um endereço
+        else {
+            add(new Label("enderecoFormTitle", Model.of("Editar endereço")));
+        }
+
+        Form<Endereco> enderecoForm = new Form<>("enderecoForm", new CompoundPropertyModel<>(endereco));
 
         TextArea<String> inputEndereco = new TextArea<>("endereco");
         TextField<String> inputNumero = new TextField<>("numero");
@@ -51,17 +78,16 @@ public class EnderecoForm extends Form<Endereco> {
 
         CheckBox checkBoxPrincipal = new CheckBox("principal");
 
-        AjaxButton submitAjax = new AjaxButton("submitAjax") {
+        AjaxButton submitAjax = new AjaxButton("submitAjax", enderecoForm) {
             private static final long serialVersionUID = 3333211378039191514L;
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 try {
-                    salvar(EnderecoForm.this.getModelObject());
-                    submited = Boolean.TRUE;
-                    if (EnderecoForm.this.getModelObject().getId() == null){
-                        success("Endereço cadastrado com sucesso!"); // TODO sucess msgs
+                    salvar(enderecoForm.getModelObject(), idMonitorador);
+                    if (enderecoForm.getModelObject().getId() == null){
+                        success("Endereço cadastrado com sucesso!");
                     } else {
-                        success("Endereço atualizado com sucesso!"); // TODO sucess msgs
+                        success("Endereço atualizado com sucesso!");
                     }
                     ModalWindow.closeCurrent(target);
                 } catch (Exception e){
@@ -76,7 +102,7 @@ public class EnderecoForm extends Form<Endereco> {
                 target.add(feedbackPanel);
             }
         };
-        add(inputEndereco, inputNumero, inputCep, inputBairro, inputTelefone, inputCidade, dropEstado, checkBoxPrincipal, submitAjax);
+        enderecoForm.add(inputEndereco, inputNumero, inputCep, inputBairro, inputTelefone, inputCidade, dropEstado, checkBoxPrincipal, submitAjax);
 
 
         // Validações do formulário
@@ -87,19 +113,18 @@ public class EnderecoForm extends Form<Endereco> {
         inputTelefone.setLabel(Model.of("Telefone")).setRequired(true).add(StringValidator.lengthBetween(10, 14));
         inputCidade.setLabel(Model.of("Cidade")).setRequired(true).add(StringValidator.lengthBetween(3, 20));
         dropEstado.setLabel(Model.of("Estado")).setRequired(true);
+
+
+        add(enderecoForm);
     }
 
     // Metódo salvar usado para adcionar ou editar um endereço ao banco de dados
-    private void salvar(Endereco endereco){
+    private void salvar(Endereco endereco, Long idMonitorador){
         try {
-            if (idMonitorador != -1L){
-                if(endereco.getId() == null){ // Criando novo endereço
-                    monitoradorApi.adcionarEndereco(idMonitorador, endereco);
-                    System.out.println("Salvou novo!");
-                } else { // Editando um endereçoi existente
-                    enderecoApi.editarEndereco(endereco.getId(), endereco);
-                    System.out.println("Editou um existente!");
-                }
+            if(endereco.getId() == null){ // Criando novo endereço
+                monitoradorApi.adcionarEndereco(idMonitorador, endereco);
+            } else { // Editando um endereço existente
+                enderecoApi.editarEndereco(endereco.getId(), endereco);
             }
         } catch(Exception e){
             throw new RuntimeException(e.getMessage());

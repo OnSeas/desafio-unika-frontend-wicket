@@ -1,0 +1,23 @@
+body{
+    background-color: #77777777
+}
+
+#pageNavigation a:link{
+    background-color: #0d6efd;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 5px;
+    padding: 5px 8px;
+    font-weight: bold;
+}
+
+#pageNavigation a:link:hover{
+    background-color: #0c4db6;
+}
+
+#pageNavigation a{
+    color: black;
+    text-align: center;
+    text-decoration: none;
+}

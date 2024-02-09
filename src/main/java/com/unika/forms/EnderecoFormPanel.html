@@ -9,11 +9,10 @@
             <div>
                 <h2 wicket:id="enderecoFormTitle" class="mb-3 mt-2" style="text-align: center">[Endere&ccedil;o Form title]</h2>
 
+                <div wicket:id="feedbackMessage" class="alert alert-danger gap-7 col-10 mx-auto"></div>
+
                 <form wicket:id="enderecoForm">
-
-                    <div wicket:id="feedbackMessage" style="color: red"></div>
-
-                    <div class="d-grid gap-7 col-9 mx-auto">
+                    <div class="d-grid gap-7 col-10 mx-auto">
                         <div class="form-floating mb-3">
                             <textarea class="form-control" wicket:id="endereco" placeholder="Rua 01, Qd 00 Lt 02..." id="inputEnderecoForm"></textarea>
                             <label for="inputEnderecoForm" class="form-label">Endere&ccedil;o</label>
