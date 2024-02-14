@@ -13,6 +13,7 @@ import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
+import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.list.PageableListView;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -34,11 +35,10 @@ public class MonitoradorListPanel extends Panel {
 
         // Inicia a Lista
         this.monitoradores = monitoradores;
-        PageableListView<Monitorador> monitoradorListView = construirLista();
 
         monitoradorListWMC.setOutputMarkupId(true);
         monitoradorListWMC.setOutputMarkupPlaceholderTag(true);
-        addPageableList(monitoradorListView);
+        addPageableList(feedbackPanels);
         add(monitoradorListWMC);
 
         // config do modaw
@@ -46,22 +46,14 @@ public class MonitoradorListPanel extends Panel {
         modalWindow.setOutputMarkupId(true);
         add(modalWindow);
 
-        add(new PesquisaFormPanel("searchForm", monitoradorListView, feedbackPanels){
-            private static final long serialVersionUID = 7497134965226070790L;
 
-            @Override
-            protected void onConfigure() {
-                super.onConfigure();
-                this.setVisible(!monitoradores.isEmpty());
-            }
-        });
 
         modalWindow.setWindowClosedCallback(new ModalWindow.WindowClosedCallback() {
             private static final long serialVersionUID = 7800205096545281286L;
             @Override
             public void onClose(AjaxRequestTarget target) {
                 recarregarMonitoradores(); // Ao Atualizar, Excluir, Desativar, Ativar.
-                addPageableList(monitoradorListView);
+                addPageableList(feedbackPanels);
                 feedbackPanels.forEach(target::add); // Lista com feedbackPanel success e error
                 target.add(monitoradorListWMC);
             }
@@ -78,16 +70,21 @@ public class MonitoradorListPanel extends Panel {
     }
 
     // Coloca Páginação
-    private void addPageableList(PageableListView<Monitorador> monitoradorListView){
+    private void addPageableList(List<FeedbackPanel> feedbackPanels){
         monitoradorListWMC.removeAll(); // Remove se já existir uma lista
 
+        PageableListView<Monitorador> monitoradorListView = construirLista();
         AjaxPagingNavigator pagingNavigation = new AjaxPagingNavigator("pageNavigator", monitoradorListView);
         pagingNavigation.setOutputMarkupId(true);
         pagingNavigation.setOutputMarkupPlaceholderTag(true);
-        pagingNavigation.setVisible(monitoradorListView.getList().size() >= 10);
+        pagingNavigation.setVisible(monitoradorListView.getList().size() > 8);
         monitoradorListWMC.setVisible(!monitoradorListView.getList().isEmpty());
 
-        monitoradorListWMC.add(monitoradorListView, pagingNavigation);
+        monitoradorListWMC.add(monitoradorListView, pagingNavigation, addFormPesquisa(monitoradorListView, feedbackPanels));
+    }
+
+    private Panel addFormPesquisa(ListView<Monitorador> listView, List<FeedbackPanel> feedbackPanels){
+        return new PesquisaFormPanel("searchForm", listView, feedbackPanels);
     }
 
     // CONSTRÓI A LISTA

@@ -146,12 +146,49 @@ public class MonitoradorFormPanel extends Panel {
         radioTipoPessoa.setLabel(Model.of("Tipo de pessoa")).setRequired(true);
         inputEmail.setLabel(Model.of("Email do contato")).setRequired(true).add(EmailAddressValidator.getInstance());
         inputDataNascimento.setLabel(Model.of("Data nascimento")).setRequired(true);
-        inputCpf.setLabel(Model.of("CPF")).setRequired(true).add(StringValidator.lengthBetween(11, 14));
+        inputCpf.setLabel(Model.of("CPF")).setRequired(true).add(StringValidator.exactLength(14));
+        inputCpf.setOutputMarkupId(true); // Pelo jeito tem que colocar todos os inpujts como true
         inputNome.setLabel(Model.of("Nome")).setRequired(true).add(StringValidator.lengthBetween(3, 50));
-        inputRg.setLabel(Model.of("RG")).setRequired(true).add(StringValidator.lengthBetween(9, 12));
+        inputRg.setLabel(Model.of("RG")).setRequired(true).add(StringValidator.exactLength(12));
         inputRazaoSocial.setLabel(Model.of("Razão Social")).setRequired(true).add(StringValidator.lengthBetween(3, 50));
-        inputCnpj.setLabel(Model.of("CNPJ")).setRequired(true).add(StringValidator.lengthBetween(14, 18));
+        inputCnpj.setLabel(Model.of("CNPJ")).setRequired(true).add(StringValidator.exactLength(18));
         inputInscricaoEstadual.setLabel(Model.of("Inscrição Estadual")).setRequired(true).add(StringValidator.maximumLength(18));
+
+        // Mascáras de inputs
+        inputCpf.add(new AjaxEventBehavior("focusin") {
+            private static final long serialVersionUID = -8024661883244296260L;
+            @Override
+            protected void onEvent(AjaxRequestTarget target) {
+                target.appendJavaScript(
+                        "$(document).ready(function (){\n" +
+                        "   $('#cpfInput').mask('000.000.000-00');\n" +
+                        "});");
+            }
+        });
+
+        inputRg.add(new AjaxEventBehavior("focusin") {
+            private static final long serialVersionUID = -984263498898264817L;
+            @Override
+            protected void onEvent(AjaxRequestTarget target) {
+                target.appendJavaScript(
+                        "$(document).ready(function (){\n" +
+                        "   $('#inputRgForm').mask('00.000.000-0');\n" +
+                        "});");
+            }
+        });
+
+        inputCnpj.add(new AjaxEventBehavior("focusin") {
+            private static final long serialVersionUID = 3145077170075078630L;
+
+            @Override
+            protected void onEvent(AjaxRequestTarget target) {
+                target.appendJavaScript(
+                        "$(document).ready(function (){\n" +
+                        "   $('#inputCnpjForm').mask('00.000.000/0000-00')\n" +
+                        "});");
+            }
+        });
+
 
         monitoradorForm.add(new AjaxButton("ajaxSubmit", monitoradorForm) {
             private static final long serialVersionUID = -8806215908629462715L;
@@ -176,7 +213,8 @@ public class MonitoradorFormPanel extends Panel {
             }
         });
 
-        radioTipoPessoa.get("pf").add(new AjaxEventBehavior("click") {
+        // Mostrar os inputs corretos ao selecionar o tipo de pessoa
+        radioTipoPessoa.get("pf").add(new AjaxEventBehavior("focusin") {
             private static final long serialVersionUID = 7722774318433529522L;
             @Override
             protected void onEvent(AjaxRequestTarget target) {
@@ -186,7 +224,7 @@ public class MonitoradorFormPanel extends Panel {
             }
         });
 
-        radioTipoPessoa.get("pj").add(new AjaxEventBehavior("click") {
+        radioTipoPessoa.get("pj").add(new AjaxEventBehavior("focusin") {
             private static final long serialVersionUID = 7722774318433529522L;
             @Override
             protected void onEvent(AjaxRequestTarget target) {

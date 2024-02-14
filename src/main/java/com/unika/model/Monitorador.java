@@ -19,7 +19,7 @@ public class Monitorador implements Serializable {
     private TipoPessoa tipoPessoa;
     private String email;
 
-    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="dd/MM/yyyy")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy", locale = "pt-BR", timezone = "Brazil/East")
     private Date dataNascimento;
     private String inscricaoEstadual;
     private List<Endereco> enderecoList;

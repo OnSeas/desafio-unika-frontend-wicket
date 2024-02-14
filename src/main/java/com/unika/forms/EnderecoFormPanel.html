@@ -60,6 +60,13 @@
                     </div>
                 </form>
             </div>
+
+            <script type="text/javascript">
+                $(document).ready(function (){
+                    $('#inputCepForm').mask('00000-000')
+                    $('#inputTelefoneForm').mask('(00)00000-0000') // TODO
+                });
+            </script>
         </wicket:panel>
     </body>
 </html>

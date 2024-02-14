@@ -16,6 +16,7 @@ import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.validation.validator.StringValidator;
 
+import java.io.IOException;
 import java.util.Arrays;
 
 public class EnderecoFormPanel extends Panel {
@@ -108,12 +109,25 @@ public class EnderecoFormPanel extends Panel {
         // Validações do formulário
         inputEndereco.setLabel(Model.of("Endereço")).setRequired(true).add(StringValidator.lengthBetween(3, 50)); // TODO unicode ç
         inputNumero.setLabel(Model.of("Número")).setRequired(true).add(StringValidator.maximumLength(5)); // TODO unicode ú
-        inputCep.setLabel(Model.of("CEP")).setRequired(true).add(StringValidator.lengthBetween(8, 9));
+        inputCep.setLabel(Model.of("CEP")).setRequired(true).add(StringValidator.exactLength(9));
         inputBairro.setLabel(Model.of("Bairro")).setRequired(true).add(StringValidator.lengthBetween(3, 20));
-        inputTelefone.setLabel(Model.of("Telefone")).setRequired(true).add(StringValidator.lengthBetween(10, 14));
+        inputTelefone.setLabel(Model.of("Telefone")).setRequired(true).add(StringValidator.exactLength(14));
         inputCidade.setLabel(Model.of("Cidade")).setRequired(true).add(StringValidator.lengthBetween(3, 20));
         dropEstado.setLabel(Model.of("Estado")).setRequired(true);
 
+
+        inputCep.add(new AjaxEventBehavior("onBlur") {
+            private static final long serialVersionUID = 8995325121134414023L;
+
+            @Override
+            protected void onEvent(AjaxRequestTarget target) { // TODO organizar
+                try {
+                    enderecoForm.setModelObject(enderecoApi.buscarEnderecopeloCep(inputCep.getModelObject()));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
 
         add(enderecoForm);
     }
