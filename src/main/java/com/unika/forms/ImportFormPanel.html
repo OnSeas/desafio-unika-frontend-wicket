@@ -2,14 +2,14 @@
 <html lang="pt" xmlns:wicket="http://wicket.apache.org">
     <body>
         <wicket:panel>
-            <h3 style="text-align: center">Importar</h3>
+            <h2 class="mt-2 mb-3" style="text-align: center">Importar Monitorador</h2>
 
-            <div wicket:id="feedbackPanel" class="alert alert-danger alert-dismissible fade show" role="alert" style="width: 80%; margin: auto"></div>
+            <div wicket:id="feedbackPanel" class="alert alert-danger mb-3" role="alert" style="width: 80%; margin: auto"></div>
 
             <form wicket:id="importForm">
                 <div class="d-grid gap-7 col-9 mx-auto">
-                    <div>
-                        <label wicket:for="importField" class="form-label">upload de arquivo xlsx</label>
+                    <div class="mb-3">
+                        <label wicket:for="importField" class="form-label">upload de arquivo excel</label>
                         <input wicket:id="importField" class="form-control" type="file">
                     </div>
                     <div>

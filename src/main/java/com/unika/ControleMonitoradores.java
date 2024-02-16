@@ -16,10 +16,12 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 
 import java.io.IOException;
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ControleMonitoradores extends HomePage{
+    @Serial
     private static final long serialVersionUID = 2178207601281324056L;
     final MonitoradorApi monitoradorApi = new MonitoradorApi();
     final ModalWindow modalWindow = new ModalWindow("modaw");
@@ -28,11 +30,12 @@ public class ControleMonitoradores extends HomePage{
     FeedbackPanel feedbackPanelError;
     List<FeedbackPanel> feedbackPanels = new ArrayList<>();
 
-    public ControleMonitoradores(PageParameters parameters) throws IOException {
+    public ControleMonitoradores(PageParameters parameters) {
         super(parameters);
 
         // FEEDBACK PANELS CONFIG
         feedbackPanelSuccess = new FeedbackPanel("feedbackPanelSuccess"){
+            @Serial
             private static final long serialVersionUID = 8923533799419175857L;
             @Override
             protected void onConfigure() {
@@ -40,9 +43,13 @@ public class ControleMonitoradores extends HomePage{
                 this.setOutputMarkupId(true);
                 this.setOutputMarkupPlaceholderTag(true);
                 this.setVisible(anyMessage(250) && !anyErrorMessage()); // Não consigo entender pq sem a segunda validação aparece as msg de erro tbm (ps: esse mostra qualquer msg que não seja de erro mesmo usando o 250(success) como parâmetro.
+                if(this.isVisible()){
+                    // Todo Descobrir como fazer para o feedbackPanel sumir sozinho depois de alguns segundos.
+                }
             }
         };
         feedbackPanelSuccess.add(new AjaxEventBehavior("click") {
+            @Serial
             private static final long serialVersionUID = 3239147858404127676L;
             @Override
             protected void onEvent(AjaxRequestTarget target) {
@@ -53,6 +60,7 @@ public class ControleMonitoradores extends HomePage{
         add(feedbackPanelSuccess);
 
         feedbackPanelError = new FeedbackPanel("feedbackPanelError"){
+            @Serial
             private static final long serialVersionUID = -706855642723453811L;
             @Override
             protected void onConfigure() {
@@ -63,8 +71,8 @@ public class ControleMonitoradores extends HomePage{
             }
         };
         feedbackPanelError.add(new AjaxEventBehavior("click") {
+            @Serial
             private static final long serialVersionUID = 4186326921821554339L;
-
             @Override
             protected void onEvent(AjaxRequestTarget target) {
                 feedbackPanelError.setVisible(false);
@@ -83,13 +91,18 @@ public class ControleMonitoradores extends HomePage{
 
         // WMC que envolve a lista já inciando a lista geral
         listWMC.setOutputMarkupId(true);
-        putPageableList(monitoradorApi.listarMonitoradores());
+        try {
+            listWMC.add(new MonitoradorListPanel("monitoradorListPanel", monitoradorApi.listarMonitoradores(), feedbackPanels));
+        } catch (IOException e) {
+            error(e.getMessage());
+        }
         add(listWMC);
 
         add(new Label("ControlLabel", Model.of("Controle de monitoradores")));
 
         // Botão de criar novo monitorador
         add( new AjaxLink<Void>("formNovoMonitorador") {
+            @Serial
             private static final long serialVersionUID = -387605849215267697L;
             @Override
             public void onClick(AjaxRequestTarget target) {
@@ -100,8 +113,8 @@ public class ControleMonitoradores extends HomePage{
         });
 
         add(new AjaxLink<Void>("importarMonitoradores") {
+            @Serial
             private static final long serialVersionUID = -7139346449600703225L;
-
             @Override
             public void onClick(AjaxRequestTarget target) {
                 modalWindow.setContent(new ImportFormPanel(modalWindow.getContentId()));
@@ -111,14 +124,15 @@ public class ControleMonitoradores extends HomePage{
 
         // Função quando alguma modal window é fechada.
         modalWindow.setWindowClosedCallback(new ModalWindow.WindowClosedCallback(){
+            @Serial
             private static final long serialVersionUID = 1L;
             @Override
             public void onClose(AjaxRequestTarget target){
                 try {
                     putPageableList(monitoradorApi.listarMonitoradores());
-                    feedbackPanels.forEach(target::add); // Lista com feedbackPanel success e error
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    feedbackPanels.forEach(target::add);
+                } catch (Exception e){
+                    error(e.getMessage());
                 }
                 target.add(listWMC);
             }

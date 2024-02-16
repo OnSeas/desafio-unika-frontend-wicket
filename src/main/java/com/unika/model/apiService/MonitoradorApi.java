@@ -7,31 +7,33 @@ import okhttp3.Response;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serial;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 public class MonitoradorApi implements Serializable {
+    @Serial
     private static final long serialVersionUID = -4705610385379890273L;
     final String apiUrl = "http://localhost:8080/monitorador";
     ApiService apiService = new ApiService();
     ConverterDados converterDados = new ConverterDados();
 
     public Monitorador cadastrarMonitorador(Monitorador monitorador) throws IOException {
-        Response response = apiService.conectarApiPOST(
-                converterDados.obterJason(monitorador),
-                apiUrl + "/cadastrar"
-        );
+            Response response = apiService.conectarApiPOST(
+                    converterDados.obterJason(monitorador),
+                    apiUrl + "/cadastrar"
+            );
 
-        assert response.body() != null;
-        String res = response.body().string();
-        response.close();
+            assert response.body() != null;
+            String res = response.body().string();
+            response.close();
 
-        if(response.isSuccessful()){
-            return converterDados.obterDados(res, Monitorador.class);
-        } else {
-            throw new RuntimeException(res);
-        }
+            if(response.isSuccessful()){
+                return converterDados.obterDados(res, Monitorador.class);
+            } else {
+                throw new RuntimeException(res);
+            }
+
     }
 
     public List<Monitorador> listarMonitoradores() throws IOException {
@@ -44,7 +46,7 @@ public class MonitoradorApi implements Serializable {
         if (response.isSuccessful()){
             return converterDados.obterLista(res, Monitorador.class);
         } else {
-            return new ArrayList<>();
+            throw new RuntimeException(res);
         }
     }
 
@@ -160,7 +162,7 @@ public class MonitoradorApi implements Serializable {
         if (response.isSuccessful()){
             return converterDados.obterLista(res, Monitorador.class);
         } else {
-            return listarMonitoradores();
+            throw new RuntimeException("Nenhum um  monitorador encontrado na busca!");
         }
     }
 
@@ -174,7 +176,7 @@ public class MonitoradorApi implements Serializable {
         if (response.isSuccessful()){
             return converterDados.obterLista(res, Monitorador.class);
         } else {
-            return listarMonitoradores();
+            throw new RuntimeException("Nenhum um  monitorador encontrado na busca!");
         }
     }
 
@@ -188,7 +190,7 @@ public class MonitoradorApi implements Serializable {
         if (response.isSuccessful()){
             return converterDados.obterLista(res, Monitorador.class);
         } else {
-            return listarMonitoradores();
+            throw new RuntimeException("Nenhum um  monitorador encontrado na busca!");
         }
     }
 

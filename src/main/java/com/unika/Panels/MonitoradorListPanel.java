@@ -23,9 +23,11 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 
 import java.io.File;
+import java.io.Serial;
 import java.util.List;
 
 public class MonitoradorListPanel extends Panel {
+    @Serial
     private static final long serialVersionUID = -3590955289064988486L;
     ModalWindow modalWindow = new ModalWindow("modawOpcoes");
     MonitoradorApi monitoradorApi = new MonitoradorApi();
@@ -48,9 +50,8 @@ public class MonitoradorListPanel extends Panel {
         modalWindow.setOutputMarkupId(true);
         add(modalWindow);
 
-
-
         modalWindow.setWindowClosedCallback(new ModalWindow.WindowClosedCallback() {
+            @Serial
             private static final long serialVersionUID = 7800205096545281286L;
             @Override
             public void onClose(AjaxRequestTarget target) {
@@ -76,12 +77,19 @@ public class MonitoradorListPanel extends Panel {
         monitoradorListWMC.removeAll(); // Remove se já existir uma lista
 
         PageableListView<Monitorador> monitoradorListView = construirLista();
-        AjaxPagingNavigator pagingNavigation = new AjaxPagingNavigator("pageNavigator", monitoradorListView);
+        AjaxPagingNavigator pagingNavigation = new AjaxPagingNavigator("pageNavigator", monitoradorListView){
+            @Serial
+            private static final long serialVersionUID = 3745148448399664563L;
+            @Override
+            protected void onConfigure() {
+                super.onConfigure();
+                this.setVisible(monitoradorListView.getList().size() > 8);
+            }
+        };
         pagingNavigation.setOutputMarkupId(true);
         pagingNavigation.setOutputMarkupPlaceholderTag(true);
-        pagingNavigation.setVisible(monitoradorListView.getList().size() > 8);
-        monitoradorListWMC.setVisible(!monitoradorListView.getList().isEmpty());
 
+        monitoradorListWMC.setVisible(!monitoradorListView.getList().isEmpty());
         monitoradorListWMC.add(monitoradorListView, pagingNavigation, addFormPesquisa(monitoradorListView, feedbackPanels));
     }
 
@@ -92,6 +100,7 @@ public class MonitoradorListPanel extends Panel {
     // CONSTRÓI A LISTA
     private PageableListView<Monitorador> construirLista() {
         return new PageableListView<Monitorador>("monitoradores", monitoradores, 8) {
+            @Serial
             private static final long serialVersionUID = -7313164500893623865L;
             @Override
             protected void populateItem(final ListItem<Monitorador> listItem) {
@@ -105,6 +114,7 @@ public class MonitoradorListPanel extends Panel {
 
                 // Opções para cada monitorador
                 listItem.add(new AjaxLink<Void>("formEditarMonitorador") {
+                    @Serial
                     private static final long serialVersionUID = -387605849215267697L;
                     @Override
                     public void onClick(AjaxRequestTarget target) {
@@ -117,6 +127,7 @@ public class MonitoradorListPanel extends Panel {
                     }
                 });
                 listItem.add(new AjaxLink<Void>("ajaxEcluirMonitorador") {
+                    @Serial
                     private static final long serialVersionUID = -1679276620382639682L;
                     @Override
                     public void onClick(AjaxRequestTarget target) {
@@ -128,12 +139,13 @@ public class MonitoradorListPanel extends Panel {
                                     "excluir"
                             ));
                         } catch (Exception e){
-                            System.out.println("Não excluíu!");
+                            error(e.getMessage());
                         }
                         modalWindow.show(target);
                     }
                 });
                 AjaxLink<Void> desativarAjax = new AjaxLink<Void>("Destivar") {
+                    @Serial
                     private static final long serialVersionUID = -505817807318118040L;
                     @Override
                     public void onClick(AjaxRequestTarget target) {
@@ -145,12 +157,13 @@ public class MonitoradorListPanel extends Panel {
                                             "desativar"
                                     ));
                         } catch (Exception e){
-                            System.out.println("Não desativou!");
+                            error(e.getMessage());
                         }
                         modalWindow.show(target);
                     }
                 };
                 AjaxLink<Void> ativarAjax = new AjaxLink<Void>("Ativar") {
+                    @Serial
                     private static final long serialVersionUID = -505817807318118040L;
                     @Override
                     public void onClick(AjaxRequestTarget target) {
@@ -162,7 +175,7 @@ public class MonitoradorListPanel extends Panel {
                                             "ativar"
                                     ));
                         } catch (Exception e){
-                            System.out.println("Não ativou!");
+                            error(e.getMessage());
                         }
                         modalWindow.show(target);
                     }
@@ -177,15 +190,18 @@ public class MonitoradorListPanel extends Panel {
 
                 listItem.add(desativarAjax, ativarAjax);
 
-                listItem.add(new AjaxLink<Void>("reportView") {
+                listItem.add(new AjaxLink<Void>("reportView") { //TODO Mostrar o Pdf ou Html na ModalWindow
+                    @Serial
                     private static final long serialVersionUID = 7878631882100442474L;
                     @Override
                     public void onClick(AjaxRequestTarget target) {
-                        System.out.println("Ainda não funciona."); // TODO tem que Abrir modal com o relatório
+                        modalWindow.setContent(new PdfPanel(modalWindow.getContentId()));
+                        modalWindow.show(target);
                     }
                 });
 
                 listItem.add(new DownloadLink("reportDownload", new AbstractReadOnlyModel<File>() {
+                    @Serial
                     private static final long serialVersionUID = -8630718144901310523L;
                     @Override
                     public File getObject() {
@@ -194,7 +210,8 @@ public class MonitoradorListPanel extends Panel {
                             tempFile = monitoradorApi.gerarRelatorio(listItem.getModelObject().getId());
                         }
                         catch (Exception e){
-                            throw new RuntimeException(e);
+                            tempFile = null;
+                            error(e.getMessage());
                         }
                         return tempFile;
                     }

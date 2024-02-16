@@ -14,8 +14,10 @@ import org.apache.wicket.util.lang.Bytes;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.Serial;
 
 public class ImportFormPanel extends Panel {
+    @Serial
     private static final long serialVersionUID = 7680031748038474194L;
     MonitoradorApi monitoradorApi = new MonitoradorApi();
 
@@ -28,6 +30,7 @@ public class ImportFormPanel extends Panel {
         // Esse é um exemplo bom que funiona pra retonar os erros na tela com o fbp
         FeedbackPanel feedbackPanel = new FeedbackPanel("feedbackPanel")
         {
+            @Serial
             private static final long serialVersionUID = -6225292489343766625L;
             @Override
             protected void onConfigure() {
@@ -38,6 +41,7 @@ public class ImportFormPanel extends Panel {
             }
         };
         feedbackPanel.add(new AjaxEventBehavior("click") {
+            @Serial
             private static final long serialVersionUID = 2714109594941898418L;
             @Override
             protected void onEvent(AjaxRequestTarget target) {
@@ -50,6 +54,7 @@ public class ImportFormPanel extends Panel {
         Form<FileUpload> form = new Form<>("importForm");
 
         form.add(new AjaxButton("submitAjax", form) {
+            @Serial
             private static final long serialVersionUID = 8938068611108208621L;
 
             @Override
