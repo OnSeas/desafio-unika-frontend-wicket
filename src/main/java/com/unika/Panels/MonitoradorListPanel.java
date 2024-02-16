@@ -12,11 +12,13 @@ import org.apache.wicket.ajax.markup.html.navigation.paging.AjaxPagingNavigator;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.link.DownloadLink;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.list.PageableListView;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 
@@ -175,26 +177,28 @@ public class MonitoradorListPanel extends Panel {
 
                 listItem.add(desativarAjax, ativarAjax);
 
-                listItem.add(new AjaxLink<Void>("view") {
+                listItem.add(new AjaxLink<Void>("reportView") {
                     private static final long serialVersionUID = 7878631882100442474L;
                     @Override
                     public void onClick(AjaxRequestTarget target) {
-                        System.out.println("Tem que abrir o relatório para visualizar"); // TODO abrir para visualizar o relatório
+                        System.out.println("Ainda não funciona."); // TODO tem que Abrir modal com o relatório
                     }
                 });
 
-                listItem.add(new AjaxLink<Void>("report") {
-                    private static final long serialVersionUID = 2182163427384641040L;
+                listItem.add(new DownloadLink("reportDownload", new AbstractReadOnlyModel<File>() {
+                    private static final long serialVersionUID = -8630718144901310523L;
                     @Override
-                    public void onClick(AjaxRequestTarget target) {
+                    public File getObject() {
+                        File tempFile;
                         try {
-                            File file = monitoradorApi.gerarRelatorio(listItem.getModelObject().getId());
-                            System.out.println(file); // TODO tem que salvar o relatório
-                        } catch (Exception e) {
+                            tempFile = monitoradorApi.gerarRelatorio(listItem.getModelObject().getId());
+                        }
+                        catch (Exception e){
                             throw new RuntimeException(e);
                         }
+                        return tempFile;
                     }
-                });
+                }));
             }
         };
     }

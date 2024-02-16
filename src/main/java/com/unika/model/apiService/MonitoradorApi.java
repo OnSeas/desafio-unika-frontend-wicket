@@ -236,6 +236,20 @@ public class MonitoradorApi implements Serializable {
         }
     }
 
+    public File gerarRelatorioHTML(Long idMonitorador) throws IOException {
+        Response response = apiService.conectarApiGET(apiUrl + "/report/html/" + idMonitorador);
+
+        assert response.body() != null;
+        String res = response.body().string();
+        response.close();
+
+        if (response.isSuccessful()){
+            return converterDados.obterDados(res, File.class);
+        } else {
+            throw new RuntimeException(res);
+        }
+    }
+
     public String importarXLSX(File file) throws IOException {
         Response response = apiService.conectarApiPOST(
                 converterDados.obterJason(file),

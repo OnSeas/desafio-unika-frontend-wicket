@@ -4,6 +4,7 @@ import com.unika.model.Endereco;
 import com.unika.model.UF;
 import com.unika.model.apiService.EnderecoApi;
 import com.unika.model.apiService.MonitoradorApi;
+import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
@@ -18,6 +19,7 @@ import org.apache.wicket.validation.validator.StringValidator;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 
 public class EnderecoFormPanel extends Panel {
     private static final long serialVersionUID = 8787731904574781396L;
@@ -30,7 +32,6 @@ public class EnderecoFormPanel extends Panel {
         // Config do FeedbackPanel para mensagens de erro
         FeedbackPanel feedbackPanel = new FeedbackPanel("feedbackMessage"){
             private static final long serialVersionUID = 1399754822422272539L;
-
             @Override
             protected void onConfigure() {
                 super.onConfigure();
@@ -103,7 +104,13 @@ public class EnderecoFormPanel extends Panel {
                 target.add(feedbackPanel);
             }
         };
-        enderecoForm.add(inputEndereco, inputNumero, inputCep, inputBairro, inputTelefone, inputCidade, dropEstado, checkBoxPrincipal, submitAjax);
+
+
+        List<Component> inputsList = Arrays.asList(inputEndereco, inputNumero, inputCep, inputBairro, inputTelefone, inputCidade, dropEstado, checkBoxPrincipal, submitAjax);
+        inputsList.forEach(component -> {
+            component.setOutputMarkupId(true);
+            enderecoForm.add(component);
+        });
 
 
         // Validações do formulário
@@ -111,20 +118,28 @@ public class EnderecoFormPanel extends Panel {
         inputNumero.setLabel(Model.of("Número")).setRequired(true).add(StringValidator.maximumLength(5)); // TODO unicode ú
         inputCep.setLabel(Model.of("CEP")).setRequired(true).add(StringValidator.exactLength(9));
         inputBairro.setLabel(Model.of("Bairro")).setRequired(true).add(StringValidator.lengthBetween(3, 20));
-        inputTelefone.setLabel(Model.of("Telefone")).setRequired(true).add(StringValidator.exactLength(14));
+        inputTelefone.setLabel(Model.of("Telefone")).setRequired(true).add(StringValidator.lengthBetween(13, 14));
         inputCidade.setLabel(Model.of("Cidade")).setRequired(true).add(StringValidator.lengthBetween(3, 20));
         dropEstado.setLabel(Model.of("Estado")).setRequired(true);
 
 
-        inputCep.add(new AjaxEventBehavior("onBlur") {
+        // Ao digitar o CEP
+        inputCep.add(new AjaxEventBehavior("blur") {
             private static final long serialVersionUID = 8995325121134414023L;
-
             @Override
-            protected void onEvent(AjaxRequestTarget target) { // TODO organizar
+            protected void onEvent(AjaxRequestTarget target) { // TODO Tela de espera enquanto carrega os objetos
                 try {
-                    enderecoForm.setModelObject(enderecoApi.buscarEnderecopeloCep(inputCep.getModelObject()));
+                    Endereco enderecoCep = enderecoApi.buscarEnderecopeloCep(inputCep.getInput());
+                    inputEndereco.setModelObject(enderecoCep.getEndereco());
+                    inputBairro.setModelObject(enderecoCep.getBairro());
+                    inputCidade.setModelObject(enderecoCep.getCidade());
+                    dropEstado.setModelObject(enderecoCep.getEstado());
+                    target.add(inputEndereco, inputBairro, inputCidade, dropEstado);
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    feedbackPanel.error("Erro ao buscar pelo CEP no sistema! obs. erro de conexão com o backend");
+                } catch (Exception e){
+                    feedbackPanel.error(e.getMessage());
+                    target.add(feedbackPanel);
                 }
             }
         });

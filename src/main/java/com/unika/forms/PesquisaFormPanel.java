@@ -40,8 +40,7 @@ public class PesquisaFormPanel extends Panel {
                     success("Pesquisa realizada com sucesso!");
                     feedbackPanels.forEach(target::add);
                 } catch (Exception e) {
-                    System.out.println("Jogou a exceção?");
-                    this.error(e.getMessage()); // TODO está aparencendo os dois feedback panels (danger e success) no controleMonitoradores.
+                    error(e.getMessage());
                     feedbackPanels.forEach(target::add);
                 }
             }

@@ -16,61 +16,75 @@
                     <form wicket:id="formMonitorador" name="formMonitorador">
 
                         <div class="d-grid gap-3 col-10 mx-auto">
-
                             <div class="btn-group d-flex justify-content-center" role="group" aria-label="Basic radio toggle button group" style="">
                                 <span wicket:id="tipoPessoa">
                                     <input wicket:id="pf" class="btn-check" type="radio"/>
-                                    <label class="btn btn-outline-primary" wicket:for="pf">Pessoa F&iacute;sica</label>
+                                    <label wicket:for="pf" class="btn btn-outline-primary">Pessoa F&iacute;sica</label>
                                     <input wicket:id="pj" class="btn-check" type="radio"/>
-                                    <label class="btn btn-outline-primary" wicket:for="pj">Pessoa Jur&iacute;dica</label>
+                                    <label wicket:for="pj" class="btn btn-outline-primary">Pessoa Jur&iacute;dica</label>
                                 </span>
                             </div>
 
-                            <div class="form-floating mb-3">
-                                <input wicket:id="email" type="email" class="form-control" id="inputEmailForm" placeholder="nome@email.com">
-                                <label for="inputEmailForm" class="form-label">Email</label>
+                            <div class="row g-2">
+                                <div class="col-md">
+                                    <div class="form-floating mb-3">
+                                        <input wicket:id="email" type="email" class="form-control" placeholder="email@email.com">
+                                        <label wicket:for="email" class="form-label">Email</label>
+                                    </div>
+                                </div>
+                                <div class="col-md">
+                                    <div class="form-floating">
+                                        <input wicket:id="dataNascimento" type="date" class="form-control" data-date-format="yyyy-MM-dd">
+                                        <label wicket:for="dataNascimento" class="form-label">Data de Nascimento</label>
+                                    </div>
+                                </div>
                             </div>
-
-                            <div class="form-floating mb-3">
-                                <input wicket:id="dataNascimento" type="date" class="form-control" data-date-format="yyyy-MM-dd" id="inputDataNascimentoForm">
-                                <label for="inputDataNascimentoForm" class="form-label">Data de Nascimento</label>
-                            </div>
-
 
                             <!-- Pessoa Física -->
                             <div wicket:id="pfWMC">
-                                <div class="form-floating mb-3">
-                                    <input wicket:id="nome" type="text" class="form-control" id="inputNomeForm" placeholder="Seu Nome">
-                                    <label for="inputNomeForm" class="form-label">Nome</label>
-                                </div>
-
-                                <div class="form-floating mb-3" id="cpfDiv">
-                                    <input wicket:id="cpf" type="text" class="form-control" id="cpfInput" placeholder="000.000.000-00">
-                                    <label wicket:for="cpf" class="form-label">CPF</label>
-                                </div>
-
-                                <div class="form-floating mb-3">
-                                    <input wicket:id="rg" type="text" class="form-control" id="inputRgForm" placeholder="00.000.000-0">
-                                    <label for="inputRgForm" class="form-label">RG</label>
+                                <div class="row g-3">
+                                    <div class="col-md">
+                                        <div class="form-floating mb-3">
+                                            <input wicket:id="nome" type="text" class="form-control" placeholder="Seu nome">
+                                            <label wicket:for="nome" class="form-label">Nome</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md">
+                                        <div class="form-floating mb-3">
+                                            <input wicket:id="cpf" type="text" class="form-control" id="cpfInput" placeholder="999.999.999-99">
+                                            <label wicket:for="cpf" class="form-label">CPF</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md">
+                                        <div class="form-floating mb-3">
+                                            <input wicket:id="rg" type="text" class="form-control" id="inputRgForm" placeholder="99.999.99-9">
+                                            <label wicket:for="rg" class="form-label">RG</label>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
-
                             <!-- Pessoa Jurídica-->
                             <div wicket:id="pjWMC">
-                                <div class="form-floating mb-3">
-                                    <input wicket:id="razaoSocial" type="text" class="form-control" id="inputRazaoSocialForm" placeholder="Empresa X">
-                                    <label for="inputRazaoSocialForm" class="form-label">Razão Social</label>
-                                </div>
-
-                                <div class="form-floating mb-3">
-                                    <input wicket:id="cnpj" type="text" class="form-control" id="inputCnpjForm" placeholder="00.000.000/0000-00">
-                                    <label for="inputCnpjForm" class="form-label">CNPJ</label>
-                                </div>
-
-                                <div class="form-floating mb-3">
-                                    <input wicket:id="inscricaoEstadual" type="text" class="form-control" id="inputInscricaoEstadualForm" placeholder="00.000.000-0">
-                                    <label for="inputInscricaoEstadualForm" class="form-label">Inscrição Estadual</label>
+                                <div class="row g-3">
+                                    <div class="col-md">
+                                        <div class="form-floating mb-3">
+                                            <input wicket:id="razaoSocial" type="text" class="form-control" placeholder="Empresa x">
+                                            <label wicket:for="razaoSocial" class="form-label">Razão Social</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md">
+                                        <div class="form-floating mb-3">
+                                            <input wicket:id="cnpj" type="text" class="form-control" id="inputCnpjForm" placeholder="99.999.999/9999-99">
+                                            <label wicket:for="cnpj" class="form-label">CNPJ</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md">
+                                        <div class="form-floating mb-3">
+                                            <input wicket:id="inscricaoEstadual" type="text" class="form-control" placeholder="99.999.999-9">
+                                            <label wicket:for="inscricaoEstadual" class="form-label">Inscrição Estadual</label>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 

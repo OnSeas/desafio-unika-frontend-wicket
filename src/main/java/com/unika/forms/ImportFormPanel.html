@@ -4,17 +4,14 @@
         <wicket:panel>
             <h3 style="text-align: center">Importar</h3>
 
-            <div wicket:id="feedbackPanel" class="alert alert-danger alert-dismissible fade show" role="alert" style="width: 80%; margin: auto">
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
+            <div wicket:id="feedbackPanel" class="alert alert-danger alert-dismissible fade show" role="alert" style="width: 80%; margin: auto"></div>
 
             <form wicket:id="importForm">
                 <div class="d-grid gap-7 col-9 mx-auto">
                     <div>
-                        <label for="formFile" class="form-label">upload de arquivo xlsx</label>
-                        <input wicket:id="importField" class="form-control" type="file" id="formFile">
+                        <label wicket:for="importField" class="form-label">upload de arquivo xlsx</label>
+                        <input wicket:id="importField" class="form-control" type="file">
                     </div>
-
                     <div>
                         <input wicket:id="submitAjax" type="submit" value="Importar" class="btn btn-primary">
                     </div>

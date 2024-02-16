@@ -77,7 +77,11 @@ public class EnderecoApi implements Serializable {
     }
 
     public Endereco buscarEnderecopeloCep(String cep) throws IOException {
-        Response response = apiService.conectarApiGET(apiUrl + "/buscar/" + cep);
+        if (cep.isBlank()){
+            throw new RuntimeException("Cep inválido!");
+        }
+
+        Response response = apiService.conectarApiGET(apiUrl + "/getbyCep/" + cep);
 
         assert response.body() != null;
         String res = response.body().string();

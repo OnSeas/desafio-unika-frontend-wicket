@@ -39,7 +39,7 @@ public class ControleMonitoradores extends HomePage{
                 super.onConfigure();
                 this.setOutputMarkupId(true);
                 this.setOutputMarkupPlaceholderTag(true);
-                setVisible(anyMessage(250)); // 250 é o level de success FeedbackMessage
+                this.setVisible(anyMessage(250) && !anyErrorMessage()); // Não consigo entender pq sem a segunda validação aparece as msg de erro tbm (ps: esse mostra qualquer msg que não seja de erro mesmo usando o 250(success) como parâmetro.
             }
         };
         feedbackPanelSuccess.add(new AjaxEventBehavior("click") {
@@ -59,7 +59,7 @@ public class ControleMonitoradores extends HomePage{
                 super.onConfigure();
                 this.setOutputMarkupId(true);
                 this.setOutputMarkupPlaceholderTag(true);
-                setVisible(anyErrorMessage());
+                this.setVisible(anyErrorMessage());
             }
         };
         feedbackPanelError.add(new AjaxEventBehavior("click") {

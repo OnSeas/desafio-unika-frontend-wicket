@@ -13,58 +13,86 @@
 
                 <form wicket:id="enderecoForm">
                     <div class="d-grid gap-7 col-10 mx-auto">
-                        <div class="form-floating mb-3">
-                            <textarea class="form-control" wicket:id="endereco" placeholder="Rua 01, Qd 00 Lt 02..." id="inputEnderecoForm"></textarea>
-                            <label for="inputEnderecoForm" class="form-label">Endere&ccedil;o</label>
+
+                        <div class="row g-2">
+                            <div class="col-md">
+                                <div class="form-floating mb-3">
+                                    <input wicket:id="cep" type="text" class="form-control" id="inputCepForm" placeholder="00000-000">
+                                    <label wicket:for="cep" class="form-label">CEP</label>
+                                </div>
+                            </div>
+                            <div class="col-md">
+                                <div class="form-floating mb-3">
+                                    <input wicket:id="numero" type="text" class="form-control" placeholder="000">
+                                    <label wicket:for="numero" class="form-label">N&uacute;mero</label>
+                                </div>
+                            </div>
                         </div>
 
-                        <div class="form-floating mb-3">
-                            <input type="text" class="form-control" wicket:id="numero" id="inputNumberForm" placeholder="000">
-                            <label for="inputNumberForm" class="form-label">N&uacute;mero</label>
+                        <div class="row g-3">
+                            <div class="col-md">
+                                <div class="form-floating mb-3">
+                                    <input wicket:id="cidade" type="text" class="form-control" placeholder="São Paulo">
+                                    <label wicket:for="cidade" class="form-label">Cidade</label>
+                                </div>
+                            </div>
+                            <div class="col-md">
+                                <div class="form-floating mb-3">
+                                    <select wicket:id="estado" class="form-select form-select mb-3">
+                                    </select>
+                                    <label wicket:for="estado" class="form-label">Estado</label>
+                                </div>
+                            </div>
+                            <div class="col-md">
+                                <div class="form-floating mb-3">
+                                    <input wicket:id="bairro" type="text" class="form-control" placeholder="São João">
+                                    <label wicket:for="bairro" class="form-label">Bairro</label>
+                                </div>
+                            </div>
                         </div>
 
-                        <div class="form-floating mb-3">
-                            <input type="text" class="form-control" wicket:id="cep" id="inputCepForm" placeholder="00000-000">
-                            <label for="inputCepForm" class="form-label">CEP</label>
-                        </div>
-
-                        <div class="form-floating mb-3">
-                            <input type="text" class="form-control" wicket:id="bairro" id="inputBairroForm" placeholder="São João">
-                            <label for="inputBairroForm" class="form-label">Bairro</label>
-                        </div>
-
-                        <div class="form-floating mb-3">
-                            <input type="text" class="form-control" wicket:id="telefone" id="inputTelefoneForm" placeholder="(00)00000-0000">
-                            <label for="inputTelefoneForm" class="form-label">Telefone</label>
-                        </div>
-
-                        <div class="form-floating mb-3">
-                            <input type="text" class="form-control" wicket:id="cidade" id="inputCidadeForm" placeholder="São Paulo">
-                            <label for="inputCidadeForm" class="form-label">Cidade</label>
-                        </div>
-
-                        <div class="form-floating mb-3">
-                            <select class="form-select form-select mb-3" aria-label="Default select example" wicket:id="estado" id="inputEstadoForm">
-                            </select>
-                            <label for="inputEstadoForm" class="form-label">Estado</label>
+                        <div class="row g-2">
+                            <div class="col-md">
+                                <div class="form-floating mb-3">
+                                    <input wicket:id="telefone" type="text" class="form-control" id="inputTelefoneForm" placeholder="(99)99999-9999">
+                                    <label wicket:for="telefone" class="form-label">Telefone</label>
+                                </div>
+                            </div>
+                            <div class="col-md">
+                                <div class="form-floating mb-3">
+                                    <textarea wicket:id="endereco" class="form-control" placeholder="Rua 01, Qd 02 Lt 03..."></textarea>
+                                    <label wicket:for="endereco" class="form-label">Endere&ccedil;o</label>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="d-flex justify-content-end mb-3">
                             <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" wicket:id="principal" id="flexSwitchCheckDefault">
-                                <label class="form-check-label" for="flexSwitchCheckDefault">Endereço Principal</label>
+                                <input wicket:id="principal" class="form-check-input" type="checkbox">
+                                <label wicket:for="principal" class="form-check-label">Endereço Principal</label>
                             </div>
                         </div>
 
-                        <input wicket:id="submitAjax" class="btn btn-primary" type="submit" value="Cadastrar">
+                        <input wicket:id="submitAjax" class="btn btn-primary" type="submit" value="Salvar">
                     </div>
                 </form>
             </div>
 
             <script type="text/javascript">
                 $(document).ready(function (){
+                    // Máscara de Cep
                     $('#inputCepForm').mask('00000-000')
-                    $('#inputTelefoneForm').mask('(00)00000-0000') // TODO
+
+                    // Máscara de telefone
+                    var behavior = function (val) {
+                            return val.replace(/\D/g, '').length === 11 ? '(00)00000-0000' : '(00)0000-00009';
+                        },
+                        options = {
+                            onKeyPress: function (val, e, field, options) {
+                                field.mask(behavior.apply({}, arguments), options);
+                            }
+                        };
+                    $('#inputTelefoneForm').mask(behavior, options) //TODO
                 });
             </script>
         </wicket:panel>

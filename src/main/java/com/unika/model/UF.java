@@ -1,5 +1,9 @@
 package com.unika.model;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+import lombok.Getter;
+
+@Getter
 public enum UF {
     AMAZONAS("AM"),
     ALAGOAS("AL"),
@@ -29,13 +33,10 @@ public enum UF {
     SERGIPE("SE"),
     DISTRITO_FEDERAL("DF");
 
+    @JsonValue
     private final String sigla;
 
     UF(String sigla){
         this.sigla = sigla;
-    }
-
-    public String getSigla() {
-        return sigla;
     }
 }

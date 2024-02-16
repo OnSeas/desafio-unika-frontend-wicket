@@ -5,6 +5,7 @@ import com.unika.model.Monitorador;
 import com.unika.model.TipoPessoa;
 import com.unika.model.apiService.EnderecoApi;
 import com.unika.model.apiService.MonitoradorApi;
+import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
@@ -22,6 +23,7 @@ import org.apache.wicket.validation.validator.EmailAddressValidator;
 import org.apache.wicket.validation.validator.StringValidator;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -141,13 +143,15 @@ public class MonitoradorFormPanel extends Panel {
         pjWMC.setOutputMarkupPlaceholderTag(true);
         pjWMC.add(inputRazaoSocial, inputCnpj, inputInscricaoEstadual);
 
+        // Setando todos os input com OutputMarkupId true
+        List<Component> inputList = Arrays.asList(inputEmail, inputDataNascimento, inputCpf, inputNome, inputRg, inputRazaoSocial, inputCnpj, inputInscricaoEstadual);
+        inputList.forEach(component -> component.setOutputMarkupId(true));
 
         // -- -- -- Validações em campos
         radioTipoPessoa.setLabel(Model.of("Tipo de pessoa")).setRequired(true);
         inputEmail.setLabel(Model.of("Email do contato")).setRequired(true).add(EmailAddressValidator.getInstance());
         inputDataNascimento.setLabel(Model.of("Data nascimento")).setRequired(true);
         inputCpf.setLabel(Model.of("CPF")).setRequired(true).add(StringValidator.exactLength(14));
-        inputCpf.setOutputMarkupId(true); // Pelo jeito tem que colocar todos os inpujts como true
         inputNome.setLabel(Model.of("Nome")).setRequired(true).add(StringValidator.lengthBetween(3, 50));
         inputRg.setLabel(Model.of("RG")).setRequired(true).add(StringValidator.exactLength(12));
         inputRazaoSocial.setLabel(Model.of("Razão Social")).setRequired(true).add(StringValidator.lengthBetween(3, 50));
@@ -190,6 +194,7 @@ public class MonitoradorFormPanel extends Panel {
         });
 
 
+        // Botão de submit
         monitoradorForm.add(new AjaxButton("ajaxSubmit", monitoradorForm) {
             private static final long serialVersionUID = -8806215908629462715L;
             @Override
@@ -213,6 +218,7 @@ public class MonitoradorFormPanel extends Panel {
             }
         });
 
+
         // Mostrar os inputs corretos ao selecionar o tipo de pessoa
         radioTipoPessoa.get("pf").add(new AjaxEventBehavior("focusin") {
             private static final long serialVersionUID = 7722774318433529522L;
@@ -223,7 +229,6 @@ public class MonitoradorFormPanel extends Panel {
                 target.add(pfWMC, pjWMC);
             }
         });
-
         radioTipoPessoa.get("pj").add(new AjaxEventBehavior("focusin") {
             private static final long serialVersionUID = 7722774318433529522L;
             @Override
@@ -233,6 +238,7 @@ public class MonitoradorFormPanel extends Panel {
                 target.add(pfWMC, pjWMC);
             }
         });
+
 
         monitoradorForm.add(pfWMC, pjWMC);
         return monitoradorForm;
