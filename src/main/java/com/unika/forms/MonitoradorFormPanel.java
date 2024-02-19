@@ -22,12 +22,14 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.validation.validator.EmailAddressValidator;
 import org.apache.wicket.validation.validator.StringValidator;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
 public class MonitoradorFormPanel extends Panel {
+    @Serial
     private static final long serialVersionUID = -8284617783524484913L;
     public WebMarkupContainer listaEnderecoWMC = new WebMarkupContainer("listaEnderecoWMC");
     public EnderecoApi enderecoApi = new EnderecoApi();
@@ -40,16 +42,18 @@ public class MonitoradorFormPanel extends Panel {
 
         //Configurando os FeedbackPanels
         feedbackMessageSuccess = new FeedbackPanel("FeedbackMessageSuccess"){
+            @Serial
             private static final long serialVersionUID = -1547023497652558705L;
             @Override
             protected void onConfigure() {
                 super.onConfigure();
                 this.setOutputMarkupId(true);
                 this.setOutputMarkupPlaceholderTag(true);
-                setVisible(anyMessage(250));
+                setVisible(anyMessage(250) && !anyErrorMessage());
             }
         };
         feedbackMessageSuccess.add(new AjaxEventBehavior("click") {
+            @Serial
             private static final long serialVersionUID = 7722774318433529522L;
             @Override
             protected void onEvent(AjaxRequestTarget target) {
@@ -59,6 +63,7 @@ public class MonitoradorFormPanel extends Panel {
         });
         add(feedbackMessageSuccess);
         feedbackMessageError = new FeedbackPanel("FeedbackMessageError"){
+            @Serial
             private static final long serialVersionUID = 5148472465033548020L;
             @Override
             protected void onConfigure() {
@@ -69,6 +74,7 @@ public class MonitoradorFormPanel extends Panel {
             }
         };
         feedbackMessageError.add(new AjaxEventBehavior("click") {
+            @Serial
             private static final long serialVersionUID = -8000879227247712657L;
             @Override
             protected void onEvent(AjaxRequestTarget target) {
@@ -159,7 +165,8 @@ public class MonitoradorFormPanel extends Panel {
         inputInscricaoEstadual.setLabel(Model.of("Inscrição Estadual")).setRequired(true).add(StringValidator.maximumLength(18));
 
         // Mascáras de inputs
-        inputCpf.add(new AjaxEventBehavior("focusin") {
+        inputCpf.add(new AjaxEventBehavior("focus") {
+            @Serial
             private static final long serialVersionUID = -8024661883244296260L;
             @Override
             protected void onEvent(AjaxRequestTarget target) {
@@ -170,7 +177,8 @@ public class MonitoradorFormPanel extends Panel {
             }
         });
 
-        inputRg.add(new AjaxEventBehavior("focusin") {
+        inputRg.add(new AjaxEventBehavior("focus") {
+            @Serial
             private static final long serialVersionUID = -984263498898264817L;
             @Override
             protected void onEvent(AjaxRequestTarget target) {
@@ -181,7 +189,8 @@ public class MonitoradorFormPanel extends Panel {
             }
         });
 
-        inputCnpj.add(new AjaxEventBehavior("focusin") {
+        inputCnpj.add(new AjaxEventBehavior("focus") {
+            @Serial
             private static final long serialVersionUID = 3145077170075078630L;
 
             @Override
@@ -196,6 +205,7 @@ public class MonitoradorFormPanel extends Panel {
 
         // Botão de submit
         monitoradorForm.add(new AjaxButton("ajaxSubmit", monitoradorForm) {
+            @Serial
             private static final long serialVersionUID = -8806215908629462715L;
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
@@ -220,7 +230,8 @@ public class MonitoradorFormPanel extends Panel {
 
 
         // Mostrar os inputs corretos ao selecionar o tipo de pessoa
-        radioTipoPessoa.get("pf").add(new AjaxEventBehavior("focusin") {
+        radioTipoPessoa.get("pf").add(new AjaxEventBehavior("focus") {
+            @Serial
             private static final long serialVersionUID = 7722774318433529522L;
             @Override
             protected void onEvent(AjaxRequestTarget target) {
@@ -229,7 +240,8 @@ public class MonitoradorFormPanel extends Panel {
                 target.add(pfWMC, pjWMC);
             }
         });
-        radioTipoPessoa.get("pj").add(new AjaxEventBehavior("focusin") {
+        radioTipoPessoa.get("pj").add(new AjaxEventBehavior("focus") {
+            @Serial
             private static final long serialVersionUID = 7722774318433529522L;
             @Override
             protected void onEvent(AjaxRequestTarget target) {

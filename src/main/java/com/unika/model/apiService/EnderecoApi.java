@@ -76,6 +76,23 @@ public class EnderecoApi implements Serializable {
         }
     }
 
+    public String tornarPrincipal(Long idMonitorador, Long idEndereco) throws IOException {
+        Response response = apiService.conectarApiPUT(
+                "",
+                apiUrl + "/" + idMonitorador + "/tornar-principal/" + idEndereco
+        );
+
+        assert response.body() != null;
+        String res = response.body().string();
+        response.close();
+
+        if (response.isSuccessful()){
+            return res;
+        } else {
+            throw new RuntimeException(res);
+        }
+    }
+
     public Endereco buscarEnderecopeloCep(String cep) throws IOException {
         if (cep.isBlank()){
             throw new RuntimeException("Cep inválido!");

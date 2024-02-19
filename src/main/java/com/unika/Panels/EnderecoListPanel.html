@@ -26,6 +26,7 @@
                     <th>Cidade</th>
                     <th>UF</th>
                     <th>Op&ccedil;&otilde;es</th>
+                    <th>Principal</th>
                 </tr>
                 <tr wicket:id="enderecos">
                     <td wicket:id="index">[count]</td>
@@ -39,6 +40,10 @@
                             <button wicket:id="ajaxEditar" type="button" class="btn btn-primary">Editar</button>
                             <button wicket:id="ajaxExcluir" type="button" class="btn btn-danger">Excluir</button>
                         </div>
+                    </td>
+                    <td>
+                        <button wicket:id="TornarPrincipal" type="button" class="btn btn-secondary">Tornar</button>
+                        <button wicket:id="principalButton" type="button" class="btn btn-success" disabled></button>
                     </td>
                 </tr>
             </table>

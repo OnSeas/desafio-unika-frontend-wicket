@@ -8,6 +8,7 @@ import com.unika.model.apiService.MonitoradorApi;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
@@ -86,7 +87,8 @@ public class ControleMonitoradores extends HomePage{
 
 
         // Modal que é usado em todos pop-ups
-        modalWindow.setCookieName("modalWindow-1");
+//        modalWindow.setCookieName("modal-window-1");
+        modalWindow.setResizable(false);
         add(modalWindow);
 
         // WMC que envolve a lista já inciando a lista geral
@@ -106,6 +108,9 @@ public class ControleMonitoradores extends HomePage{
             private static final long serialVersionUID = -387605849215267697L;
             @Override
             public void onClick(AjaxRequestTarget target) {
+                modalWindow.setInitialWidth(55);
+                modalWindow.setWidthUnit("%");
+                modalWindow.setInitialHeight(400);
                 modalWindow.setContent(new MonitoradorFormPanel(modalWindow.getContentId(),
                         new Monitorador()));
                 modalWindow.show(target);
@@ -117,6 +122,9 @@ public class ControleMonitoradores extends HomePage{
             private static final long serialVersionUID = -7139346449600703225L;
             @Override
             public void onClick(AjaxRequestTarget target) {
+                modalWindow.setInitialWidth(35);
+                modalWindow.setWidthUnit("%");
+                modalWindow.setInitialHeight(210);
                 modalWindow.setContent(new ImportFormPanel(modalWindow.getContentId()));
                 modalWindow.show(target);
             }

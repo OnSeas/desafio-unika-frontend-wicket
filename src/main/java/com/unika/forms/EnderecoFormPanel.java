@@ -9,6 +9,7 @@ import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.*;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
@@ -18,11 +19,13 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.validation.validator.StringValidator;
 
 import java.io.IOException;
+import java.io.Serial;
 import java.util.Arrays;
 import java.util.List;
 
 public class EnderecoFormPanel extends Panel {
-    private static final long serialVersionUID = 8787731904574781396L;
+    @Serial
+    private static final long serialVersionUID = -7243543132733295966L;
     MonitoradorApi monitoradorApi = new MonitoradorApi();
     EnderecoApi enderecoApi = new EnderecoApi();
 
@@ -31,6 +34,7 @@ public class EnderecoFormPanel extends Panel {
 
         // Config do FeedbackPanel para mensagens de erro
         FeedbackPanel feedbackPanel = new FeedbackPanel("feedbackMessage"){
+            @Serial
             private static final long serialVersionUID = 1399754822422272539L;
             @Override
             protected void onConfigure() {
@@ -41,6 +45,7 @@ public class EnderecoFormPanel extends Panel {
             }
         };
         feedbackPanel.add(new AjaxEventBehavior("click") {
+            @Serial
             private static final long serialVersionUID = 5765700798154888806L;
             @Override
             protected void onEvent(AjaxRequestTarget target) {
@@ -71,6 +76,7 @@ public class EnderecoFormPanel extends Panel {
         DropDownChoice<UF> dropEstado = new DropDownChoice<>("estado",
                 Arrays.asList(UF.values()),
                 new ChoiceRenderer<UF>(){
+                    @Serial
                     private static final long serialVersionUID = 2254888871382690067L;
                     @Override
                     public Object getDisplayValue(UF estado){
@@ -79,8 +85,21 @@ public class EnderecoFormPanel extends Panel {
                 });
 
         CheckBox checkBoxPrincipal = new CheckBox("principal");
+        checkBoxPrincipal.setOutputMarkupId(true);
+
+        WebMarkupContainer divPrincipal = new WebMarkupContainer("divPrincipal"){
+            @Serial
+            private static final long serialVersionUID = -1727909086220783131L;
+            @Override
+            protected void onConfigure() {
+                super.onConfigure();
+                setVisible(endereco.getId() == null);
+            }
+        };
+        divPrincipal.add(checkBoxPrincipal);
 
         AjaxButton submitAjax = new AjaxButton("submitAjax", enderecoForm) {
+            @Serial
             private static final long serialVersionUID = 3333211378039191514L;
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
@@ -106,7 +125,7 @@ public class EnderecoFormPanel extends Panel {
         };
 
 
-        List<Component> inputsList = Arrays.asList(inputEndereco, inputNumero, inputCep, inputBairro, inputTelefone, inputCidade, dropEstado, checkBoxPrincipal, submitAjax);
+        List<Component> inputsList = Arrays.asList(inputEndereco, inputNumero, inputCep, inputBairro, inputTelefone, inputCidade, dropEstado, divPrincipal, submitAjax);
         inputsList.forEach(component -> {
             component.setOutputMarkupId(true);
             enderecoForm.add(component);
@@ -125,9 +144,10 @@ public class EnderecoFormPanel extends Panel {
 
         // Ao digitar o CEP
         inputCep.add(new AjaxEventBehavior("blur") {
+            @Serial
             private static final long serialVersionUID = 8995325121134414023L;
             @Override
-            protected void onEvent(AjaxRequestTarget target) { // TODO Tela de espera enquanto carrega os objetos
+            protected void onEvent(AjaxRequestTarget target) {
                 try {
                     Endereco enderecoCep = enderecoApi.buscarEnderecopeloCep(inputCep.getInput());
                     inputEndereco.setModelObject(enderecoCep.getEndereco());

@@ -46,8 +46,8 @@ public class MonitoradorListPanel extends Panel {
         add(monitoradorListWMC);
 
         // config do modaw
-        modalWindow.setCookieName("modalWindow-options");
         modalWindow.setOutputMarkupId(true);
+        modalWindow.setResizable(false);
         add(modalWindow);
 
         modalWindow.setWindowClosedCallback(new ModalWindow.WindowClosedCallback() {
@@ -102,6 +102,7 @@ public class MonitoradorListPanel extends Panel {
         return new PageableListView<Monitorador>("monitoradores", monitoradores, 8) {
             @Serial
             private static final long serialVersionUID = -7313164500893623865L;
+
             @Override
             protected void populateItem(final ListItem<Monitorador> listItem) {
                 // Valores de cada monitorador
@@ -119,6 +120,9 @@ public class MonitoradorListPanel extends Panel {
                     @Override
                     public void onClick(AjaxRequestTarget target) {
                         try {
+                            modalWindow.setInitialWidth(60);
+                            modalWindow.setWidthUnit("%");
+                            modalWindow.setInitialHeight(700);
                             modalWindow.setContent(new MonitoradorFormPanel(modalWindow.getContentId(), listItem.getModelObject()));
                         } catch (Exception e){
                             error(e.getMessage());
@@ -132,6 +136,7 @@ public class MonitoradorListPanel extends Panel {
                     @Override
                     public void onClick(AjaxRequestTarget target) {
                         try {
+                            setModalDialogSize();
                             modalWindow.setContent(new ConfirmationModal(
                                     modalWindow.getContentId(),
                                     listItem,
@@ -150,6 +155,7 @@ public class MonitoradorListPanel extends Panel {
                     @Override
                     public void onClick(AjaxRequestTarget target) {
                         try {
+                            setModalDialogSize();
                             modalWindow.setContent(new ConfirmationModal(
                                     modalWindow.getContentId(),
                                             listItem,
@@ -168,6 +174,7 @@ public class MonitoradorListPanel extends Panel {
                     @Override
                     public void onClick(AjaxRequestTarget target) {
                         try {
+                            setModalDialogSize();
                             modalWindow.setContent(new ConfirmationModal(
                                             modalWindow.getContentId(),
                                             listItem,
@@ -190,33 +197,29 @@ public class MonitoradorListPanel extends Panel {
 
                 listItem.add(desativarAjax, ativarAjax);
 
-                listItem.add(new AjaxLink<Void>("reportView") { //TODO Mostrar o Pdf ou Html na ModalWindow
-                    @Serial
-                    private static final long serialVersionUID = 7878631882100442474L;
-                    @Override
-                    public void onClick(AjaxRequestTarget target) {
-                        modalWindow.setContent(new PdfPanel(modalWindow.getContentId()));
-                        modalWindow.show(target);
-                    }
-                });
-
-                listItem.add(new DownloadLink("reportDownload", new AbstractReadOnlyModel<File>() {
+                listItem.add(new DownloadLink("reportDownload", new AbstractReadOnlyModel<>() {
                     @Serial
                     private static final long serialVersionUID = -8630718144901310523L;
                     @Override
                     public File getObject() {
-                        File tempFile;
+                        File reportFile;
                         try {
-                            tempFile = monitoradorApi.gerarRelatorio(listItem.getModelObject().getId());
+                            reportFile = monitoradorApi.gerarRelatorio(listItem.getModelObject().getId());
                         }
                         catch (Exception e){
-                            tempFile = null;
+                            reportFile = null;
                             error(e.getMessage());
                         }
-                        return tempFile;
+                        return reportFile;
                     }
                 }));
             }
         };
+    }
+
+    private void setModalDialogSize(){
+        modalWindow.setInitialWidth(30);
+        modalWindow.setWidthUnit("%");
+        modalWindow.setInitialHeight(150);
     }
 }
