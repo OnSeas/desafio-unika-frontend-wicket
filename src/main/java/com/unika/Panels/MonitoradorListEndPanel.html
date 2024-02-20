@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="pt" xmlns:wicket="http://wicket.apache.org">
+    <head>
+        <meta charset="UTF-8">
+        <title></title>
+    </head>
+    <body>
+        <wicket:panel>
+            <form wicket:id="selectForm">
+                <div class="row g-2 mb-3" style="width: 50%">
+                    <div class="col-md">
+                        <div class="form-floating mb-3">
+                            <input wicket:id="id" type="text" class="form-control" placeholder="(99)99999-9999">
+                            <label wicket:for="id" class="form-label">Id Monitorador</label>
+                        </div>
+                    </div>
+                    <div class="col-md">
+                        <div class="form-floating mb-3">
+                            <input type="submit" class="btn btn-primary" wicket:id="ajaxSubmit">
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <div wicket:id="enderecoPanel">
+                <span wicket:id="enderecoListPanel"></span>
+            </div>
+        </wicket:panel>
+    </body>
+</html>

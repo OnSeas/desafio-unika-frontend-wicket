@@ -47,9 +47,11 @@ public class MonitoradorFormPanel extends Panel {
             @Override
             protected void onConfigure() {
                 super.onConfigure();
-                this.setOutputMarkupId(true);
-                this.setOutputMarkupPlaceholderTag(true);
                 setVisible(anyMessage(250) && !anyErrorMessage());
+                if(this.isVisible()){
+                    String jqueryScript = "$('#" + getMarkupId() + "').delay(2500).fadeOut();";
+                    getResponse().write("<script type=\"text/javascript\">" + jqueryScript + "</script>");
+                }
             }
         };
         feedbackMessageSuccess.add(new AjaxEventBehavior("click") {
@@ -61,6 +63,8 @@ public class MonitoradorFormPanel extends Panel {
                 target.add(feedbackMessageSuccess);
             }
         });
+        feedbackMessageSuccess.setOutputMarkupId(true);
+        feedbackMessageSuccess.setOutputMarkupPlaceholderTag(true);
         add(feedbackMessageSuccess);
         feedbackMessageError = new FeedbackPanel("FeedbackMessageError"){
             @Serial
@@ -68,9 +72,11 @@ public class MonitoradorFormPanel extends Panel {
             @Override
             protected void onConfigure() {
                 super.onConfigure();
-                this.setOutputMarkupId(true);
-                this.setOutputMarkupPlaceholderTag(true);
                 setVisible(anyErrorMessage());
+                if(this.isVisible()){
+                    String jqueryScript = "$('#" + getMarkupId() + "').delay(2500).fadeOut();";
+                    getResponse().write("<script type=\"text/javascript\">" + jqueryScript + "</script>");
+                }
             }
         };
         feedbackMessageError.add(new AjaxEventBehavior("click") {
@@ -82,6 +88,8 @@ public class MonitoradorFormPanel extends Panel {
                 target.add(feedbackMessageError);
             }
         });
+        feedbackMessageError.setOutputMarkupId(true);
+        feedbackMessageError.setOutputMarkupPlaceholderTag(true);
         add(feedbackMessageError);
 
         feedbackPanels.add(feedbackMessageError);
@@ -99,7 +107,7 @@ public class MonitoradorFormPanel extends Panel {
         else {
             add(new Label("monitoradorFormTitle", Model.of("Editar info do monitorador")));
 
-            WebMarkupContainer wmc;
+            WebMarkupContainer wmc; // Já mostrar os inputs corretos.
             if (monitorador.getTipoPessoa().equals(TipoPessoa.PESSOA_FISICA)){
                 wmc = (WebMarkupContainer) monitoradorForm.get("pfWMC");
             } else{

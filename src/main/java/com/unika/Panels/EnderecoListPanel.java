@@ -25,7 +25,7 @@ public class EnderecoListPanel extends Panel {
     private static final long serialVersionUID = -1429184536413087837L;
     EnderecoApi enderecoApi = new EnderecoApi();
     WebMarkupContainer enderecoListWMC = new WebMarkupContainer("enderecoListWMC");
-    ModalWindow modalWindow = new ModalWindow("modalEndereco");
+    final ModalWindow modalWindow = new ModalWindow("modalEnd");
     final Long idMonitorador;
     List<Endereco> enderecoList;
 
@@ -41,12 +41,11 @@ public class EnderecoListPanel extends Panel {
 
         add(new AjaxLink<Void>("criarEndereco") { // Criar novo endereço
             @Serial
-            private static final long serialVersionUID = -5987685929992738636L;
-
+            private static final long serialVersionUID = -7867338417724841250L;
             @Override
             public void onClick(AjaxRequestTarget target) {
                 setModalFormSize();
-                modalWindow.setContent(new EnderecoFormPanel(ModalWindow.CONTENT_ID, new Endereco(), idMonitorador));
+                modalWindow.setContent(new EnderecoFormPanel(modalWindow.getContentId(), new Endereco(), idMonitorador));
                 modalWindow.show(target);
             }
         });
@@ -54,7 +53,6 @@ public class EnderecoListPanel extends Panel {
         addList();
         add(enderecoListWMC);
 
-        modalWindow.setOutputMarkupId(true);
         modalWindow.setResizable(false);
         add(modalWindow);
 
@@ -64,15 +62,9 @@ public class EnderecoListPanel extends Panel {
             private static final long serialVersionUID = 7800205096545281286L;
             @Override
             public void onClose(AjaxRequestTarget target) {
-                if (idMonitorador != -1L){
-                    recarregarList();
-                    addList();
-                    target.add(enderecoListWMC);
-                    feedbackPanels.forEach(target::add);
-                } else {
-                    addList();
-                    target.add(enderecoListWMC);
-                }
+                addList();
+                target.add(enderecoListWMC);
+                feedbackPanels.forEach(target::add);
             }
         });
     }
@@ -110,7 +102,7 @@ public class EnderecoListPanel extends Panel {
 
                     listItem.add(new AjaxLink<Void>("ajaxEditar") {
                         @Serial
-                        private static final long serialVersionUID = -660882723667008281L;
+                        private static final long serialVersionUID = 2580172425403012021L;
                         @Override
                         public void onClick(AjaxRequestTarget target) {
                             setModalFormSize();

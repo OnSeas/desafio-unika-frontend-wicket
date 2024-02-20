@@ -8,7 +8,6 @@ import com.unika.model.apiService.MonitoradorApi;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
@@ -41,11 +40,10 @@ public class ControleMonitoradores extends HomePage{
             @Override
             protected void onConfigure() {
                 super.onConfigure();
-                this.setOutputMarkupId(true);
-                this.setOutputMarkupPlaceholderTag(true);
                 this.setVisible(anyMessage(250) && !anyErrorMessage()); // Não consigo entender pq sem a segunda validação aparece as msg de erro tbm (ps: esse mostra qualquer msg que não seja de erro mesmo usando o 250(success) como parâmetro.
                 if(this.isVisible()){
-                    // Todo Descobrir como fazer para o feedbackPanel sumir sozinho depois de alguns segundos.
+                    String jqueryScript = "$('#" + getMarkupId() + "').delay(2500).fadeOut();";
+                    getResponse().write("<script type=\"text/javascript\">" + jqueryScript + "</script>");
                 }
             }
         };
@@ -58,6 +56,8 @@ public class ControleMonitoradores extends HomePage{
                 target.add(feedbackPanelSuccess);
             }
         });
+        feedbackPanelSuccess.setOutputMarkupId(true);
+        feedbackPanelSuccess.setOutputMarkupPlaceholderTag(true);
         add(feedbackPanelSuccess);
 
         feedbackPanelError = new FeedbackPanel("feedbackPanelError"){
@@ -66,9 +66,11 @@ public class ControleMonitoradores extends HomePage{
             @Override
             protected void onConfigure() {
                 super.onConfigure();
-                this.setOutputMarkupId(true);
-                this.setOutputMarkupPlaceholderTag(true);
                 this.setVisible(anyErrorMessage());
+                if(this.isVisible()){
+                    String jqueryScript = "$('#" + getMarkupId() + "').delay(2500).fadeOut();";
+                    getResponse().write("<script type=\"text/javascript\">" + jqueryScript + "</script>");
+                }
             }
         };
         feedbackPanelError.add(new AjaxEventBehavior("click") {
@@ -80,6 +82,8 @@ public class ControleMonitoradores extends HomePage{
                 target.add(feedbackPanelError);
             }
         });
+        feedbackPanelError.setOutputMarkupId(true);
+        feedbackPanelError.setOutputMarkupPlaceholderTag(true);
         add(feedbackPanelError);
 
         feedbackPanels.add(feedbackPanelSuccess);
@@ -87,7 +91,6 @@ public class ControleMonitoradores extends HomePage{
 
 
         // Modal que é usado em todos pop-ups
-//        modalWindow.setCookieName("modal-window-1");
         modalWindow.setResizable(false);
         add(modalWindow);
 

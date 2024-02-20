@@ -39,9 +39,11 @@ public class EnderecoFormPanel extends Panel {
             @Override
             protected void onConfigure() {
                 super.onConfigure();
-                this.setOutputMarkupId(true);
-                this.setOutputMarkupPlaceholderTag(true);
                 setVisible(anyErrorMessage());
+                if(this.isVisible()){
+                    String jqueryScript = "$('#" + getMarkupId() + "').delay(2500).fadeOut();";
+                    getResponse().write("<script type=\"text/javascript\">" + jqueryScript + "</script>");
+                }
             }
         };
         feedbackPanel.add(new AjaxEventBehavior("click") {
@@ -53,6 +55,8 @@ public class EnderecoFormPanel extends Panel {
                 target.add(feedbackPanel);
             }
         });
+        feedbackPanel.setOutputMarkupId(true);
+        feedbackPanel.setOutputMarkupPlaceholderTag(true);
         add(feedbackPanel);
 
         // Criando um endereço
@@ -133,8 +137,8 @@ public class EnderecoFormPanel extends Panel {
 
 
         // Validações do formulário
-        inputEndereco.setLabel(Model.of("Endereço")).setRequired(true).add(StringValidator.lengthBetween(3, 50)); // TODO unicode ç
-        inputNumero.setLabel(Model.of("Número")).setRequired(true).add(StringValidator.maximumLength(5)); // TODO unicode ú
+        inputEndereco.setLabel(Model.of("Endereço")).setRequired(true).add(StringValidator.lengthBetween(3, 50));
+        inputNumero.setLabel(Model.of("Número")).setRequired(true).add(StringValidator.maximumLength(5));
         inputCep.setLabel(Model.of("CEP")).setRequired(true).add(StringValidator.exactLength(9));
         inputBairro.setLabel(Model.of("Bairro")).setRequired(true).add(StringValidator.lengthBetween(3, 20));
         inputTelefone.setLabel(Model.of("Telefone")).setRequired(true).add(StringValidator.lengthBetween(13, 14));
