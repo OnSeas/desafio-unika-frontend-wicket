@@ -25,7 +25,7 @@ public class PesquisaFormPanel extends Panel {
     private static final long serialVersionUID = -4704292867141672385L;
     final MonitoradorApi monitoradorApi = new MonitoradorApi();
 
-    public PesquisaFormPanel(String id, ListView<Monitorador> monitoradorListView, List<FeedbackPanel> feedbackPanels) {
+    public PesquisaFormPanel(String id, ListView<Monitorador> monitoradorListView, FeedbackPanel feedbackPanel) {
         super(id);
 
         Form<String> pesquisarForm = new Form<>("pesquisarForm");
@@ -58,14 +58,14 @@ public class PesquisaFormPanel extends Panel {
                 try {
                     monitoradorListView.setList(monitoradorApi.listarMonitoradores());
                     success("Mostrando todos os monitoradores!");
-                    feedbackPanels.forEach(target::add);
+                    target.add(feedbackPanel);
                     this.setVisible(false);
                     inputTipo.setVisible(false);
                     inputPesquisa.setModelObject(null);
                     target.add(monitoradorListView.getParent(), this, inputTipo, inputPesquisa);
                 } catch (Exception e) {
                     error(e.getMessage());
-                    feedbackPanels.forEach(target::add);
+                    feedbackPanel.forEach(target::add);
                 }
             }
         };
@@ -81,18 +81,18 @@ public class PesquisaFormPanel extends Panel {
                 try {
                     monitoradorListView.setList(getListaMonitoradores(inputTipo.getModelObject(), inputPesquisa.getModelObject()));
                     success("Pesquisa realizada com sucesso!");
-                    feedbackPanels.forEach(target::add);
+                    target.add(feedbackPanel);
                     clearButton.setVisible(true);
                     target.add(monitoradorListView.getParent(), clearButton);
                 } catch (Exception e) {
                     error(e.getMessage());
-                    feedbackPanels.forEach(target::add);
+                    target.add(feedbackPanel);
                 }
             }
             @Override
             protected void onError(AjaxRequestTarget target, Form<?> form) {
                 super.onError(target, form);
-                feedbackPanels.forEach(target::add);
+                target.add(feedbackPanel);
             }
         };
 

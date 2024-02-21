@@ -1,11 +1,12 @@
 package com.unika.Panels;
 
+import com.unika.MonitoradorPage;
 import com.unika.dialogs.ConfirmationModal;
-import com.unika.forms.MonitoradorFormPanel;
 import com.unika.forms.PesquisaFormPanel;
 import com.unika.model.Monitorador;
 import com.unika.model.TipoPessoa;
 import com.unika.model.apiService.MonitoradorApi;
+import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.navigation.paging.AjaxPagingNavigator;
@@ -29,20 +30,22 @@ import java.util.List;
 public class MonitoradorListPanel extends Panel {
     @Serial
     private static final long serialVersionUID = -3590955289064988486L;
+    final FeedbackPanel feedbackPanel;
     ModalWindow modalWindow = new ModalWindow("modawOpcoes");
     MonitoradorApi monitoradorApi = new MonitoradorApi();
     WebMarkupContainer monitoradorListWMC = new WebMarkupContainer("monitoradorListWMC");
     List<Monitorador> monitoradores;
 
-    public MonitoradorListPanel(String id, List<Monitorador> monitoradores, List<FeedbackPanel> feedbackPanels) {
+    public MonitoradorListPanel(String id, List<Monitorador> monitoradores, FeedbackPanel feedbackPanel) {
         super(id);
 
         // Inicia a Lista
         this.monitoradores = monitoradores;
+        this.feedbackPanel = feedbackPanel;
 
         monitoradorListWMC.setOutputMarkupId(true);
         monitoradorListWMC.setOutputMarkupPlaceholderTag(true);
-        addPageableList(feedbackPanels);
+        addPageableList(feedbackPanel);
         add(monitoradorListWMC);
 
         // config do modaw
@@ -56,8 +59,8 @@ public class MonitoradorListPanel extends Panel {
             @Override
             public void onClose(AjaxRequestTarget target) {
                 recarregarMonitoradores(); // Ao Atualizar, Excluir, Desativar, Ativar.
-                addPageableList(feedbackPanels);
-                feedbackPanels.forEach(target::add); // Lista com feedbackPanel success e error
+                addPageableList(feedbackPanel);
+                target.add(feedbackPanel);
                 target.add(monitoradorListWMC);
             }
         });
@@ -73,7 +76,7 @@ public class MonitoradorListPanel extends Panel {
     }
 
     // Coloca Páginação
-    private void addPageableList(List<FeedbackPanel> feedbackPanels){
+    private void addPageableList(FeedbackPanel feedbackPanel){
         monitoradorListWMC.removeAll(); // Remove se já existir uma lista
 
         PageableListView<Monitorador> monitoradorListView = construirLista();
@@ -83,23 +86,25 @@ public class MonitoradorListPanel extends Panel {
             @Override
             protected void onConfigure() {
                 super.onConfigure();
-                this.setVisible(monitoradorListView.getList().size() > 8);
+                this.setVisible(monitoradorListView.getList().size() > monitoradorListView.getItemsPerPage());
             }
         };
         pagingNavigation.setOutputMarkupId(true);
         pagingNavigation.setOutputMarkupPlaceholderTag(true);
 
+        monitoradorListWMC.add(addFormPesquisa(monitoradorListView, feedbackPanel));
+
         monitoradorListWMC.setVisible(!monitoradorListView.getList().isEmpty());
-        monitoradorListWMC.add(monitoradorListView, pagingNavigation, addFormPesquisa(monitoradorListView, feedbackPanels));
+        monitoradorListWMC.add(monitoradorListView, pagingNavigation);
     }
 
-    private Panel addFormPesquisa(ListView<Monitorador> listView, List<FeedbackPanel> feedbackPanels){
-        return new PesquisaFormPanel("searchForm", listView, feedbackPanels);
+    private Panel addFormPesquisa(ListView<Monitorador> listView, FeedbackPanel feedbackPanel){
+        return new PesquisaFormPanel("searchForm", listView, feedbackPanel);
     }
 
     // CONSTRÓI A LISTA
     private PageableListView<Monitorador> construirLista() {
-        return new PageableListView<Monitorador>("monitoradores", monitoradores, 8) {
+        return new PageableListView<Monitorador>("monitoradores", monitoradores, 10) {
             @Serial
             private static final long serialVersionUID = -7313164500893623865L;
 
@@ -119,15 +124,7 @@ public class MonitoradorListPanel extends Panel {
                     private static final long serialVersionUID = -387605849215267697L;
                     @Override
                     public void onClick(AjaxRequestTarget target) {
-                        try {
-                            modalWindow.setInitialWidth(60);
-                            modalWindow.setWidthUnit("%");
-                            modalWindow.setInitialHeight(700);
-                            modalWindow.setContent(new MonitoradorFormPanel(modalWindow.getContentId(), listItem.getModelObject()));
-                        } catch (Exception e){
-                            error(e.getMessage());
-                        }
-                        modalWindow.show(target);
+                        setResponsePage(new MonitoradorPage(listItem.getModelObject()));
                     }
                 });
                 listItem.add(new AjaxLink<Void>("ajaxEcluirMonitorador") {
@@ -213,6 +210,17 @@ public class MonitoradorListPanel extends Panel {
                         return reportFile;
                     }
                 }));
+
+                listItem.add(new AjaxEventBehavior("click") {
+                    @Serial
+                    private static final long serialVersionUID = -295009595611851250L;
+                    @Override
+                    protected void onEvent(AjaxRequestTarget target) {
+                        setModalInfoPanel();
+                        modalWindow.setContent(new InfoMonitoradorPanel(modalWindow.getContentId(), listItem.getModelObject()));
+                        modalWindow.show(target);
+                    }
+                });
             }
         };
     }
@@ -221,5 +229,9 @@ public class MonitoradorListPanel extends Panel {
         modalWindow.setInitialWidth(30);
         modalWindow.setWidthUnit("%");
         modalWindow.setInitialHeight(150);
+    }
+
+    private void setModalInfoPanel(){
+        //TODO
     }
 }

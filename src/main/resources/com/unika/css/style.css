@@ -6,6 +6,21 @@ h1{
     color: black;
 }
 
+.teste{
+    background-color: black;
+}
+
+.feedback-popup{
+    position: fixed;
+    top: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    max-width : 800px;
+    z-index: 999999; /* Coloquei esse numero grande para que fique acima dos Modals */
+}
+
+/*TODO tentar usar o jQuery para adcionar classes do bootstrap aqui*/
 #pageNavigation a:link{
     background-color: #0d6efd;
     color: white;

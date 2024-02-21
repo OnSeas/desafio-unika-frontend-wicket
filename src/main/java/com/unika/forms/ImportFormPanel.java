@@ -1,7 +1,6 @@
 package com.unika.forms;
 
 import com.unika.model.apiService.MonitoradorApi;
-import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
@@ -19,37 +18,14 @@ import java.io.Serial;
 public class ImportFormPanel extends Panel {
     @Serial
     private static final long serialVersionUID = 7680031748038474194L;
-    MonitoradorApi monitoradorApi = new MonitoradorApi();
+    final MonitoradorApi monitoradorApi = new MonitoradorApi();
+    final FeedbackPanel feedbackPanel;
 
-    public ImportFormPanel(String id) {
+    public ImportFormPanel(String id, FeedbackPanel feedbackPanel) {
         super(id);
+        this.feedbackPanel = feedbackPanel;
 
         FileUploadField fileUploadField = new FileUploadField("importField");
-
-
-        // Esse é um exemplo bom que funiona pra retonar os erros na tela com o fbp
-        FeedbackPanel feedbackPanel = new FeedbackPanel("feedbackPanel")
-        {
-            @Serial
-            private static final long serialVersionUID = -6225292489343766625L;
-            @Override
-            protected void onConfigure() {
-                super.onConfigure();
-                this.setOutputMarkupId(true);
-                this.setOutputMarkupPlaceholderTag(true);
-                setVisible(anyMessage());
-            }
-        };
-        feedbackPanel.add(new AjaxEventBehavior("click") {
-            @Serial
-            private static final long serialVersionUID = 2714109594941898418L;
-            @Override
-            protected void onEvent(AjaxRequestTarget target) {
-                feedbackPanel.setVisible(false);
-                target.add(feedbackPanel);
-            }
-        });
-        add(feedbackPanel);
 
         Form<FileUpload> form = new Form<>("importForm");
 

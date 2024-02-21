@@ -26,38 +26,13 @@ import java.util.List;
 public class EnderecoFormPanel extends Panel {
     @Serial
     private static final long serialVersionUID = -7243543132733295966L;
-    MonitoradorApi monitoradorApi = new MonitoradorApi();
-    EnderecoApi enderecoApi = new EnderecoApi();
+    final MonitoradorApi monitoradorApi = new MonitoradorApi();
+    final EnderecoApi enderecoApi = new EnderecoApi();
+    final FeedbackPanel feedbackPanel;
 
-    public EnderecoFormPanel(String id, Endereco endereco,Long idMonitorador) {
+    public EnderecoFormPanel(String id, Endereco endereco, Long idMonitorador, FeedbackPanel feedbackPanel) {
         super(id);
-
-        // Config do FeedbackPanel para mensagens de erro
-        FeedbackPanel feedbackPanel = new FeedbackPanel("feedbackMessage"){
-            @Serial
-            private static final long serialVersionUID = 1399754822422272539L;
-            @Override
-            protected void onConfigure() {
-                super.onConfigure();
-                setVisible(anyErrorMessage());
-                if(this.isVisible()){
-                    String jqueryScript = "$('#" + getMarkupId() + "').delay(2500).fadeOut();";
-                    getResponse().write("<script type=\"text/javascript\">" + jqueryScript + "</script>");
-                }
-            }
-        };
-        feedbackPanel.add(new AjaxEventBehavior("click") {
-            @Serial
-            private static final long serialVersionUID = 5765700798154888806L;
-            @Override
-            protected void onEvent(AjaxRequestTarget target) {
-                feedbackPanel.setVisible(false);
-                target.add(feedbackPanel);
-            }
-        });
-        feedbackPanel.setOutputMarkupId(true);
-        feedbackPanel.setOutputMarkupPlaceholderTag(true);
-        add(feedbackPanel);
+        this.feedbackPanel = feedbackPanel;
 
         // Criando um endereço
         if(endereco.getId() == null){
@@ -79,7 +54,7 @@ public class EnderecoFormPanel extends Panel {
 
         DropDownChoice<UF> dropEstado = new DropDownChoice<>("estado",
                 Arrays.asList(UF.values()),
-                new ChoiceRenderer<UF>(){
+                new ChoiceRenderer<>(){
                     @Serial
                     private static final long serialVersionUID = 2254888871382690067L;
                     @Override

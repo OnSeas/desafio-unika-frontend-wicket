@@ -18,22 +18,24 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 
 import java.io.Serial;
+import java.util.ArrayList;
 import java.util.List;
 
 public class EnderecoListPanel extends Panel {
     @Serial
     private static final long serialVersionUID = -1429184536413087837L;
-    EnderecoApi enderecoApi = new EnderecoApi();
+    final EnderecoApi enderecoApi = new EnderecoApi();
+    final FeedbackPanel feedbackPanel;
     WebMarkupContainer enderecoListWMC = new WebMarkupContainer("enderecoListWMC");
     final ModalWindow modalWindow = new ModalWindow("modalEnd");
     final Long idMonitorador;
-    List<Endereco> enderecoList;
+    public List<Endereco> enderecoList;
 
     // Editar Monitorador
-    public EnderecoListPanel(String id, List<Endereco> enderecoList, Long idMonitorador, List<FeedbackPanel> feedbackPanels) {
+    public EnderecoListPanel(String id, Long idMonitorador, FeedbackPanel feedbackPanel) {
         super(id);
-        this.enderecoList = enderecoList;
         this.idMonitorador = idMonitorador;
+        this.feedbackPanel = feedbackPanel;
 
         // Para poder aparecer se não tiver nenhum
         enderecoListWMC.setOutputMarkupId(true);
@@ -45,11 +47,16 @@ public class EnderecoListPanel extends Panel {
             @Override
             public void onClick(AjaxRequestTarget target) {
                 setModalFormSize();
-                modalWindow.setContent(new EnderecoFormPanel(modalWindow.getContentId(), new Endereco(), idMonitorador));
+                modalWindow.setContent(new EnderecoFormPanel(modalWindow.getContentId(), new Endereco(), idMonitorador, feedbackPanel));
                 modalWindow.show(target);
             }
         });
 
+        try {
+            enderecoList = enderecoApi.listarEnderecos(idMonitorador);
+        } catch (Exception e){
+            enderecoList = new ArrayList<>();
+        }
         addList();
         add(enderecoListWMC);
 
@@ -62,9 +69,10 @@ public class EnderecoListPanel extends Panel {
             private static final long serialVersionUID = 7800205096545281286L;
             @Override
             public void onClose(AjaxRequestTarget target) {
+                recarregarList();
                 addList();
                 target.add(enderecoListWMC);
-                feedbackPanels.forEach(target::add);
+                target.add(feedbackPanel);
             }
         });
     }
@@ -109,7 +117,8 @@ public class EnderecoListPanel extends Panel {
                             modalWindow.setContent(new EnderecoFormPanel(
                                 modalWindow.getContentId(),
                                     listItem.getModelObject(),
-                                    idMonitorador)); // Endereco
+                                    idMonitorador,
+                                    feedbackPanel)); // Endereco
                             modalWindow.show(target);
                         }
                     });

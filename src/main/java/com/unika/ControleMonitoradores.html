@@ -7,21 +7,11 @@
     <body>
         <wicket:extend>
             <div style="width: 80%; margin: auto">
-                <h1 wicket:id="ControlLabel" class="d-flex justify-content-center mb-3 mt-3">[título da página]</h1>
-
-                <div wicket:id="feedbackPanelSuccess" class="alert alert-success"></div>
-                <div wicket:id="feedbackPanelError" class="alert alert-danger"></div>
-
-                <div class="monitoradorSlaClass d-md-flex justify-content-md-end mb-2">
-                    <button wicket:id="formNovoMonitorador" class="btn btn-primary fw-bold me-1" type="button">Novo Monitorador</button>
-                    <button wicket:id="importarMonitoradores" class="btn btn-primary fw-bold" type="button">Importar monitoradores</button>
-                </div>
+                <h1 wicket:id="ControlLabel" class="d-flex justify-content-center mb-3 mt-2">[título da página]</h1>
 
                 <div wicket:id="listWMC" style="margin: auto;">
                     <span wicket:id="monitoradorListPanel">[lista de monitoradores com páginação]</span>
                 </div>
-
-                <div wicket:id="modaw"></div>
             </div>
         </wicket:extend>
     </body>

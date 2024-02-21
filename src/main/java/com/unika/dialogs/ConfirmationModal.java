@@ -44,7 +44,7 @@ public class ConfirmationModal extends Panel {
                             deletarEndereco(((Endereco) listItem.getModelObject()).getId());
                             break;
                         case "tornarEndPrincipal":
-                            tornarEndPrincipal((ListItem<Endereco>) listItem);
+                            tornarEndPrincipal(listItem);
                     }
                     ModalWindow.closeCurrent(target);
                 } catch (Exception e){
@@ -101,11 +101,12 @@ public class ConfirmationModal extends Panel {
         }
     }
 
-    private void tornarEndPrincipal(ListItem<Endereco> listItem){
+    private void tornarEndPrincipal(ListItem<?> listItem){
         try {
+            Endereco endereco = (Endereco) listItem.getModelObject();
             success(enderecoApi.tornarPrincipal(
-                    listItem.getModelObject().getMonitoradorId(),
-                    listItem.getModelObject().getId()
+                    endereco.getMonitoradorId(),
+                    endereco.getId()
             ));
         } catch (Exception e) {
             error(e.getMessage());

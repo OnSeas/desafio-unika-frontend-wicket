@@ -1,9 +1,8 @@
 package com.unika.forms;
 
-import com.unika.Panels.EnderecoListPanel;
+import com.unika.ControleMonitoradores;
 import com.unika.model.Monitorador;
 import com.unika.model.TipoPessoa;
-import com.unika.model.apiService.EnderecoApi;
 import com.unika.model.apiService.MonitoradorApi;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxEventBehavior;
@@ -14,7 +13,6 @@ import org.apache.wicket.extensions.markup.html.form.DateTextField;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.*;
-import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.CompoundPropertyModel;
@@ -23,7 +21,6 @@ import org.apache.wicket.validation.validator.EmailAddressValidator;
 import org.apache.wicket.validation.validator.StringValidator;
 
 import java.io.Serial;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -31,69 +28,11 @@ import java.util.List;
 public class MonitoradorFormPanel extends Panel {
     @Serial
     private static final long serialVersionUID = -8284617783524484913L;
-    public WebMarkupContainer listaEnderecoWMC = new WebMarkupContainer("listaEnderecoWMC");
-    public EnderecoApi enderecoApi = new EnderecoApi();
-    MonitoradorApi monitoradorApi = new MonitoradorApi();
-    public FeedbackPanel feedbackMessageError;
-    public FeedbackPanel feedbackMessageSuccess; // Mostra os erros no form
-    List<FeedbackPanel> feedbackPanels = new ArrayList<>();
-    public MonitoradorFormPanel(String id, Monitorador monitorador) {
+    final FeedbackPanel feedbackPanel;
+    final MonitoradorApi monitoradorApi = new MonitoradorApi();
+    public MonitoradorFormPanel(String id, Monitorador monitorador, FeedbackPanel feedbackPanel) {
         super(id);
-
-        //Configurando os FeedbackPanels
-        feedbackMessageSuccess = new FeedbackPanel("FeedbackMessageSuccess"){
-            @Serial
-            private static final long serialVersionUID = -1547023497652558705L;
-            @Override
-            protected void onConfigure() {
-                super.onConfigure();
-                setVisible(anyMessage(250) && !anyErrorMessage());
-                if(this.isVisible()){
-                    String jqueryScript = "$('#" + getMarkupId() + "').delay(2500).fadeOut();";
-                    getResponse().write("<script type=\"text/javascript\">" + jqueryScript + "</script>");
-                }
-            }
-        };
-        feedbackMessageSuccess.add(new AjaxEventBehavior("click") {
-            @Serial
-            private static final long serialVersionUID = 7722774318433529522L;
-            @Override
-            protected void onEvent(AjaxRequestTarget target) {
-                feedbackMessageSuccess.setVisible(false);
-                target.add(feedbackMessageSuccess);
-            }
-        });
-        feedbackMessageSuccess.setOutputMarkupId(true);
-        feedbackMessageSuccess.setOutputMarkupPlaceholderTag(true);
-        add(feedbackMessageSuccess);
-        feedbackMessageError = new FeedbackPanel("FeedbackMessageError"){
-            @Serial
-            private static final long serialVersionUID = 5148472465033548020L;
-            @Override
-            protected void onConfigure() {
-                super.onConfigure();
-                setVisible(anyErrorMessage());
-                if(this.isVisible()){
-                    String jqueryScript = "$('#" + getMarkupId() + "').delay(2500).fadeOut();";
-                    getResponse().write("<script type=\"text/javascript\">" + jqueryScript + "</script>");
-                }
-            }
-        };
-        feedbackMessageError.add(new AjaxEventBehavior("click") {
-            @Serial
-            private static final long serialVersionUID = -8000879227247712657L;
-            @Override
-            protected void onEvent(AjaxRequestTarget target) {
-                feedbackMessageError.setVisible(false);
-                target.add(feedbackMessageError);
-            }
-        });
-        feedbackMessageError.setOutputMarkupId(true);
-        feedbackMessageError.setOutputMarkupPlaceholderTag(true);
-        add(feedbackMessageError);
-
-        feedbackPanels.add(feedbackMessageError);
-        feedbackPanels.add(feedbackMessageSuccess);
+        this.feedbackPanel = feedbackPanel;
 
         Form<Monitorador> monitoradorForm = getForm(monitorador);
         add(monitoradorForm);
@@ -101,7 +40,6 @@ public class MonitoradorFormPanel extends Panel {
         // Criando um novo monitorador
         if(monitorador.getId() == null) {
             add(new Label("monitoradorFormTitle", Model.of("Cadastrar um novo monitorador")));
-            listaEnderecoWMC.add(new EmptyPanel("enderecoPanel"));
         }
         // Editando um monitorador existente
         else {
@@ -114,14 +52,7 @@ public class MonitoradorFormPanel extends Panel {
                 wmc = (WebMarkupContainer) monitoradorForm.get("pjWMC");
             }
             wmc.setVisible(true);
-
-            addListaEndereco(monitorador.getId());
         }
-
-        // Configuração da lista de Endereços
-        listaEnderecoWMC.setOutputMarkupId(true);
-        listaEnderecoWMC.setOutputMarkupPlaceholderTag(true);
-        add(listaEnderecoWMC);
     }
 
     Form<Monitorador> getForm(Monitorador monitorador){
@@ -177,7 +108,7 @@ public class MonitoradorFormPanel extends Panel {
             @Serial
             private static final long serialVersionUID = -8024661883244296260L;
             @Override
-            protected void onEvent(AjaxRequestTarget target) {
+            protected void onEvent(AjaxRequestTarget target) { // TODO mudar todos para não precisar usar o ajax
                 target.appendJavaScript(
                         "$(document).ready(function (){\n" +
                         "   $('#cpfInput').mask('000.000.000-00');\n" +
@@ -224,15 +155,15 @@ public class MonitoradorFormPanel extends Panel {
                     } else {
                         success("Monitorador Atualizado com Sucesso!");
                     }
-                    ModalWindow.closeCurrent(target);
+                    target.add(feedbackPanel);
                 } catch (Exception e){
-                    feedbackMessageError.error(e.getMessage());
-                    target.add(feedbackMessageError);
+                    error(e.getMessage());
+                    target.add(feedbackPanel);
                 }
             }
             @Override
             protected void onError(AjaxRequestTarget target, Form<?> form) {
-                target.add(feedbackMessageError);
+                target.add(feedbackPanel);
             }
         });
 
@@ -262,19 +193,6 @@ public class MonitoradorFormPanel extends Panel {
 
         monitoradorForm.add(pfWMC, pjWMC);
         return monitoradorForm;
-    }
-
-    private void addListaEndereco(Long idMonitorador){
-        listaEnderecoWMC.removeAll();
-        try {
-            listaEnderecoWMC.add(new EnderecoListPanel("enderecoPanel",
-                    enderecoApi.listarEnderecos(idMonitorador),
-                    idMonitorador,
-                    feedbackPanels));
-        } catch (Exception e){
-            error("Não foi possivel carregar a lista de endereços. Erro: " + e.getMessage());
-        }
-
     }
 
     private void salvar(Monitorador monitorador){
