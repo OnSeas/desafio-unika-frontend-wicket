@@ -1,29 +1,26 @@
 package com.unika.Panels;
 
 import com.unika.MonitoradorPage;
-import com.unika.dialogs.ConfirmationModal;
+import com.unika.dialogs.ConfirmationLink;
 import com.unika.forms.PesquisaFormPanel;
 import com.unika.model.Monitorador;
 import com.unika.model.TipoPessoa;
 import com.unika.model.apiService.MonitoradorApi;
-import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.navigation.paging.AjaxPagingNavigator;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.link.DownloadLink;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.list.PageableListView;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 
-import java.io.File;
+import java.io.IOException;
 import java.io.Serial;
 import java.util.List;
 
@@ -36,11 +33,15 @@ public class MonitoradorListPanel extends Panel {
     WebMarkupContainer monitoradorListWMC = new WebMarkupContainer("monitoradorListWMC");
     List<Monitorador> monitoradores;
 
-    public MonitoradorListPanel(String id, List<Monitorador> monitoradores, FeedbackPanel feedbackPanel) {
+    public MonitoradorListPanel(String id, FeedbackPanel feedbackPanel) {
         super(id);
 
         // Inicia a Lista
-        this.monitoradores = monitoradores;
+        try {
+            this.monitoradores = monitoradorApi.listarMonitoradores();
+        } catch (IOException e) {
+            feedbackPanel.error(e.getMessage());
+        }
         this.feedbackPanel = feedbackPanel;
 
         monitoradorListWMC.setOutputMarkupId(true);
@@ -52,27 +53,6 @@ public class MonitoradorListPanel extends Panel {
         modalWindow.setOutputMarkupId(true);
         modalWindow.setResizable(false);
         add(modalWindow);
-
-        modalWindow.setWindowClosedCallback(new ModalWindow.WindowClosedCallback() {
-            @Serial
-            private static final long serialVersionUID = 7800205096545281286L;
-            @Override
-            public void onClose(AjaxRequestTarget target) {
-                recarregarMonitoradores(); // Ao Atualizar, Excluir, Desativar, Ativar.
-                addPageableList(feedbackPanel);
-                target.add(feedbackPanel);
-                target.add(monitoradorListWMC);
-            }
-        });
-    }
-
-    // Recarrega a lista de monitoradores
-    private void recarregarMonitoradores(){
-        try {
-            monitoradores = monitoradorApi.listarMonitoradores();
-        } catch (Exception e){
-            error("Erro ao atualizar lista de monitoradores: " + e.getMessage());
-        }
     }
 
     // Coloca Páginação
@@ -127,102 +107,36 @@ public class MonitoradorListPanel extends Panel {
                         setResponsePage(new MonitoradorPage(listItem.getModelObject()));
                     }
                 });
-                listItem.add(new AjaxLink<Void>("ajaxEcluirMonitorador") {
+                listItem.add(new ConfirmationLink<>("ajaxEcluirMonitorador", "Tem certeza que deseja EXCLUIR o monitorador?") {
                     @Serial
                     private static final long serialVersionUID = -1679276620382639682L;
                     @Override
                     public void onClick(AjaxRequestTarget target) {
-                        try {
-                            setModalDialogSize();
-                            modalWindow.setContent(new ConfirmationModal(
-                                    modalWindow.getContentId(),
-                                    listItem,
-                                    "Deseja excluir o monitorador " + listItem.getModelObject().getId() + "?",
-                                    "excluir"
-                            ));
-                        } catch (Exception e){
-                            error(e.getMessage());
-                        }
-                        modalWindow.show(target);
+                        deletarMontorador(listItem.getModelObject());
+                        target.add(monitoradorListWMC, feedbackPanel);
                     }
                 });
-                AjaxLink<Void> desativarAjax = new AjaxLink<Void>("Destivar") {
+                listItem.add(new AjaxLink<Void>("infoMonitorador") {
                     @Serial
-                    private static final long serialVersionUID = -505817807318118040L;
+                    private static final long serialVersionUID = -4065299638781858229L;
                     @Override
                     public void onClick(AjaxRequestTarget target) {
-                        try {
-                            setModalDialogSize();
-                            modalWindow.setContent(new ConfirmationModal(
-                                    modalWindow.getContentId(),
-                                            listItem,
-                                            "Deseja desativar o monitorador " + listItem.getModelObject().getId() + "?",
-                                            "desativar"
-                                    ));
-                        } catch (Exception e){
-                            error(e.getMessage());
-                        }
-                        modalWindow.show(target);
-                    }
-                };
-                AjaxLink<Void> ativarAjax = new AjaxLink<Void>("Ativar") {
-                    @Serial
-                    private static final long serialVersionUID = -505817807318118040L;
-                    @Override
-                    public void onClick(AjaxRequestTarget target) {
-                        try {
-                            setModalDialogSize();
-                            modalWindow.setContent(new ConfirmationModal(
-                                            modalWindow.getContentId(),
-                                            listItem,
-                                            "Deseja ativar o monitorador " + listItem.getModelObject().getId() + "?",
-                                            "ativar"
-                                    ));
-                        } catch (Exception e){
-                            error(e.getMessage());
-                        }
-                        modalWindow.show(target);
-                    }
-                };
-
-                // Mostrar o botão ativar/desativar de acordo com o status do monitorador
-                if (listItem.getModelObject().getAtivo()){
-                    ativarAjax.setVisible(false);
-                } else {
-                    desativarAjax.setVisible(false);
-                }
-
-                listItem.add(desativarAjax, ativarAjax);
-
-                listItem.add(new DownloadLink("reportDownload", new AbstractReadOnlyModel<>() {
-                    @Serial
-                    private static final long serialVersionUID = -8630718144901310523L;
-                    @Override
-                    public File getObject() {
-                        File reportFile;
-                        try {
-                            reportFile = monitoradorApi.gerarRelatorio(listItem.getModelObject().getId());
-                        }
-                        catch (Exception e){
-                            reportFile = null;
-                            error(e.getMessage());
-                        }
-                        return reportFile;
-                    }
-                }));
-
-                listItem.add(new AjaxEventBehavior("click") {
-                    @Serial
-                    private static final long serialVersionUID = -295009595611851250L;
-                    @Override
-                    protected void onEvent(AjaxRequestTarget target) {
-                        setModalInfoPanel();
-                        modalWindow.setContent(new InfoMonitoradorPanel(modalWindow.getContentId(), listItem.getModelObject()));
+                        setModalInfoPanel(listItem.getModelObject().getEnderecoList().size());
+                        modalWindow.setContent(new InfoMonitoradorPanel(modalWindow.getContentId(), listItem.getModelObject(), feedbackPanel));
                         modalWindow.show(target);
                     }
                 });
             }
         };
+    }
+
+    private void deletarMontorador(Monitorador monitorador) {
+        try {
+            feedbackPanel.success(monitoradorApi.deletarMonitorador(monitorador.getId()));
+            monitoradores.remove(monitorador);
+        } catch (Exception e) {
+            feedbackPanel.error(e.getMessage());
+        }
     }
 
     private void setModalDialogSize(){
@@ -231,7 +145,19 @@ public class MonitoradorListPanel extends Panel {
         modalWindow.setInitialHeight(150);
     }
 
-    private void setModalInfoPanel(){
-        //TODO
+    private void setModalInfoPanel(int qntEnd){
+        modalWindow.showUnloadConfirmation(false);
+        modalWindow.setInitialWidth(45);
+        modalWindow.setWidthUnit("%");
+
+        if(qntEnd < 1){
+            modalWindow.setInitialHeight(410);
+        } else if(qntEnd == 1){
+            modalWindow.setInitialHeight(550);
+        } else if(qntEnd == 2){
+            modalWindow.setInitialHeight(590);
+        } else {
+            modalWindow.setInitialHeight(630);
+        }
     }
 }

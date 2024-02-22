@@ -21,8 +21,5 @@ public class MonitoradorPage extends HomePage{
 
     private void adcionarContent(Monitorador monitorador){
         add(new MonitoradorFormPanel("monitoradorFormPanel", monitorador, getFeedbackPanel()));
-
-        if (monitorador.getId() == null) add(new EmptyPanel("endListPanel"));
-        else add(new EnderecoListPanel("endListPanel", monitorador.getId(), getFeedbackPanel()));
     }
 }

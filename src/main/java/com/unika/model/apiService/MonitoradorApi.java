@@ -98,7 +98,7 @@ public class MonitoradorApi implements Serializable {
     }
 
     // Adcionar Endereço
-    public String adcionarEndereco(Long idMonitorador, Endereco endereco) throws IOException {
+    public Endereco adcionarEndereco(Long idMonitorador, Endereco endereco) throws IOException {
         Response response = apiService.conectarApiPOST(
                 converterDados.obterJason(endereco),
                 apiUrl + "/" + idMonitorador + "/endereco"
@@ -109,7 +109,7 @@ public class MonitoradorApi implements Serializable {
         response.close();
 
         if (response.isSuccessful()){
-            return res;
+            return converterDados.obterDados(res, Endereco.class);
         } else {
             throw new RuntimeException(res);
         }
@@ -226,20 +226,6 @@ public class MonitoradorApi implements Serializable {
     // Exports e Imports
     public File gerarRelatorio(Long idMonitorador) throws IOException {
         Response response = apiService.conectarApiGET(apiUrl + "/report/pdf/" + idMonitorador);
-
-        assert response.body() != null;
-        String res = response.body().string();
-        response.close();
-
-        if (response.isSuccessful()){
-            return converterDados.obterDados(res, File.class);
-        } else {
-            throw new RuntimeException(res);
-        }
-    }
-
-    public File gerarRelatorioHTML(Long idMonitorador) throws IOException {
-        Response response = apiService.conectarApiGET(apiUrl + "/report/html/" + idMonitorador);
 
         assert response.body() != null;
         String res = response.body().string();

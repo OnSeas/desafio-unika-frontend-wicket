@@ -4,12 +4,14 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 @Getter
 @Setter
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Endereco implements Serializable {
+    @Serial
     private static final long serialVersionUID = 192787022611302892L;
 
     private Long id;

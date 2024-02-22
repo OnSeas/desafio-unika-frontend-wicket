@@ -16,6 +16,7 @@ import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.validation.validator.StringValidator;
 
 import java.io.IOException;
@@ -83,7 +84,9 @@ public class EnderecoFormPanel extends Panel {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 try {
-                    salvar(enderecoForm.getModelObject(), idMonitorador);
+                    Endereco enderecobd = salvar(enderecoForm.getModelObject(), idMonitorador);
+                    enderecoForm.getModelObject().setId(enderecobd.getId());
+
                     if (enderecoForm.getModelObject().getId() == null){
                         success("Endereço cadastrado com sucesso!");
                     } else {
@@ -147,13 +150,15 @@ public class EnderecoFormPanel extends Panel {
     }
 
     // Metódo salvar usado para adcionar ou editar um endereço ao banco de dados
-    private void salvar(Endereco endereco, Long idMonitorador){
+    private Endereco salvar(Endereco endereco, Long idMonitorador){
         try {
-            if(endereco.getId() == null){ // Criando novo endereço
-                monitoradorApi.adcionarEndereco(idMonitorador, endereco);
-            } else { // Editando um endereço existente
-                enderecoApi.editarEndereco(endereco.getId(), endereco);
-            }
+            if (idMonitorador!=null){
+                if(endereco.getId() == null){ // Criando novo endereço
+                    return monitoradorApi.adcionarEndereco(idMonitorador, endereco);
+                } else { // Editando um endereço existente
+                    return enderecoApi.editarEndereco(endereco.getId(), endereco);
+                }
+            } return endereco;
         } catch(Exception e){
             throw new RuntimeException(e.getMessage());
         }

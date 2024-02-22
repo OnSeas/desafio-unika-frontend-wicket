@@ -1,6 +1,7 @@
 package com.unika.forms;
 
 import com.unika.ControleMonitoradores;
+import com.unika.Panels.EnderecoListPanel;
 import com.unika.model.Monitorador;
 import com.unika.model.TipoPessoa;
 import com.unika.model.apiService.MonitoradorApi;
@@ -8,7 +9,6 @@ import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
-import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.apache.wicket.extensions.markup.html.form.DateTextField;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
@@ -53,6 +53,8 @@ public class MonitoradorFormPanel extends Panel {
             }
             wmc.setVisible(true);
         }
+
+        add(new EnderecoListPanel("endListPanel", monitorador.getId(), feedbackPanel));
     }
 
     Form<Monitorador> getForm(Monitorador monitorador){

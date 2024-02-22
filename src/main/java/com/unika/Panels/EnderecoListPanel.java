@@ -1,6 +1,6 @@
 package com.unika.Panels;
 
-import com.unika.dialogs.ConfirmationModal;
+import com.unika.dialogs.ConfirmationLink;
 import com.unika.forms.EnderecoFormPanel;
 import com.unika.model.Endereco;
 import com.unika.model.UF;
@@ -26,10 +26,22 @@ public class EnderecoListPanel extends Panel {
     private static final long serialVersionUID = -1429184536413087837L;
     final EnderecoApi enderecoApi = new EnderecoApi();
     final FeedbackPanel feedbackPanel;
-    WebMarkupContainer enderecoListWMC = new WebMarkupContainer("enderecoListWMC");
     final ModalWindow modalWindow = new ModalWindow("modalEnd");
     final Long idMonitorador;
     public List<Endereco> enderecoList;
+    WebMarkupContainer enderecoListWMC = new WebMarkupContainer("enderecoListWMC"){
+        @Serial
+        private static final long serialVersionUID = -5217040513869614038L;
+        @Override
+        protected void onConfigure() {
+            super.onConfigure();
+            this.setOutputMarkupId(true);
+            this.setOutputMarkupPlaceholderTag(true);
+            this.setVisible(!enderecoList.isEmpty());
+        }
+    };
+    Endereco endereco;
+    formType FLAG;
 
     // Editar Monitorador
     public EnderecoListPanel(String id, Long idMonitorador, FeedbackPanel feedbackPanel) {
@@ -37,17 +49,15 @@ public class EnderecoListPanel extends Panel {
         this.idMonitorador = idMonitorador;
         this.feedbackPanel = feedbackPanel;
 
-        // Para poder aparecer se não tiver nenhum
-        enderecoListWMC.setOutputMarkupId(true);
-        enderecoListWMC.setOutputMarkupPlaceholderTag(true);
-
         add(new AjaxLink<Void>("criarEndereco") { // Criar novo endereço
             @Serial
             private static final long serialVersionUID = -7867338417724841250L;
             @Override
             public void onClick(AjaxRequestTarget target) {
                 setModalFormSize();
-                modalWindow.setContent(new EnderecoFormPanel(modalWindow.getContentId(), new Endereco(), idMonitorador, feedbackPanel));
+                endereco = new Endereco();
+                FLAG = formType.CREATE;
+                modalWindow.setContent(new EnderecoFormPanel(modalWindow.getContentId(), endereco, idMonitorador, feedbackPanel));
                 modalWindow.show(target);
             }
         });
@@ -57,40 +67,26 @@ public class EnderecoListPanel extends Panel {
         } catch (Exception e){
             enderecoList = new ArrayList<>();
         }
-        addList();
+
+        enderecoListWMC.add(construirLista());
         add(enderecoListWMC);
 
         modalWindow.setResizable(false);
         add(modalWindow);
 
-        // Quando fecha o modal
         modalWindow.setWindowClosedCallback(new ModalWindow.WindowClosedCallback() {
             @Serial
-            private static final long serialVersionUID = 7800205096545281286L;
+            private static final long serialVersionUID = 3681913398232804854L;
             @Override
             public void onClose(AjaxRequestTarget target) {
-                recarregarList();
-                addList();
-                target.add(enderecoListWMC);
-                target.add(feedbackPanel);
+                System.out.println(endereco);
+                if(FLAG.equals(formType.CREATE) && endereco.getEstado() != null){
+                    if (enderecoList.size() >=3) feedbackPanel.error("Este monitorador já possuí o número maximo de endereços: 3.");
+                    else enderecoList.add(endereco);
+                }
+                target.add(enderecoListWMC, feedbackPanel);
             }
         });
-    }
-
-    private void recarregarList(){
-        try {
-            enderecoList = enderecoApi.listarEnderecos(idMonitorador);
-        } catch (Exception e){
-            System.out.println("Erro ao recarregar a lista de enderecos");
-        }
-    }
-
-    private void addList(){
-        enderecoListWMC.removeAll();
-
-        ListView<Endereco> enderecoListView = construirLista();
-        enderecoListWMC.add(enderecoListView);
-        enderecoListWMC.setVisible(!enderecoListView.getList().isEmpty());
     }
 
     // Construir a lista de endereços
@@ -113,7 +109,7 @@ public class EnderecoListPanel extends Panel {
                         private static final long serialVersionUID = 2580172425403012021L;
                         @Override
                         public void onClick(AjaxRequestTarget target) {
-                            setModalFormSize();
+                            FLAG = formType.EDIT;
                             modalWindow.setContent(new EnderecoFormPanel(
                                 modalWindow.getContentId(),
                                     listItem.getModelObject(),
@@ -122,36 +118,24 @@ public class EnderecoListPanel extends Panel {
                             modalWindow.show(target);
                         }
                     });
-                    listItem.add(new AjaxLink<Void>("ajaxExcluir") {
+                    listItem.add(new ConfirmationLink<>("ajaxExcluir", "Tem certeza que deseja excluir este endereço?") {
                         @Serial
                         private static final long serialVersionUID = -660882723667008281L;
                         @Override
                         public void onClick(AjaxRequestTarget target) {
-                            setModalDialogSize();
-                            modalWindow.setContent(new ConfirmationModal(
-                                        modalWindow.getContentId(),
-                                            listItem,
-                                            "Tem certeza que deseja excluir o endereço: " + listItem.getModelObject().getId(),
-                                            "excluirEndereco"
-                                    ));
-                            modalWindow.show(target);
+                            deletarEndereco(listItem.getModelObject());
+                            target.add(enderecoListWMC, feedbackPanel);
                         }
                     });
                     Label principalButton = new Label("principalButton", Model.of("Principal"));
                     listItem.add(principalButton);
-                    listItem.add(new AjaxLink<Void>("TornarPrincipal") {
+                    listItem.add(new ConfirmationLink<>("TornarPrincipal", "Tem ceterteza que deseja tornar este seu endereço principal") {
                         @Serial
                         private static final long serialVersionUID = -7811189455403194862L;
                         @Override
                         public void onClick(AjaxRequestTarget target) {
-                            setModalDialogSize();
-                            modalWindow.setContent(new ConfirmationModal(
-                                modalWindow.getContentId(),
-                                    listItem,
-                                    "Tem certeza que deseja tornar este endereço o seu endereço principal?",
-                                    "tornarEndPrincipal"
-                            ));
-                            modalWindow.show(target);
+                            tornarEndPrincipal(listItem.getModelObject());
+                            target.add(enderecoListWMC, feedbackPanel);
                         }
                         @Override
                         protected void onConfigure() {
@@ -169,15 +153,42 @@ public class EnderecoListPanel extends Panel {
         }
     }
 
-    private void setModalDialogSize(){
-        modalWindow.setInitialWidth(30);
-        modalWindow.setWidthUnit("%");
-        modalWindow.setInitialHeight(150);
-    }
-
     private void setModalFormSize(){
         modalWindow.setInitialWidth(40);
         modalWindow.setWidthUnit("%");
         modalWindow.setInitialHeight(390);
+    }
+
+    // TODO Adaptar as duas funções para em caso de edenreço.getId=null (Quando for um novo monitorador)
+    private void tornarEndPrincipal(Endereco endereco){
+        try {
+            feedbackPanel.success(enderecoApi.tornarPrincipal(
+                    idMonitorador,
+                    endereco.getId()
+            ));
+            enderecoList.forEach(end -> end.setPrincipal(false));
+            endereco.setPrincipal(true);
+        } catch (Exception e) {
+            feedbackPanel.error(e.getMessage());
+        }
+    }
+
+    private void deletarEndereco(Endereco endereco){
+        try {
+            feedbackPanel.success(enderecoApi.deletarEndereco(endereco.getId()));
+            enderecoList.remove(endereco);
+        } catch (Exception e) {
+            feedbackPanel.error(e.getMessage());
+        }
+    }
+
+    private enum formType{
+        CREATE(0),
+        EDIT(1);
+
+        final int value;
+        formType(int value) {
+            this.value = value;
+        }
     }
 }

@@ -6,8 +6,77 @@
 </head>
 <body>
     <wicket:panel>
-        <div class="mt-2 mb-3">
-            <h1 wicket:id="infoTitle"></h1>
+        <div class="mt-2 mb-3" style="width: 80%; margin: auto">
+            <h3 wicket:id="infoTitle" class="d-flex justify-content-center mb-3"></h3>
+
+            <div wicket:id="pessoaCardWMC" class="card text-dark bg-light mb-3">
+                <h5 wicket:id="tipoPessoa" class="card-header">[Tipo pessoa]</h5>
+                <div class="card-body">
+                    <div class="card-text">
+                        <div class="row g-2 mb-2">
+                            <div class="col-md">
+                                <label wicket:id="nomeLabel" for="nomeId">[Nome/razaoSocial]</label>
+                                <h4 wicket:id="nome" class="card-title" id="nomeId">[Nome/razaoSocial]</h4>
+                            </div>
+                            <div class="col-md">
+                                <label for="emailId">Email</label>
+                                <h5 wicket:id="email" id="emailId">[email]</h5>
+                            </div>
+                        </div>
+
+                        <div class="row g-2 mb-2">
+                            <div class="col-md">
+                                <label for="dataNasicmentoId">Data Nascimento</label>
+                                <h5 wicket:id="dataNasicmento" id="dataNasicmentoId">[dataNascimento]</h5>
+                            </div>
+                            <div class="col-md">
+                                <label wicket:id="identificadorLabel" for="identificadorId">[Identificador]</label>
+                                <h5 wicket:id="identificador" id="identificadorId">[cpf/cnpj]</h5>
+                            </div>
+                        </div>
+
+                        <div class="row g-2 mb-2">
+                            <div class="col-md">
+                                <label wicket:id="rgIsncricaoLabel" for="rgInscicaoSocial">[rg/inscricaoSocial]</label>
+                                <h5 wicket:id="rgIsncricao" id="rgInscicaoSocial">[rg/inscricaoSocial]</h5>
+                            </div>
+                            <div class="col-md">
+                                <label for="statusId">Status</label>
+                                <div id="statusId">
+                                    <button wicket:id="ativo" class="btn btn-success">Ativo</button>
+                                    <button wicket:id="inativo" class="btn btn-secondary">Inativo</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div wicket:id="listEnderecoWMC" style="width: 90%; margin: auto">
+                    <h4 class="d-flex justify-content-center mb-3">Endere&ccedil;os</h4>
+                    <div class="table-responsive-md">
+                        <table class="table table-secondary table-striped table-hover">
+                            <tr>
+                                <th>#</th>
+                                <th>Endere&ccedil;o</th>
+                                <th>Bairro</th>
+                                <th>Cidade</th>
+                                <th>UF</th>
+                            </tr>
+                            <tr wicket:id="enderecos">
+                                <td wicket:id="index">[count]</td>
+                                <td wicket:id="endereco">[endereco]</td>
+                                <td wicket:id="bairro">[bairro]</td>
+                                <td wicket:id="cidade">[cidade]</td>
+                                <td wicket:id="estado">[bairro]</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-end mb-3">
+                <button wicket:id="reportDownload" class="btn btn-danger">Gerar PDF</button>
+            </div>
         </div>
     </wicket:panel>
 </body>
