@@ -16,7 +16,6 @@ import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.validation.validator.StringValidator;
 
 import java.io.IOException;
@@ -66,7 +65,6 @@ public class EnderecoFormPanel extends Panel {
 
         CheckBox checkBoxPrincipal = new CheckBox("principal");
         checkBoxPrincipal.setOutputMarkupId(true);
-
         WebMarkupContainer divPrincipal = new WebMarkupContainer("divPrincipal"){
             @Serial
             private static final long serialVersionUID = -1727909086220783131L;
@@ -84,6 +82,8 @@ public class EnderecoFormPanel extends Panel {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 try {
+                    System.out.println(enderecoForm.getModelObject());
+
                     Endereco enderecobd = salvar(enderecoForm.getModelObject(), idMonitorador);
                     enderecoForm.getModelObject().setId(enderecobd.getId());
 

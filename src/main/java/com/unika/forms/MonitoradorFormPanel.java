@@ -1,6 +1,5 @@
 package com.unika.forms;
 
-import com.unika.ControleMonitoradores;
 import com.unika.Panels.EnderecoListPanel;
 import com.unika.model.Monitorador;
 import com.unika.model.TipoPessoa;
@@ -30,6 +29,8 @@ public class MonitoradorFormPanel extends Panel {
     private static final long serialVersionUID = -8284617783524484913L;
     final FeedbackPanel feedbackPanel;
     final MonitoradorApi monitoradorApi = new MonitoradorApi();
+    private final EnderecoListPanel enderecoListPanel;
+
     public MonitoradorFormPanel(String id, Monitorador monitorador, FeedbackPanel feedbackPanel) {
         super(id);
         this.feedbackPanel = feedbackPanel;
@@ -53,8 +54,8 @@ public class MonitoradorFormPanel extends Panel {
             }
             wmc.setVisible(true);
         }
-
-        add(new EnderecoListPanel("endListPanel", monitorador.getId(), feedbackPanel));
+        enderecoListPanel = new EnderecoListPanel("endListPanel", monitorador.getId(), feedbackPanel);
+        add(enderecoListPanel);
     }
 
     Form<Monitorador> getForm(Monitorador monitorador){
@@ -191,14 +192,16 @@ public class MonitoradorFormPanel extends Panel {
                 target.add(pfWMC, pjWMC);
             }
         });
-
-
         monitoradorForm.add(pfWMC, pjWMC);
         return monitoradorForm;
     }
 
     private void salvar(Monitorador monitorador){
         try {
+            monitorador.setEnderecoList(enderecoListPanel.getEnderecoList());
+
+            System.out.println(monitorador);
+
             if(monitorador.getId() == null){
                 monitoradorApi.cadastrarMonitorador(monitorador); // Novo monitorador
             } else {
@@ -208,5 +211,4 @@ public class MonitoradorFormPanel extends Panel {
             throw new RuntimeException(e.getMessage());
         }
     }
-
 }

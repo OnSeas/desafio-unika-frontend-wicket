@@ -28,7 +28,7 @@ public class EnderecoListPanel extends Panel {
     final FeedbackPanel feedbackPanel;
     final ModalWindow modalWindow = new ModalWindow("modalEnd");
     final Long idMonitorador;
-    public List<Endereco> enderecoList;
+    private List<Endereco> enderecoList;
     WebMarkupContainer enderecoListWMC = new WebMarkupContainer("enderecoListWMC"){
         @Serial
         private static final long serialVersionUID = -5217040513869614038L;
@@ -57,8 +57,15 @@ public class EnderecoListPanel extends Panel {
                 setModalFormSize();
                 endereco = new Endereco();
                 FLAG = formType.CREATE;
-                modalWindow.setContent(new EnderecoFormPanel(modalWindow.getContentId(), endereco, idMonitorador, feedbackPanel));
-                modalWindow.show(target);
+
+                if (enderecoList.size() >= 3){
+                    error("Este monitorador já possuí o número maximo de endereços: 3.");
+                    target.add(feedbackPanel);
+                }
+                else {
+                    modalWindow.setContent(new EnderecoFormPanel(modalWindow.getContentId(), endereco, idMonitorador, feedbackPanel));
+                    modalWindow.show(target);
+                }
             }
         });
 
@@ -80,7 +87,7 @@ public class EnderecoListPanel extends Panel {
             @Override
             public void onClose(AjaxRequestTarget target) {
                 System.out.println(endereco);
-                if(FLAG.equals(formType.CREATE) && endereco.getEstado() != null){
+                if(FLAG.equals(formType.CREATE) && endereco.getCep() != null){
                     if (enderecoList.size() >=3) feedbackPanel.error("Este monitorador já possuí o número maximo de endereços: 3.");
                     else enderecoList.add(endereco);
                 }
@@ -159,27 +166,37 @@ public class EnderecoListPanel extends Panel {
         modalWindow.setInitialHeight(390);
     }
 
-    // TODO Adaptar as duas funções para em caso de edenreço.getId=null (Quando for um novo monitorador)
+    // Em caso de edenreço.getId=null (Quando for um novo monitorador) não manda para o banco de dados
     private void tornarEndPrincipal(Endereco endereco){
-        try {
-            feedbackPanel.success(enderecoApi.tornarPrincipal(
-                    idMonitorador,
-                    endereco.getId()
-            ));
-            enderecoList.forEach(end -> end.setPrincipal(false));
-            endereco.setPrincipal(true);
-        } catch (Exception e) {
-            feedbackPanel.error(e.getMessage());
-        }
+            try {
+                if (endereco.getId() != null) success(enderecoApi.tornarPrincipal(
+                        idMonitorador,
+                        endereco.getId()
+                ));
+                else success("O endereço " + endereco.getEndereco() + " agora é o seu endereço principal.");
+
+                enderecoList.forEach(end -> end.setPrincipal(false));
+                endereco.setPrincipal(true);
+            } catch (Exception e) {
+                error(e.getMessage());
+            }
+
     }
 
     private void deletarEndereco(Endereco endereco){
-        try {
-            feedbackPanel.success(enderecoApi.deletarEndereco(endereco.getId()));
+        if (enderecoList.size() <=1) error("Monitorador não pode ficar sem endereços.");
+        else try {
+            if (endereco.getId() != null) success(enderecoApi.deletarEndereco(endereco.getId()));
+            else success("O endereço " + endereco.getEndereco() + " foi removido.");
+
             enderecoList.remove(endereco);
         } catch (Exception e) {
-            feedbackPanel.error(e.getMessage());
+            error(e.getMessage());
         }
+    }
+
+    public List<Endereco> getEnderecoList(){
+        return this.enderecoList;
     }
 
     private enum formType{

@@ -42,15 +42,14 @@ public class ImportFormPanel extends Panel {
                     File file = new File(fileUpload.getClientFileName());
                     System.out.println(file.getAbsolutePath());
                     fileUpload.writeTo(file);
-                    success(monitoradorApi.importarXLSX(file));
+                    feedbackPanel.success(monitoradorApi.importarXLSX(file));
                     ModalWindow.closeCurrent(target);
                 } catch (FileNotFoundException | NullPointerException ex){
                     feedbackPanel.error("É necessário enviar um arquivo!");
-                    target.add(feedbackPanel);
                 } catch (Exception e){
                     feedbackPanel.error(e.getMessage());
-                    target.add(feedbackPanel);
                 }
+                target.add(feedbackPanel);
             }
 
             @Override
@@ -59,7 +58,7 @@ public class ImportFormPanel extends Panel {
             }
         });
 
-        form.setMultiPart(true); // Set to true to use enctype='multipart/form-data', and to process file uploads by default multiPart = false
+        form.setMultiPart(true);
         form.setMaxSize(Bytes.megabytes(2));
         form.add(fileUploadField);
         add(form);
