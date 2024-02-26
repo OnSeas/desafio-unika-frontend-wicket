@@ -12,14 +12,17 @@ import org.apache.wicket.ajax.markup.html.navigation.paging.AjaxPagingNavigator;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.link.DownloadLink;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.list.PageableListView;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.Serial;
 import java.util.List;
@@ -53,12 +56,31 @@ public class MonitoradorListPanel extends Panel {
         modalWindow.setOutputMarkupId(true);
         modalWindow.setResizable(false);
         add(modalWindow);
+
+        addButtons();
+    }
+
+    private void addButtons(){
+        monitoradorListWMC.add(new DownloadLink("downloadAllReport", new AbstractReadOnlyModel<>() {
+            @Serial
+            private static final long serialVersionUID = -8630718144901310523L;
+            @Override
+            public File getObject() {
+                File reportFile;
+                try {
+                    reportFile = monitoradorApi.gerarRelatorio();
+                }
+                catch (Exception e){
+                    reportFile = null;
+                    feedbackPanel.error(e.getMessage());
+                }
+                return reportFile;
+            }
+        }));
     }
 
     // Coloca Páginação
     private void addPageableList(FeedbackPanel feedbackPanel){
-        monitoradorListWMC.removeAll(); // Remove se já existir uma lista
-
         PageableListView<Monitorador> monitoradorListView = construirLista();
         AjaxPagingNavigator pagingNavigation = new AjaxPagingNavigator("pageNavigator", monitoradorListView){
             @Serial
@@ -74,12 +96,19 @@ public class MonitoradorListPanel extends Panel {
 
         monitoradorListWMC.add(addFormPesquisa(monitoradorListView, feedbackPanel));
 
-        monitoradorListWMC.setVisible(!monitoradorListView.getList().isEmpty());
         monitoradorListWMC.add(monitoradorListView, pagingNavigation);
     }
 
     private Panel addFormPesquisa(ListView<Monitorador> listView, FeedbackPanel feedbackPanel){
-        return new PesquisaFormPanel("searchForm", listView, feedbackPanel);
+        return new PesquisaFormPanel("searchForm", listView, feedbackPanel){
+            @Serial
+            private static final long serialVersionUID = 3745148448399664563L;
+            @Override
+            protected void onConfigure() {
+                super.onConfigure();
+                this.setVisible(!listView.getList().isEmpty());
+            }
+        };
     }
 
     // CONSTRÓI A LISTA
@@ -137,12 +166,6 @@ public class MonitoradorListPanel extends Panel {
         } catch (Exception e) {
             feedbackPanel.error(e.getMessage());
         }
-    }
-
-    private void setModalDialogSize(){
-        modalWindow.setInitialWidth(30);
-        modalWindow.setWidthUnit("%");
-        modalWindow.setInitialHeight(150);
     }
 
     private void setModalInfoPanel(int qntEnd){

@@ -7,7 +7,16 @@
     <body>
         <wicket:panel>
             <div wicket:id="monitoradorListWMC">
-                <span wicket:id="searchForm"></span>
+                <!--TODO organizar css-->
+                <div class="d-flex justify-content-end">
+                    <div>
+                        <button wicket:id="downloadAllReport" type="button" class="btn btn-danger">Gerar Relatório PDF</button>
+                        <button type="button" class="btn btn-success">Gerar planilha excel</button>
+                    </div>
+                    <div>
+                        <span wicket:id="searchForm"></span>
+                    </div>
+                </div>
 
                 <table class="table table-dark table-striped table-hover">
                     <tr>

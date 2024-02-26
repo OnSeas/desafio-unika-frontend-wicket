@@ -225,7 +225,21 @@ public class MonitoradorApi implements Serializable {
 
     // Exports e Imports
     public File gerarRelatorio(Long idMonitorador) throws IOException {
-        Response response = apiService.conectarApiGET(apiUrl + "/report/pdf/" + idMonitorador);
+        Response response = apiService.conectarApiGET(apiUrl + "/report/" + idMonitorador);
+
+        assert response.body() != null;
+        String res = response.body().string();
+        response.close();
+
+        if (response.isSuccessful()){
+            return converterDados.obterDados(res, File.class);
+        } else {
+            throw new RuntimeException(res);
+        }
+    }
+
+    public File gerarRelatorio() throws IOException {
+        Response response = apiService.conectarApiGET(apiUrl + "/report");
 
         assert response.body() != null;
         String res = response.body().string();

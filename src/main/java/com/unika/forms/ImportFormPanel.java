@@ -1,9 +1,9 @@
 package com.unika.forms;
 
+import com.unika.ControleMonitoradores;
 import com.unika.model.apiService.MonitoradorApi;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
-import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
@@ -43,7 +43,7 @@ public class ImportFormPanel extends Panel {
                     System.out.println(file.getAbsolutePath());
                     fileUpload.writeTo(file);
                     feedbackPanel.success(monitoradorApi.importarXLSX(file));
-                    ModalWindow.closeCurrent(target);
+                    setResponsePage(new ControleMonitoradores(feedbackPanel));
                 } catch (FileNotFoundException | NullPointerException ex){
                     feedbackPanel.error("É necessário enviar um arquivo!");
                 } catch (Exception e){
