@@ -1,6 +1,5 @@
 package com.unika.forms;
 
-import com.unika.ControleMonitoradores;
 import com.unika.Panels.EnderecoListPanel;
 import com.unika.model.Monitorador;
 import com.unika.model.TipoPessoa;
@@ -159,7 +158,7 @@ public class MonitoradorFormPanel extends Panel {
                     } else {
                         feedbackPanel.success("Monitorador Atualizado com Sucesso!");
                     }
-                    setResponsePage(new ControleMonitoradores(feedbackPanel));
+                    target.add(feedbackPanel);
                 } catch (Exception e){
                     error(e.getMessage());
                     target.add(feedbackPanel);

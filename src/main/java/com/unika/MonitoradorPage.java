@@ -1,9 +1,7 @@
 package com.unika;
 
-import com.unika.Panels.EnderecoListPanel;
 import com.unika.forms.MonitoradorFormPanel;
 import com.unika.model.Monitorador;
-import org.apache.wicket.markup.html.panel.EmptyPanel;
 
 import java.io.Serial;
 

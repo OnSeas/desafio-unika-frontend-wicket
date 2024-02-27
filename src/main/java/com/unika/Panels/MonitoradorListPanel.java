@@ -1,11 +1,15 @@
 package com.unika.Panels;
 
+import com.unika.ImportarMonitoradores;
 import com.unika.MonitoradorPage;
 import com.unika.dialogs.ConfirmationLink;
+import com.unika.forms.ImportFormPanel;
+import com.unika.forms.MonitoradorFormPanel;
 import com.unika.forms.PesquisaFormPanel;
 import com.unika.model.Monitorador;
 import com.unika.model.TipoPessoa;
 import com.unika.model.apiService.MonitoradorApi;
+import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.navigation.paging.AjaxPagingNavigator;
@@ -31,9 +35,27 @@ public class MonitoradorListPanel extends Panel {
     @Serial
     private static final long serialVersionUID = -3590955289064988486L;
     final FeedbackPanel feedbackPanel;
-    ModalWindow modalWindow = new ModalWindow("modawOpcoes");
+    ModalWindow modalWindow = new ModalWindow("modaw");
     MonitoradorApi monitoradorApi = new MonitoradorApi();
-    WebMarkupContainer monitoradorListWMC = new WebMarkupContainer("monitoradorListWMC");
+    WebMarkupContainer monitoradorListWMC = new WebMarkupContainer("monitoradorListWMC"){
+        @Serial
+        private static final long serialVersionUID = 7497134965226070790L;
+        @Override
+        protected void onConfigure() {
+            super.onConfigure();
+            this.setVisible(!monitoradores.isEmpty());
+        }
+    };
+
+    WebMarkupContainer emptyListWMC = new WebMarkupContainer("emptyListWMC"){
+        @Serial
+        private static final long serialVersionUID = -1140679043565414998L;
+        @Override
+        protected void onConfigure() {
+            super.onConfigure();
+            this.setVisible(!monitoradorListWMC.isVisible());
+        }
+    };
     List<Monitorador> monitoradores;
 
     public MonitoradorListPanel(String id, FeedbackPanel feedbackPanel) {
@@ -51,6 +73,11 @@ public class MonitoradorListPanel extends Panel {
         monitoradorListWMC.setOutputMarkupPlaceholderTag(true);
         addPageableList(feedbackPanel);
         add(monitoradorListWMC);
+
+        emptyListWMC.setOutputMarkupId(true);
+        emptyListWMC.setOutputMarkupPlaceholderTag(true);
+        addEmptyListComponents();
+        add(emptyListWMC);
 
         // config do modaw
         modalWindow.setOutputMarkupId(true);
@@ -77,6 +104,24 @@ public class MonitoradorListPanel extends Panel {
                 return reportFile;
             }
         }));
+
+        monitoradorListWMC.add(new DownloadLink("downloadMonitoradoresXlsx", new AbstractReadOnlyModel<File>() {
+            @Serial
+            private static final long serialVersionUID = 5404244274162871915L;
+
+            @Override
+            public File getObject() {
+                File file;
+                try {
+                    file = monitoradorApi.exportarXLSX();
+                    System.out.println(file);
+                } catch (Exception e){
+                    file = null;
+                    System.out.println(e.getMessage());
+                }
+                return file;
+            }
+        }));
     }
 
     // Coloca Páginação
@@ -100,15 +145,26 @@ public class MonitoradorListPanel extends Panel {
     }
 
     private Panel addFormPesquisa(ListView<Monitorador> listView, FeedbackPanel feedbackPanel){
-        return new PesquisaFormPanel("searchForm", listView, feedbackPanel){
+        return new PesquisaFormPanel("searchForm", listView, feedbackPanel);
+    }
+
+    private void addEmptyListComponents(){
+        emptyListWMC.add(new AjaxLink<Void>("criarMonitorador") {
             @Serial
-            private static final long serialVersionUID = 3745148448399664563L;
+            private static final long serialVersionUID = -7101144915138464271L;
             @Override
-            protected void onConfigure() {
-                super.onConfigure();
-                this.setVisible(!listView.getList().isEmpty());
+            public void onClick(AjaxRequestTarget target) {
+                setResponsePage(MonitoradorPage.class);
             }
-        };
+        });
+        emptyListWMC.add(new AjaxLink<Void>("importarMonitorador") {
+            @Serial
+            private static final long serialVersionUID = 7931682729645654379L;
+            @Override
+            public void onClick(AjaxRequestTarget target) {
+                setResponsePage(ImportarMonitoradores.class);
+            }
+        });
     }
 
     // CONSTRÓI A LISTA
@@ -142,7 +198,7 @@ public class MonitoradorListPanel extends Panel {
                     @Override
                     public void onClick(AjaxRequestTarget target) {
                         deletarMontorador(listItem.getModelObject());
-                        target.add(monitoradorListWMC, feedbackPanel);
+                        target.add(monitoradorListWMC, emptyListWMC, feedbackPanel);
                     }
                 });
                 listItem.add(new AjaxLink<Void>("infoMonitorador") {

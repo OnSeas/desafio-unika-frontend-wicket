@@ -76,10 +76,10 @@ public class EnderecoApi implements Serializable {
         }
     }
 
-    public String tornarPrincipal(Long idMonitorador, Long idEndereco) throws IOException {
+    public String tornarPrincipal(Long idEndereco) throws IOException {
         Response response = apiService.conectarApiPUT(
                 "",
-                apiUrl + "/" + idMonitorador + "/tornar-principal/" + idEndereco
+                apiUrl + "/tornar-principal/" + idEndereco
         );
 
         assert response.body() != null;

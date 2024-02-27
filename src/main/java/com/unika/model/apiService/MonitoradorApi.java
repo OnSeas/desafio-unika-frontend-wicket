@@ -268,4 +268,18 @@ public class MonitoradorApi implements Serializable {
             throw new RuntimeException(res);
         }
     }
+
+    public File exportarXLSX() throws IOException {
+        Response response = apiService.conectarApiGET(apiUrl + "/export/xlsx");
+
+        assert response.body() != null;
+        String res = response.body().string();
+        response.close();
+
+        if (response.isSuccessful()){
+            return converterDados.obterDados(res, File.class);
+        } else {
+            throw new RuntimeException(res);
+        }
+    }
 }

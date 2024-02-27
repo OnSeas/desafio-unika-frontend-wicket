@@ -170,7 +170,6 @@ public class EnderecoListPanel extends Panel {
     private void tornarEndPrincipal(Endereco endereco){
             try {
                 if (endereco.getId() != null) success(enderecoApi.tornarPrincipal(
-                        idMonitorador,
                         endereco.getId()
                 ));
                 else success("O endereço " + endereco.getEndereco() + " agora é o seu endereço principal.");

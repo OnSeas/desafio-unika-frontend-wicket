@@ -43,7 +43,7 @@ public class ImportFormPanel extends Panel {
                     System.out.println(file.getAbsolutePath());
                     fileUpload.writeTo(file);
                     feedbackPanel.success(monitoradorApi.importarXLSX(file));
-                    setResponsePage(new ControleMonitoradores(feedbackPanel));
+                    target.add(feedbackPanel);
                 } catch (FileNotFoundException | NullPointerException ex){
                     feedbackPanel.error("É necessário enviar um arquivo!");
                 } catch (Exception e){
