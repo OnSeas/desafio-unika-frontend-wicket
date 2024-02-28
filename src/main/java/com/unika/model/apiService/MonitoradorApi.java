@@ -1,6 +1,7 @@
 package com.unika.model.apiService;
 
 import com.unika.model.Endereco;
+import com.unika.model.Filtro;
 import com.unika.model.Monitorador;
 import com.unika.model.apiService.converters.ConverterDados;
 import okhttp3.Response;
@@ -150,52 +151,12 @@ public class MonitoradorApi implements Serializable {
         }
     }
 
-
-    // Buscas
-    public List<Monitorador> buscarMonitoradoresPorEmail(String email) throws IOException {
-        Response response = apiService.conectarApiGET(apiUrl + "/buscar/email/" + email);
-
-        assert response.body() != null;
-        String res = response.body().string();
-        response.close();
-
-        if (response.isSuccessful()){
-            return converterDados.obterLista(res, Monitorador.class);
-        } else {
-            throw new RuntimeException("Nenhum um  monitorador encontrado na busca!");
-        }
-    }
-
-    public List<Monitorador> buscarMonitoradorPorCpf(String cpf) throws IOException {
-        Response response = apiService.conectarApiGET(apiUrl + "/buscar/cpf/" + cpf);
-
-        assert response.body() != null;
-        String res = response.body().string();
-        response.close();
-
-        if (response.isSuccessful()){
-            return converterDados.obterLista(res, Monitorador.class);
-        } else {
-            throw new RuntimeException("Nenhum um  monitorador encontrado na busca!");
-        }
-    }
-
-    public List<Monitorador> buscarMonitoradorPorCnpj(String cnpj) throws IOException {
-        Response response = apiService.conectarApiGET(apiUrl + "/buscar/cnpj/" + cnpj);
-
-        assert response.body() != null;
-        String res = response.body().string();
-        response.close();
-
-        if (response.isSuccessful()){
-            return converterDados.obterLista(res, Monitorador.class);
-        } else {
-            throw new RuntimeException("Nenhum um  monitorador encontrado na busca!");
-        }
-    }
-
-    public List<Monitorador> buscarPF() throws IOException {
-        Response response = apiService.conectarApiGET(apiUrl + "/buscar-pf");
+    // Filtro
+    public List<Monitorador> filtrarMonitorares(Filtro filtro) throws IOException {
+        Response response = apiService.conectarApiPOST(
+                converterDados.obterJason(filtro),
+                apiUrl + "/filtro"
+        );
 
         assert response.body() != null;
         String res = response.body().string();
@@ -207,21 +168,6 @@ public class MonitoradorApi implements Serializable {
             throw new RuntimeException(res);
         }
     }
-
-    public List<Monitorador> buscarPJ() throws IOException {
-        Response response = apiService.conectarApiGET(apiUrl + "/buscar-pj");
-
-        assert response.body() != null;
-        String res = response.body().string();
-        response.close();
-
-        if (response.isSuccessful()){
-            return converterDados.obterLista(res, Monitorador.class);
-        } else {
-            throw new RuntimeException(res);
-        }
-    }
-
 
     // Exports e Imports
     public File gerarRelatorio(Long idMonitorador) throws IOException {

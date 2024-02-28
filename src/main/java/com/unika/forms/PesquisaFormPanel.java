@@ -1,17 +1,19 @@
 package com.unika.forms;
 
+import com.unika.model.Filtro;
 import com.unika.model.Monitorador;
+import com.unika.model.UF;
 import com.unika.model.apiService.MonitoradorApi;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
-import org.apache.wicket.markup.html.form.DropDownChoice;
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.form.*;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.Model;
 
 import java.io.IOException;
@@ -28,16 +30,35 @@ public class PesquisaFormPanel extends Panel {
     public PesquisaFormPanel(String id, ListView<Monitorador> monitoradorListView, FeedbackPanel feedbackPanel) {
         super(id);
 
-        Form<String> pesquisarForm = new Form<>("pesquisarForm");
+        Form<Filtro> pesquisarForm = new Form<>("pesquisarForm", new CompoundPropertyModel<>(new Filtro()));
         add(pesquisarForm);
 
-        List<String> tipos = Arrays.asList("email", "cpf", "cnpj");
-        DropDownChoice<String> inputTipo = new DropDownChoice<>("inputTipo", new Model<>(), tipos);
+        DropDownChoice<Filtro.TipoBusca> inputTipo = new DropDownChoice<>("tipoBusca",
+                Arrays.asList(Filtro.TipoBusca.values()),
+                new ChoiceRenderer<>(){
+                    @Serial
+                    private static final long serialVersionUID = 2254888871382690067L;
+                    @Override
+                    public Object getDisplayValue(Filtro.TipoBusca tipo){
+                        return tipo.getLabel();
+                    }
+                });
         inputTipo.setOutputMarkupId(true);
         inputTipo.setOutputMarkupPlaceholderTag(true);
         inputTipo.setVisible(false);
 
-        TextField<String> inputPesquisa = new TextField<>("inputPesquisa", new Model<>());
+        WebMarkupContainer checkboxes = new WebMarkupContainer("checkboxes");
+        checkboxes.setOutputMarkupId(true);
+        checkboxes.setOutputMarkupPlaceholderTag(true);
+        checkboxes.setVisible(false);
+
+        CheckBox checkBoxPF = new CheckBox("pessoaFisica");
+        CheckBox checkBoxPJ = new CheckBox("pessoaJuridica");
+        CheckBox checkBoxAtivados = new CheckBox("soAtivados");
+
+        checkboxes.add(checkBoxPF, checkBoxPJ, checkBoxAtivados);
+
+        TextField<String> inputPesquisa = new TextField<>("busca");
         inputPesquisa.add(new AjaxEventBehavior("focus") {
             @Serial
             private static final long serialVersionUID = 5061484065988631638L;
@@ -45,7 +66,8 @@ public class PesquisaFormPanel extends Panel {
             protected void onEvent(AjaxRequestTarget target) {
                 if(!inputTipo.isVisible()){
                     inputTipo.setVisible(true);
-                    target.add(inputTipo);
+                    checkboxes.setVisible(true);
+                    target.add(inputTipo, checkboxes);
                 }
             }
         });
@@ -61,8 +83,9 @@ public class PesquisaFormPanel extends Panel {
                     target.add(feedbackPanel);
                     this.setVisible(false);
                     inputTipo.setVisible(false);
-                    inputPesquisa.setModelObject(null);
-                    target.add(monitoradorListView.getParent(), this, inputTipo, inputPesquisa);
+                    checkboxes.setVisible(false);
+                    pesquisarForm.setModelObject(new Filtro());
+                    target.add(monitoradorListView.getParent(), this, inputTipo, inputPesquisa, checkboxes);
                 } catch (Exception e) {
                     error(e.getMessage());
                     feedbackPanel.forEach(target::add);
@@ -79,7 +102,8 @@ public class PesquisaFormPanel extends Panel {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 try {
-                    monitoradorListView.setList(getListaMonitoradores(inputTipo.getModelObject(), inputPesquisa.getModelObject()));
+                    System.out.println(pesquisarForm.getModelObject());
+                    monitoradorListView.setList(getListaMonitoradores(pesquisarForm.getModelObject()));
                     success("Pesquisa realizada com sucesso!");
                     target.add(feedbackPanel);
                     clearButton.setVisible(true);
@@ -96,20 +120,11 @@ public class PesquisaFormPanel extends Panel {
             }
         };
 
-        pesquisarForm.add(inputPesquisa, inputTipo, searchButton, clearButton);
+        pesquisarForm.add(inputPesquisa, inputTipo, searchButton, checkboxes, clearButton);
     }
 
     // Para o filtro
-    private List<Monitorador> getListaMonitoradores(String tipo, String busca) throws IOException {
-        if (tipo == null){
-            throw new InvalidPropertiesFormatException("Tipo de pesquisa inválida! É necessário inserir uma pesquisa.");
-        }
-
-        return switch (tipo) {
-            case "email" -> monitoradorApi.buscarMonitoradoresPorEmail(busca);
-            case "cpf" -> monitoradorApi.buscarMonitoradorPorCpf(busca);
-            case "cnpj" -> monitoradorApi.buscarMonitoradorPorCnpj(busca);
-            default -> throw new InvalidPropertiesFormatException("Tipo de pesquisa inválida!");
-        };
+    private List<Monitorador> getListaMonitoradores(Filtro filtro) throws IOException {
+        return monitoradorApi.filtrarMonitorares(filtro);
     }
 }
