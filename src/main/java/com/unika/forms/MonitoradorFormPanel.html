@@ -3,17 +3,18 @@
     <head>
         <meta charset="UTF-8">
         <title></title>
+        <script src="../../../../resources/com/unika/forms/js/countScript.js"></script>
     </head>
     <body>
         <wicket:panel>
             <div class="mb-3 mt-2">
-                <h1 wicket:id="monitoradorFormTitle" class="d-flex justify-content-center mb-3 mt-3">[título]</h1>
+                <h1 wicket:id="monitoradorFormTitle" class="d-flex justify-content-center mb-4 mt-3">[título]</h1>
 
                 <div id="formId" class="d-grid gap-6 col-8 mx-auto">
-                    <form wicket:id="formMonitorador" name="formMonitorador">
+                    <form wicket:id="formMonitorador" name="formMonitoradorName">
 
                         <div class="d-grid gap-3 col-10 mx-auto">
-                            <div class="btn-group d-flex justify-content-center" role="group" aria-label="Basic radio toggle button group" style="">
+                            <div class="btn-group d-flex justify-content-center mb-3" role="group">
                                 <span wicket:id="tipoPessoa">
                                     <input wicket:id="pf" class="btn-check" type="radio"/>
                                     <label wicket:for="pf" class="btn btn-outline-primary">Pessoa F&iacute;sica</label>
@@ -25,10 +26,11 @@
                             <div class="row g-2">
                                 <div class="col-md">
                                     <div class="form-floating mb-3">
-                                        <input wicket:id="email" type="email" class="form-control" placeholder="email@email.com">
+                                        <input wicket:id="email" type="email" class="form-control" placeholder="email@email.com" maxlength="50">
                                         <label wicket:for="email" class="form-label">Email</label>
                                     </div>
                                 </div>
+
                                 <div class="col-md">
                                     <div class="form-floating">
                                         <input wicket:id="dataNascimento" type="date" class="form-control" data-date-format="yyyy-MM-dd">
@@ -90,7 +92,6 @@
                         </div>
                     </form>
                 </div>
-
                 <span wicket:id="endListPanel" class="d-grid col-11 mx-auto"></span>
             </div>
         </wicket:panel>

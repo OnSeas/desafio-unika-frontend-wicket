@@ -19,7 +19,7 @@ public class HomePage extends WebPage {
 	@Serial
 	private static final long serialVersionUID = 1L;
 	final private FeedbackPanel feedbackPanel;
-	private WebMarkupContainer pageContent = new WebMarkupContainer("pageContent");
+	private final WebMarkupContainer pageContent = new WebMarkupContainer("pageContent");
 
 	public HomePage() {
 		feedbackPanel = new FeedbackPanel("feedbackPanel"){ // FeedbackPanel geral para todas as validações.
@@ -35,7 +35,7 @@ public class HomePage extends WebPage {
 					String jqueryScriptClass = "$('#" + getMarkupId() + "').addClass(\"alert-success\");";
 					getResponse().write("<script type=\"text/javascript\">" + jqueryScriptClass + "</script>");
 
-					String jqueryScript = "$('#" + getMarkupId() + "').delay(2600).fadeOut();";
+					String jqueryScript = "$('#" + getMarkupId() + "').delay(4100).fadeOut();";
 					getResponse().write("<script type=\"text/javascript\">" + jqueryScript + "</script>");
 				}
 				if(anyErrorMessage()){ // Só em mensagens de erro.
@@ -44,7 +44,7 @@ public class HomePage extends WebPage {
 					String jqueryScriptClass = "$('#" + getMarkupId() + "').addClass(\"alert-danger\");";
 					getResponse().write("<script type=\"text/javascript\">" + jqueryScriptClass + "</script>");
 
-					String jqueryScript = "$('#" + getMarkupId() + "').delay(2600).fadeOut();";
+					String jqueryScript = "$('#" + getMarkupId() + "').delay(4100).fadeOut();";
 					getResponse().write("<script type=\"text/javascript\">" + jqueryScript + "</script>");
 				}
 			}
@@ -70,6 +70,8 @@ public class HomePage extends WebPage {
 		add(pageContent);
 
 		add(new AjaxLink<Void>("homePage") {
+			@Serial
+			private static final long serialVersionUID = -3861353272569056434L;
 			@Override
 			public void onClick(AjaxRequestTarget target) {
 				pageContent.get("contentPanel").replaceWith(new MonitoradorListPanel("contentPanel", getFeedbackPanel(), pageContent));
@@ -78,6 +80,8 @@ public class HomePage extends WebPage {
 		});
 
 		add(new AjaxLink<Void>("formMonitorador") {
+			@Serial
+			private static final long serialVersionUID = -6420487693954995450L;
 			@Override
 			public void onClick(AjaxRequestTarget target) {
 				pageContent.get("contentPanel").replaceWith(new MonitoradorFormPanel("contentPanel", new Monitorador(), getFeedbackPanel(), pageContent));
@@ -86,6 +90,8 @@ public class HomePage extends WebPage {
 		});
 
 		add(new AjaxLink<Void>("formImport") {
+			@Serial
+			private static final long serialVersionUID = 4025427636012099392L;
 			@Override
 			public void onClick(AjaxRequestTarget target) {
 				pageContent.get("contentPanel").replaceWith(new ImportFormPanel("contentPanel", getFeedbackPanel(), pageContent));

@@ -103,14 +103,14 @@ public class MonitoradorFormPanel extends Panel {
 
         // -- -- -- Validações em campos
         radioTipoPessoa.setLabel(Model.of("Tipo de pessoa")).setRequired(true);
-        inputEmail.setLabel(Model.of("Email do contato")).setRequired(true).add(EmailAddressValidator.getInstance());
+        inputEmail.setLabel(Model.of("Email")).setRequired(true).add(EmailAddressValidator.getInstance());
         inputDataNascimento.setLabel(Model.of("Data nascimento")).setRequired(true);
         inputCpf.setLabel(Model.of("CPF")).setRequired(true).add(StringValidator.exactLength(14));
-        inputNome.setLabel(Model.of("Nome")).setRequired(true).add(StringValidator.lengthBetween(3, 50));
+        inputNome.setLabel(Model.of("Nome")).setRequired(true).add(StringValidator.lengthBetween(3, 30));
         inputRg.setLabel(Model.of("RG")).setRequired(true).add(StringValidator.exactLength(12));
-        inputRazaoSocial.setLabel(Model.of("Razão Social")).setRequired(true).add(StringValidator.lengthBetween(3, 50));
+        inputRazaoSocial.setLabel(Model.of("Razão Social")).setRequired(true).add(StringValidator.lengthBetween(3, 30));
         inputCnpj.setLabel(Model.of("CNPJ")).setRequired(true).add(StringValidator.exactLength(18));
-        inputInscricaoEstadual.setLabel(Model.of("Inscrição Estadual")).setRequired(true).add(StringValidator.maximumLength(18));
+        inputInscricaoEstadual.setLabel(Model.of("Inscrição Estadual")).setRequired(true).add(StringValidator.lengthBetween(8, 18));
 
         // Mascáras de inputs
         inputCpf.add(new AjaxEventBehavior("focus") {

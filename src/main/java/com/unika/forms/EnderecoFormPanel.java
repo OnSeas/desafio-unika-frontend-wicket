@@ -9,7 +9,6 @@ import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
-import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.*;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
@@ -45,7 +44,7 @@ public class EnderecoFormPanel extends Panel {
 
         Form<Endereco> enderecoForm = new Form<>("enderecoForm", new CompoundPropertyModel<>(endereco));
 
-        TextArea<String> inputEndereco = new TextArea<>("endereco");
+        TextField<String> inputEndereco = new TextField<>("endereco");
         TextField<String> inputNumero = new TextField<>("numero");
         TextField<String> inputCep = new TextField<>("cep");
         TextField<String> inputBairro = new TextField<>("bairro");
@@ -62,19 +61,6 @@ public class EnderecoFormPanel extends Panel {
                         return estado.getSigla();
                     }
                 });
-
-        CheckBox checkBoxPrincipal = new CheckBox("principal");
-        checkBoxPrincipal.setOutputMarkupId(true);
-        WebMarkupContainer divPrincipal = new WebMarkupContainer("divPrincipal"){
-            @Serial
-            private static final long serialVersionUID = -1727909086220783131L;
-            @Override
-            protected void onConfigure() {
-                super.onConfigure();
-                setVisible(endereco.getId() == null);
-            }
-        };
-        divPrincipal.add(checkBoxPrincipal);
 
         AjaxButton submitAjax = new AjaxButton("submitAjax", enderecoForm) {
             @Serial
@@ -107,7 +93,7 @@ public class EnderecoFormPanel extends Panel {
         };
 
 
-        List<Component> inputsList = Arrays.asList(inputEndereco, inputNumero, inputCep, inputBairro, inputTelefone, inputCidade, dropEstado, divPrincipal, submitAjax);
+        List<Component> inputsList = Arrays.asList(inputEndereco, inputNumero, inputCep, inputBairro, inputTelefone, inputCidade, dropEstado, submitAjax);
         inputsList.forEach(component -> {
             component.setOutputMarkupId(true);
             enderecoForm.add(component);
@@ -152,6 +138,10 @@ public class EnderecoFormPanel extends Panel {
     // Metódo salvar usado para adcionar ou editar um endereço ao banco de dados
     private Endereco salvar(Endereco endereco, Long idMonitorador){
         try {
+            // Não chega no backend quando vai criar um novo monitorador, então validando aqui.
+            if (!endereco.getCidade().matches("[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ ]*")) throw  new RuntimeException("Cidade não pode conter números ou caracteres especiais!");
+            if (!endereco.getBairro().matches("[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ ]*")) throw  new RuntimeException("Bairro não pode conter números ou caracteres especiais!");
+
             if (idMonitorador!=null){
                 if(endereco.getId() == null){ // Criando novo endereço
                     return monitoradorApi.adcionarEndereco(idMonitorador, endereco);

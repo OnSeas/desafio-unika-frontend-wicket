@@ -7,7 +7,6 @@ import com.unika.forms.PesquisaFormPanel;
 import com.unika.model.Monitorador;
 import com.unika.model.TipoPessoa;
 import com.unika.model.apiService.MonitoradorApi;
-import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.navigation.paging.AjaxPagingNavigator;
@@ -64,13 +63,6 @@ public class MonitoradorListPanel extends Panel {
         super(id);
         this.pageContent = pageContent;
         this.feedbackPanel = feedbackPanel;
-
-        add(new AjaxEventBehavior("load") {
-            @Override
-            protected void onEvent(AjaxRequestTarget target) {
-
-            }
-        });
 
         // Inicia a Lista
         try {
@@ -186,7 +178,6 @@ public class MonitoradorListPanel extends Panel {
         return new PageableListView<Monitorador>("monitoradores", monitoradores, 10) {
             @Serial
             private static final long serialVersionUID = -7313164500893623865L;
-
             @Override
             protected void populateItem(final ListItem<Monitorador> listItem) {
                 // Valores de cada monitorador

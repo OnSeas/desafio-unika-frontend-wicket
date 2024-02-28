@@ -42,6 +42,7 @@ public class EnderecoListPanel extends Panel {
     };
     Endereco endereco;
     formType FLAG;
+    boolean temEndPrincipal = false;
 
     // Editar Monitorador
     public EnderecoListPanel(String id, Long idMonitorador, FeedbackPanel feedbackPanel) {
@@ -87,7 +88,11 @@ public class EnderecoListPanel extends Panel {
             @Override
             public void onClose(AjaxRequestTarget target) {
                 System.out.println(endereco);
+                temEndPrincipal = false;
                 if(FLAG.equals(formType.CREATE) && endereco.getCep() != null){
+                    enderecoList.forEach(e -> {if(e.getPrincipal()) temEndPrincipal = true;});
+                    endereco.setPrincipal(!temEndPrincipal);
+
                     if (enderecoList.size() >=3) feedbackPanel.error("Este monitorador já possuí o número maximo de endereços: 3.");
                     else enderecoList.add(endereco);
                 }
@@ -117,6 +122,7 @@ public class EnderecoListPanel extends Panel {
                         @Override
                         public void onClick(AjaxRequestTarget target) {
                             FLAG = formType.EDIT;
+                            setModalFormSize();
                             modalWindow.setContent(new EnderecoFormPanel(
                                 modalWindow.getContentId(),
                                     listItem.getModelObject(),
@@ -163,16 +169,14 @@ public class EnderecoListPanel extends Panel {
     private void setModalFormSize(){
         modalWindow.setInitialWidth(40);
         modalWindow.setWidthUnit("%");
-        modalWindow.setInitialHeight(390);
+        modalWindow.setInitialHeight(360);
     }
 
     // Em caso de edenreço.getId=null (Quando for um novo monitorador) não manda para o banco de dados
     private void tornarEndPrincipal(Endereco endereco){
             try {
-                if (endereco.getId() != null) success(enderecoApi.tornarPrincipal(
-                        endereco.getId()
-                ));
-                else success("O endereço " + endereco.getEndereco() + " agora é o seu endereço principal.");
+                if (endereco.getId() != null) enderecoApi.tornarPrincipal(endereco.getId());
+                success("O endereço " + endereco.getEndereco() + " agora é o seu endereço principal.");
 
                 enderecoList.forEach(end -> end.setPrincipal(false));
                 endereco.setPrincipal(true);
