@@ -1,7 +1,5 @@
 package com.unika.Panels;
 
-import com.unika.ImportarMonitoradores;
-import com.unika.MonitoradorPage;
 import com.unika.dialogs.ConfirmationLink;
 import com.unika.forms.ImportFormPanel;
 import com.unika.forms.MonitoradorFormPanel;
@@ -9,11 +7,13 @@ import com.unika.forms.PesquisaFormPanel;
 import com.unika.model.Monitorador;
 import com.unika.model.TipoPessoa;
 import com.unika.model.apiService.MonitoradorApi;
-import org.apache.wicket.Page;
+import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.navigation.paging.AjaxPagingNavigator;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.DownloadLink;
@@ -58,8 +58,19 @@ public class MonitoradorListPanel extends Panel {
     };
     List<Monitorador> monitoradores;
 
-    public MonitoradorListPanel(String id, FeedbackPanel feedbackPanel) {
+    final WebMarkupContainer pageContent;
+
+    public MonitoradorListPanel(String id, FeedbackPanel feedbackPanel, WebMarkupContainer pageContent) {
         super(id);
+        this.pageContent = pageContent;
+        this.feedbackPanel = feedbackPanel;
+
+        add(new AjaxEventBehavior("load") {
+            @Override
+            protected void onEvent(AjaxRequestTarget target) {
+
+            }
+        });
 
         // Inicia a Lista
         try {
@@ -67,7 +78,8 @@ public class MonitoradorListPanel extends Panel {
         } catch (IOException e) {
             feedbackPanel.error(e.getMessage());
         }
-        this.feedbackPanel = feedbackPanel;
+
+        add(new Label("titleListPanel", Model.of("Controle de monitoradores")));
 
         monitoradorListWMC.setOutputMarkupId(true);
         monitoradorListWMC.setOutputMarkupPlaceholderTag(true);
@@ -154,7 +166,8 @@ public class MonitoradorListPanel extends Panel {
             private static final long serialVersionUID = -7101144915138464271L;
             @Override
             public void onClick(AjaxRequestTarget target) {
-                setResponsePage(MonitoradorPage.class);
+                pageContent.get("contentPanel").replaceWith(new MonitoradorFormPanel("contentPanel", new Monitorador(), feedbackPanel, pageContent));
+                target.add(pageContent);
             }
         });
         emptyListWMC.add(new AjaxLink<Void>("importarMonitorador") {
@@ -162,7 +175,8 @@ public class MonitoradorListPanel extends Panel {
             private static final long serialVersionUID = 7931682729645654379L;
             @Override
             public void onClick(AjaxRequestTarget target) {
-                setResponsePage(ImportarMonitoradores.class);
+                pageContent.get("contentPanel").replaceWith(new ImportFormPanel("contentPanel", feedbackPanel, pageContent));
+                target.add(pageContent);
             }
         });
     }
@@ -189,7 +203,11 @@ public class MonitoradorListPanel extends Panel {
                     private static final long serialVersionUID = -387605849215267697L;
                     @Override
                     public void onClick(AjaxRequestTarget target) {
-                        setResponsePage(new MonitoradorPage(listItem.getModelObject()));
+                        pageContent.get("contentPanel").replaceWith(new MonitoradorFormPanel("contentPanel",
+                                listItem.getModelObject(),
+                                feedbackPanel,
+                                pageContent));
+                        target.add(pageContent);
                     }
                 });
                 listItem.add(new ConfirmationLink<>("ajaxEcluirMonitorador", "Tem certeza que deseja EXCLUIR o monitorador?") {
@@ -238,5 +256,15 @@ public class MonitoradorListPanel extends Panel {
         } else {
             modalWindow.setInitialHeight(630);
         }
+    }
+
+    @Override
+    public void renderHead(IHeaderResponse response) {
+        super.renderHead(response);
+
+        // jQuery para fazer sideBar ficar com css de selecionado de acordo com a página
+        response.render(OnDomReadyHeaderItem.forScript("$('#formMonitoradorID').removeClass(\"active\"); " +
+                "$('#homePageID').addClass(\"active\"); " +
+                "$('#formImportID').removeClass(\"active\");"));
     }
 }

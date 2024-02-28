@@ -14,11 +14,6 @@
 		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.0/jquery.mask.js"></script>
 	</head>
 	<body>
-
-	<!-- FeedbackPanel -->
-	<div wicket:id="feedbackPanel" class="alert feedback-popup"></div>
-	<!-- FeedbackPanel -->
-
 	<div class="d-flex">
 		<!-- Barra lateral -->
 		<div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark side-bar" style="width: 280px;">
@@ -26,32 +21,25 @@
 				<span class="fs-4">App Monitoradores</span>
 			</a>
 			<hr>
-			<wicket:link>
 				<ul class="nav nav-pills flex-column mb-auto">
 					<li class="nav-item">
-						<a href="ControleMonitoradores.html" class="nav-link text-white">
+						<a wicket:id="homePage" class="nav-link text-white" id="homePageID">
 							Home
 						</a>
 					</li>
 					<li>
-						<a href="ControleMonitoradores.html" class="nav-link text-white">
-							Controle de Monitoradores
-						</a>
-					</li>
-					<li>
-						<a href="MonitoradorPage.html" class="nav-link text-white">
+						<a wicket:id="formMonitorador" class="nav-link text-white" id="formMonitoradorID">
 							Cadastrar Monitorador
 						</a>
 					</li>
 					<li>
-						<a href="ImportarMonitoradores.html" class="nav-link text-white">
+						<a wicket:id="formImport" class="nav-link text-white" id="formImportID">
 							Importar Monitoradores
 						</a>
 					</li>
 				</ul>
-			</wicket:link>
-			<hr>
 			<div class="mt-auto">
+				<hr>
 				Cpyright ©
 				<a href="https://www.unikasistemas.com.br" style="color: white">
 					<strong>Unika Sistemas</strong>
@@ -62,7 +50,13 @@
 
 		<!-- Body -->
 		<div class="content">
-			<wicket:child/>
+			<!-- FeedbackPanel -->
+			<div wicket:id="feedbackPanel" class="alert feedback-popup"></div>
+			<!-- FeedbackPanel -->
+
+			<div wicket:id="pageContent" class="card text-dark bg-light d-grid col-11 mx-auto mt-3 mb-3">
+				<span wicket:id="contentPanel"></span>
+			</div>
 		</div>
 		<!-- Body -->
 	</div>

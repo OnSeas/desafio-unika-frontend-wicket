@@ -1,6 +1,7 @@
 package com.unika.forms;
 
 import com.unika.Panels.EnderecoListPanel;
+import com.unika.Panels.MonitoradorListPanel;
 import com.unika.model.Monitorador;
 import com.unika.model.TipoPessoa;
 import com.unika.model.apiService.MonitoradorApi;
@@ -9,6 +10,8 @@ import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.extensions.markup.html.form.DateTextField;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.*;
@@ -30,13 +33,16 @@ public class MonitoradorFormPanel extends Panel {
     final FeedbackPanel feedbackPanel;
     final MonitoradorApi monitoradorApi = new MonitoradorApi();
     private final EnderecoListPanel enderecoListPanel;
+    private final WebMarkupContainer pageContent;
 
-    public MonitoradorFormPanel(String id, Monitorador monitorador, FeedbackPanel feedbackPanel) {
+    public MonitoradorFormPanel(String id, Monitorador monitorador, FeedbackPanel feedbackPanel, WebMarkupContainer pageContent) {
         super(id);
         this.feedbackPanel = feedbackPanel;
+        this.pageContent = pageContent;
 
         Form<Monitorador> monitoradorForm = getForm(monitorador);
         add(monitoradorForm);
+
 
         // Criando um novo monitorador
         if(monitorador.getId() == null) {
@@ -111,7 +117,7 @@ public class MonitoradorFormPanel extends Panel {
             @Serial
             private static final long serialVersionUID = -8024661883244296260L;
             @Override
-            protected void onEvent(AjaxRequestTarget target) { // TODO mudar todos para não precisar usar o ajax
+            protected void onEvent(AjaxRequestTarget target) {
                 target.appendJavaScript(
                         "$(document).ready(function (){\n" +
                         "   $('#cpfInput').mask('000.000.000-00');\n" +
@@ -158,7 +164,8 @@ public class MonitoradorFormPanel extends Panel {
                     } else {
                         feedbackPanel.success("Monitorador Atualizado com Sucesso!");
                     }
-                    target.add(feedbackPanel);
+                    pageContent.get("contentPanel").replaceWith(new MonitoradorListPanel("contentPanel", feedbackPanel, pageContent));
+                    target.add(feedbackPanel, pageContent);
                 } catch (Exception e){
                     error(e.getMessage());
                     target.add(feedbackPanel);
@@ -210,5 +217,15 @@ public class MonitoradorFormPanel extends Panel {
         } catch (Exception e){
             throw new RuntimeException(e.getMessage());
         }
+    }
+
+    @Override
+    public void renderHead(IHeaderResponse response) {
+        super.renderHead(response);
+
+        // jQuery para fazer sideBar ficar com css de selecionado de acordo com a página
+        response.render(OnDomReadyHeaderItem.forScript("$('#formMonitoradorID').addClass(\"active\"); " +
+                "$('#homePageID').removeClass(\"active\"); " +
+                "$('#formImportID').removeClass(\"active\");"));
     }
 }

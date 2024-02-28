@@ -1,9 +1,12 @@
 package com.unika.forms;
 
-import com.unika.ControleMonitoradores;
+import com.unika.Panels.MonitoradorListPanel;
 import com.unika.model.apiService.MonitoradorApi;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
@@ -21,9 +24,12 @@ public class ImportFormPanel extends Panel {
     final MonitoradorApi monitoradorApi = new MonitoradorApi();
     final FeedbackPanel feedbackPanel;
 
-    public ImportFormPanel(String id, FeedbackPanel feedbackPanel) {
+    private final WebMarkupContainer pageContent;
+
+    public ImportFormPanel(String id, FeedbackPanel feedbackPanel, WebMarkupContainer pageContent) {
         super(id);
         this.feedbackPanel = feedbackPanel;
+        this.pageContent = pageContent;
 
         FileUploadField fileUploadField = new FileUploadField("importField");
 
@@ -39,11 +45,12 @@ public class ImportFormPanel extends Panel {
                 FileUpload fileUpload = fileUploadField.getFileUpload();
 
                 try {
-                    File file = new File(fileUpload.getClientFileName());
+                    File file = new File("C:\\Projetos\\zArquivos\\recebidos\\" + fileUpload.getClientFileName());
                     System.out.println(file.getAbsolutePath());
                     fileUpload.writeTo(file);
                     feedbackPanel.success(monitoradorApi.importarXLSX(file));
-                    target.add(feedbackPanel);
+                    pageContent.get("contentPanel").replaceWith(new MonitoradorListPanel("contentPanel", feedbackPanel, pageContent));
+                    target.add(feedbackPanel, pageContent);
                 } catch (FileNotFoundException | NullPointerException ex){
                     feedbackPanel.error("É necessário enviar um arquivo!");
                 } catch (Exception e){
@@ -62,5 +69,15 @@ public class ImportFormPanel extends Panel {
         form.setMaxSize(Bytes.megabytes(2));
         form.add(fileUploadField);
         add(form);
+    }
+
+    @Override
+    public void renderHead(IHeaderResponse response) {
+        super.renderHead(response);
+
+        // jQuery para fazer sideBar ficar com css de selecionado de acordo com a página
+        response.render(OnDomReadyHeaderItem.forScript("$('#formImportID').addClass(\"active\"); " +
+                "$('#homePageID').removeClass(\"active\"); " +
+                "$('#formMonitoradorID').removeClass(\"active\");"));
     }
 }
