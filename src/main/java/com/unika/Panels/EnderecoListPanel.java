@@ -176,10 +176,10 @@ public class EnderecoListPanel extends Panel {
     private void tornarEndPrincipal(Endereco endereco){
             try {
                 if (endereco.getId() != null) enderecoApi.tornarPrincipal(endereco.getId());
-                success("O endereço " + endereco.getEndereco() + " agora é o seu endereço principal.");
 
                 enderecoList.forEach(end -> end.setPrincipal(false));
                 endereco.setPrincipal(true);
+                success("O endereço " + endereco.getEndereco() + " agora é o seu endereço principal.");
             } catch (Exception e) {
                 error(e.getMessage());
             }
@@ -189,10 +189,10 @@ public class EnderecoListPanel extends Panel {
     private void deletarEndereco(Endereco endereco){
         if (enderecoList.size() <=1) error("Monitorador não pode ficar sem endereços.");
         else try {
-            if (endereco.getId() != null) success(enderecoApi.deletarEndereco(endereco.getId()));
-            else success("O endereço " + endereco.getEndereco() + " foi removido.");
+            if (endereco.getId() != null) enderecoApi.deletarEndereco(endereco.getId());
 
             enderecoList.remove(endereco);
+            success("O endereço " + endereco.getEndereco() + " foi removido.");
         } catch (Exception e) {
             error(e.getMessage());
         }

@@ -82,7 +82,7 @@ public class MonitoradorApi implements Serializable {
         }
     }
 
-    public String deletarMonitorador(Long id) throws IOException {
+    public Monitorador deletarMonitorador(Long id) throws IOException {
         Response response = apiService.conectarApiDELETE(
                 apiUrl + "/deletar/" + id
         );
@@ -92,7 +92,7 @@ public class MonitoradorApi implements Serializable {
         response.close();
 
         if (response.isSuccessful()){
-            return res;
+            return converterDados.obterDados(res, Monitorador.class);
         } else {
             throw new RuntimeException(res);
         }
@@ -117,7 +117,7 @@ public class MonitoradorApi implements Serializable {
     }
 
     // Funcionalidades
-    public String ativarMonitorador(Long id) throws IOException {
+    public Monitorador ativarMonitorador(Long id) throws IOException {
         Response response = apiService.conectarApiPUT(
                 "",
                 apiUrl + "/ativar/" + id
@@ -128,13 +128,13 @@ public class MonitoradorApi implements Serializable {
         response.close();
 
         if (response.isSuccessful()){
-            return res;
+            return converterDados.obterDados(res, Monitorador.class);
         } else {
             throw new RuntimeException(res);
         }
     }
 
-    public String desativarMonitorador(Long id) throws IOException {
+    public Monitorador desativarMonitorador(Long id) throws IOException {
         Response response = apiService.conectarApiPUT(
                 "",
                 apiUrl + "/desativar/" + id
@@ -145,7 +145,7 @@ public class MonitoradorApi implements Serializable {
         response.close();
 
         if (response.isSuccessful()){
-            return res;
+            return converterDados.obterDados(res, Monitorador.class);
         } else {
             throw new RuntimeException(res);
         }
@@ -198,7 +198,7 @@ public class MonitoradorApi implements Serializable {
         }
     }
 
-    public String importarXLSX(File file) throws IOException {
+    public String importarXLSX(File file) throws IOException { // TODO arrumar aqui quando mudar no backend
         Response response = apiService.conectarApiPOST(
                 converterDados.obterJason(file),
                 apiUrl + "/import"

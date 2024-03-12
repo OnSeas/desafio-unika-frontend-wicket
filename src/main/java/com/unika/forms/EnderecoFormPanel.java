@@ -71,13 +71,15 @@ public class EnderecoFormPanel extends Panel {
                     System.out.println(enderecoForm.getModelObject());
 
                     Endereco enderecobd = salvar(enderecoForm.getModelObject(), idMonitorador);
-                    enderecoForm.getModelObject().setId(enderecobd.getId());
 
                     if (enderecoForm.getModelObject().getId() == null){
                         success("Endereço cadastrado com sucesso!");
                     } else {
                         success("Endereço atualizado com sucesso!");
                     }
+
+                    enderecoForm.getModelObject().setId(enderecobd.getId());
+
                     ModalWindow.closeCurrent(target);
                 } catch (Exception e){
                     feedbackPanel.error(e.getMessage());

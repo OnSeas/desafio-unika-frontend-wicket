@@ -226,7 +226,8 @@ public class MonitoradorListPanel extends Panel {
 
     private void deletarMontorador(Monitorador monitorador) {
         try {
-            feedbackPanel.success(monitoradorApi.deletarMonitorador(monitorador.getId()));
+            monitoradorApi.deletarMonitorador(monitorador.getId());
+            feedbackPanel.success("Monitorador deletado com sucesso!");
             monitoradores.remove(monitorador);
         } catch (Exception e) {
             feedbackPanel.error(e.getMessage());

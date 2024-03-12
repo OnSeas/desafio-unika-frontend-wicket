@@ -60,7 +60,7 @@ public class EnderecoApi implements Serializable {
         }
     }
 
-    public String deletarEndereco(Long idEndereco) throws IOException {
+    public Endereco deletarEndereco(Long idEndereco) throws IOException {
         Response response = apiService.conectarApiDELETE(
                 apiUrl + "/deletar/" + idEndereco
         );
@@ -70,13 +70,13 @@ public class EnderecoApi implements Serializable {
         response.close();
 
         if (response.isSuccessful()){
-            return res;
+            return converterDados.obterDados(res, Endereco.class);
         } else {
             throw new RuntimeException(res);
         }
     }
 
-    public String tornarPrincipal(Long idEndereco) throws IOException {
+    public Endereco tornarPrincipal(Long idEndereco) throws IOException {
         Response response = apiService.conectarApiPUT(
                 "",
                 apiUrl + "/tornar-principal/" + idEndereco
@@ -87,7 +87,7 @@ public class EnderecoApi implements Serializable {
         response.close();
 
         if (response.isSuccessful()){
-            return res;
+            return converterDados.obterDados(res, Endereco.class);
         } else {
             throw new RuntimeException(res);
         }
