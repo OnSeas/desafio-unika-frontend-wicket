@@ -8,6 +8,7 @@ import com.unika.model.apiService.MonitoradorApi;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.extensions.markup.html.form.DateTextField;
 import org.apache.wicket.markup.head.IHeaderResponse;
@@ -40,6 +41,8 @@ public class MonitoradorFormPanel extends Panel {
         this.feedbackPanel = feedbackPanel;
         this.pageContent = pageContent;
 
+        enderecoListPanel = new EnderecoListPanel("endListPanel", monitorador.getId(), feedbackPanel);
+
         Form<Monitorador> monitoradorForm = getForm(monitorador);
         add(monitoradorForm);
 
@@ -60,12 +63,13 @@ public class MonitoradorFormPanel extends Panel {
             }
             wmc.setVisible(true);
         }
-        enderecoListPanel = new EnderecoListPanel("endListPanel", monitorador.getId(), feedbackPanel);
-        add(enderecoListPanel);
     }
 
     Form<Monitorador> getForm(Monitorador monitorador){
         Form<Monitorador> monitoradorForm = new Form<>("formMonitorador", new CompoundPropertyModel<>(monitorador));
+
+        monitoradorForm.add(enderecoListPanel);
+
         RadioGroup<TipoPessoa> radioTipoPessoa = new RadioGroup<>("tipoPessoa");
         radioTipoPessoa.add(new Radio<>("pf", new Model<>(TipoPessoa.PESSOA_FISICA)));
         radioTipoPessoa.add(new Radio<>("pj", new Model<>(TipoPessoa.PESSOA_JURIDICA)));
@@ -175,6 +179,18 @@ public class MonitoradorFormPanel extends Panel {
             protected void onError(AjaxRequestTarget target, Form<?> form) {
                 target.add(feedbackPanel);
             }
+        });
+
+        monitoradorForm.add(new AjaxLink("ajaxCancelar") {
+            @Override
+            public void onClick(AjaxRequestTarget target) {
+                pageContent.get("contentPanel").replaceWith(new MonitoradorListPanel("contentPanel", feedbackPanel, pageContent));
+                target.add(feedbackPanel, pageContent);
+            }
+
+            @Serial
+            private static final long serialVersionUID = -8806215908629462715L;
+
         });
 
 

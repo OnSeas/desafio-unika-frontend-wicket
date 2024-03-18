@@ -1,5 +1,6 @@
 package com.unika.forms;
 
+import com.unika.Panels.MonitoradorListPanel;
 import com.unika.model.Endereco;
 import com.unika.model.UF;
 import com.unika.model.apiService.EnderecoApi;
@@ -7,6 +8,7 @@ import com.unika.model.apiService.MonitoradorApi;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.apache.wicket.markup.html.basic.Label;
@@ -94,8 +96,19 @@ public class EnderecoFormPanel extends Panel {
             }
         };
 
+        AjaxLink<Void> calcelar = new AjaxLink("ajaxCancelar") {
+            @Override
+            public void onClick(AjaxRequestTarget target) {
+                ModalWindow.closeCurrent(target);
+            }
 
-        List<Component> inputsList = Arrays.asList(inputEndereco, inputNumero, inputCep, inputBairro, inputTelefone, inputCidade, dropEstado, submitAjax);
+            @Serial
+            private static final long serialVersionUID = -8806215908629462715L;
+
+        };
+
+
+        List<Component> inputsList = Arrays.asList(inputEndereco, inputNumero, inputCep, inputBairro, inputTelefone, inputCidade, dropEstado, submitAjax, calcelar);
         inputsList.forEach(component -> {
             component.setOutputMarkupId(true);
             enderecoForm.add(component);

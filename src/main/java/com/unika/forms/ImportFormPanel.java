@@ -48,7 +48,8 @@ public class ImportFormPanel extends Panel {
                     File file = new File("C:\\Projetos\\zArquivos\\recebidos\\" + fileUpload.getClientFileName());
                     System.out.println(file.getAbsolutePath());
                     fileUpload.writeTo(file);
-                    feedbackPanel.success(monitoradorApi.importarXLSX(file));
+                    monitoradorApi.importarXLSX(file);
+                    feedbackPanel.success("Monitodares importados com sucesso!");
                     pageContent.get("contentPanel").replaceWith(new MonitoradorListPanel("contentPanel", feedbackPanel, pageContent));
                     target.add(feedbackPanel, pageContent);
                 } catch (FileNotFoundException | NullPointerException ex){

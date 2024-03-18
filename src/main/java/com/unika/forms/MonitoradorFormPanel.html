@@ -87,12 +87,17 @@
                                 </div>
                             </div>
 
-                            <input wicket:id="ajaxSubmit" class="btn btn-primary" type="submit" value="Salvar">
+                            <span wicket:id="endListPanel" class="d-grid col-11 mx-auto"></span>
 
+                            <div class="col-8" style="margin: 0 auto">
+                                <div class="btn-group d-flex" role="group">
+                                    <button wicket:id="ajaxCancelar" type="button" class="btn btn-secondary">Cancelar</button>
+                                    <input wicket:id="ajaxSubmit" class="btn btn-primary" type="submit" value="Salvar">
+                                </div>
+                            </div>
                         </div>
                     </form>
                 </div>
-                <span wicket:id="endListPanel" class="d-grid col-11 mx-auto"></span>
             </div>
         </wicket:panel>
     </body>

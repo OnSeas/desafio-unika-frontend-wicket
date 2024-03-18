@@ -44,8 +44,8 @@ h1{
 .feedback-popup{
     position: absolute;
     top: 35px;
-    left: 90%;
-    transform: translateX(-90%);
+    left: 50%;
+    transform: translateX(-50%);
     width: 50%;
     max-width: 600px;
     z-index: 999999; /* Coloquei esse numero grande para que fique acima dos Modals */

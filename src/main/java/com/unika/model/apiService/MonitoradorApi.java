@@ -5,11 +5,11 @@ import com.unika.model.Filtro;
 import com.unika.model.Monitorador;
 import com.unika.model.apiService.converters.ConverterDados;
 import okhttp3.Response;
+import org.apache.commons.io.FileUtils;
+import org.apache.wicket.request.resource.ByteArrayResource;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.Serial;
-import java.io.Serializable;
+import java.io.*;
+import java.util.Arrays;
 import java.util.List;
 
 public class MonitoradorApi implements Serializable {
@@ -192,13 +192,17 @@ public class MonitoradorApi implements Serializable {
         response.close();
 
         if (response.isSuccessful()){
-            return converterDados.obterDados(res, File.class);
+            byte[] byteArray = converterDados.obterDados(res, byte[].class);
+            System.out.println(Arrays.toString(byteArray));
+            File file = new File("C:\\Projetos\\zArquivo\\relatorios\\relaorioGeral.pdf");
+            FileUtils.writeByteArrayToFile(file, byteArray);
+            return file;
         } else {
             throw new RuntimeException(res);
         }
     }
 
-    public String importarXLSX(File file) throws IOException { // TODO arrumar aqui quando mudar no backend
+    public List<Monitorador> importarXLSX(File file) throws IOException { // TODO arrumar aqui quando mudar no backend
         Response response = apiService.conectarApiPOST(
                 converterDados.obterJason(file),
                 apiUrl + "/import"
@@ -209,7 +213,7 @@ public class MonitoradorApi implements Serializable {
         response.close();
 
         if (response.isSuccessful()){
-            return res;
+            return converterDados.obterLista(res, Monitorador.class);
         } else {
             throw new RuntimeException(res);
         }
