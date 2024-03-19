@@ -155,15 +155,13 @@ public class MonitoradorFormPanel extends Panel {
 
 
         // Botão de submit
-        monitoradorForm.add(new AjaxButton("ajaxSubmit", monitoradorForm) {
+        AjaxButton ajaxSubmit = new AjaxButton("ajaxSubmit", monitoradorForm) {
             @Serial
             private static final long serialVersionUID = -8806215908629462715L;
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 try {
                     salvar(monitoradorForm.getModelObject());
-
-
                     if (monitoradorForm.getModelObject().getId() == null){
                         setResponsePage(new ListarMonitoradores("Monitorador Cadastrado com Sucesso!"));
                     } else {
@@ -178,7 +176,9 @@ public class MonitoradorFormPanel extends Panel {
             protected void onError(AjaxRequestTarget target, Form<?> form) {
                 target.add(feedbackPanel);
             }
-        });
+        };
+        ajaxSubmit.setOutputMarkupId(true); ajaxSubmit.setOutputMarkupPlaceholderTag(true);
+        monitoradorForm.add(ajaxSubmit);
 
         add(new AjaxLink<Void>("ajaxCancelar") {
             @Override
@@ -196,7 +196,7 @@ public class MonitoradorFormPanel extends Panel {
 
             @Override
             public void onClick(AjaxRequestTarget target) {
-                // TODO tem dar o trigger no ajaxSubmit.
+                target.appendJavaScript("document.getElementById('" + ajaxSubmit.getMarkupId() + "').click();");
             }
         });
 
