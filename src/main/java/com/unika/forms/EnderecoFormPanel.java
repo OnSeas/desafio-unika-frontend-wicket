@@ -1,6 +1,5 @@
 package com.unika.forms;
 
-import com.unika.Panels.MonitoradorListPanel;
 import com.unika.model.Endereco;
 import com.unika.model.UF;
 import com.unika.model.apiService.EnderecoApi;
@@ -12,7 +11,10 @@ import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.*;
+import org.apache.wicket.markup.html.form.ChoiceRenderer;
+import org.apache.wicket.markup.html.form.DropDownChoice;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.CompoundPropertyModel;
@@ -96,15 +98,14 @@ public class EnderecoFormPanel extends Panel {
             }
         };
 
-        AjaxLink<Void> calcelar = new AjaxLink("ajaxCancelar") {
+        AjaxLink<Void> calcelar = new AjaxLink<>("ajaxCancelar") {
+            @Serial
+            private static final long serialVersionUID = -8806215908629462715L;
+
             @Override
             public void onClick(AjaxRequestTarget target) {
                 ModalWindow.closeCurrent(target);
             }
-
-            @Serial
-            private static final long serialVersionUID = -8806215908629462715L;
-
         };
 
 

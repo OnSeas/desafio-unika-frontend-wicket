@@ -59,18 +59,6 @@ public class PesquisaFormPanel extends Panel {
         checkboxes.add(checkBoxPF, checkBoxPJ, checkBoxAtivados);
 
         TextField<String> inputPesquisa = new TextField<>("busca");
-        inputPesquisa.add(new AjaxEventBehavior("focus") {
-            @Serial
-            private static final long serialVersionUID = 5061484065988631638L;
-            @Override
-            protected void onEvent(AjaxRequestTarget target) {
-                if(!inputTipo.isVisible()){
-                    inputTipo.setVisible(true);
-                    checkboxes.setVisible(true);
-                    target.add(inputTipo, checkboxes);
-                }
-            }
-        });
 
         AjaxLink<Void> clearButton = new AjaxLink<>("clearButton") {
             @Serial
@@ -96,18 +84,42 @@ public class PesquisaFormPanel extends Panel {
         clearButton.setOutputMarkupPlaceholderTag(true);
         clearButton.setVisible(false);
 
+        inputPesquisa.add(new AjaxEventBehavior("focus") {
+            @Serial
+            private static final long serialVersionUID = 5061484065988631638L;
+            @Override
+            protected void onEvent(AjaxRequestTarget target) {
+                if(!inputTipo.isVisible()){
+                    inputTipo.setVisible(true);
+                    checkboxes.setVisible(true);
+                    clearButton.setVisible(true);
+                    target.add(inputTipo, checkboxes, clearButton);
+                }
+            }
+        });
+
         AjaxButton searchButton = new AjaxButton("searchButton", pesquisarForm) {
             @Serial
             private static final long serialVersionUID = -3533755636036242218L;
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 try {
-                    System.out.println(pesquisarForm.getModelObject());
-                    monitoradorListView.setList(getListaMonitoradores(pesquisarForm.getModelObject()));
-                    success("Pesquisa realizada com sucesso!");
+                    Filtro filtro = pesquisarForm.getModelObject();
+                    System.out.println(filtro);
+                    if (!pesquisaIsValid(filtro)){
+                        error("Pesquisa vazia!");
+                    }
+                    else {
+                        List<Monitorador> monitoradorList = getListaMonitoradores(filtro);
+                        if(!monitoradorList.isEmpty()){
+                            monitoradorListView.setList(monitoradorList);
+                            success("Pesquisa realizada com sucesso!");
+                            target.add(monitoradorListView.getParent());
+                        } else {
+                            error("Não foram encontrados monitoradores na pesquisa!");
+                        }
+                    }
                     target.add(feedbackPanel);
-                    clearButton.setVisible(true);
-                    target.add(monitoradorListView.getParent(), clearButton);
                 } catch (Exception e) {
                     error(e.getMessage());
                     target.add(feedbackPanel);
@@ -126,5 +138,13 @@ public class PesquisaFormPanel extends Panel {
     // Para o filtro
     private List<Monitorador> getListaMonitoradores(Filtro filtro) throws IOException {
         return monitoradorApi.filtrarMonitorares(filtro);
+    }
+
+    private boolean pesquisaIsValid(Filtro filtro){
+        if ((filtro.getBusca() == null || filtro.getBusca().isBlank() || filtro.getTipoBusca() == null)
+                && (filtro.getSoAtivados() == null || Boolean.FALSE.equals(filtro.getSoAtivados()))
+                && (filtro.getPessoaFisica() == null || Boolean.FALSE.equals(filtro.getPessoaFisica()))
+                && (filtro.getPessoaJuridica() == null || Boolean.FALSE.equals(filtro.getPessoaJuridica()))) return false;
+        return true;
     }
 }

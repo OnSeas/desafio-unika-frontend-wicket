@@ -5,9 +5,11 @@ import com.unika.forms.EnderecoFormPanel;
 import com.unika.model.Endereco;
 import com.unika.model.UF;
 import com.unika.model.apiService.EnderecoApi;
+import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
+import org.apache.wicket.feedback.FeedbackMessages;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
@@ -38,6 +40,19 @@ public class EnderecoListPanel extends Panel {
             this.setOutputMarkupId(true);
             this.setOutputMarkupPlaceholderTag(true);
             this.setVisible(!enderecoList.isEmpty());
+        }
+    };
+
+    WebMarkupContainer emptyList = new WebMarkupContainer("emptyList"){
+        @Serial
+        private static final long serialVersionUID = 3664874488348504694L;
+
+        @Override
+        protected void onConfigure() {
+            super.onConfigure();
+            this.setOutputMarkupId(true);
+            this.setOutputMarkupPlaceholderTag(true);
+            this.setVisible(enderecoList.isEmpty());
         }
     };
     Endereco endereco;
@@ -71,13 +86,15 @@ public class EnderecoListPanel extends Panel {
         });
 
         try {
-            enderecoList = enderecoApi.listarEnderecos(idMonitorador);
+            if (idMonitorador != null) enderecoList = enderecoApi.listarEnderecos(idMonitorador);
+            else enderecoList = new ArrayList<>();
         } catch (Exception e){
             enderecoList = new ArrayList<>();
         }
 
         enderecoListWMC.add(construirLista());
         add(enderecoListWMC);
+        add(emptyList);
 
         modalWindow.setResizable(false);
         add(modalWindow);
@@ -96,7 +113,7 @@ public class EnderecoListPanel extends Panel {
                     if (enderecoList.size() >=3) feedbackPanel.error("Este monitorador já possuí o número maximo de endereços: 3.");
                     else enderecoList.add(endereco);
                 }
-                target.add(enderecoListWMC, feedbackPanel);
+                target.add(emptyList, enderecoListWMC, feedbackPanel);
             }
         });
     }
@@ -137,7 +154,7 @@ public class EnderecoListPanel extends Panel {
                         @Override
                         public void onClick(AjaxRequestTarget target) {
                             deletarEndereco(listItem.getModelObject());
-                            target.add(enderecoListWMC, feedbackPanel);
+                            target.add(emptyList, enderecoListWMC, feedbackPanel);
                         }
                     });
                     Label principalButton = new Label("principalButton", Model.of("Principal"));
@@ -148,7 +165,7 @@ public class EnderecoListPanel extends Panel {
                         @Override
                         public void onClick(AjaxRequestTarget target) {
                             tornarEndPrincipal(listItem.getModelObject());
-                            target.add(enderecoListWMC, feedbackPanel);
+                            target.add(emptyList, enderecoListWMC, feedbackPanel);
                         }
                         @Override
                         protected void onConfigure() {

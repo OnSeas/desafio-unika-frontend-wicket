@@ -8,6 +8,7 @@ import com.unika.model.UF;
 import com.unika.model.apiService.MonitoradorApi;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.DownloadLink;
@@ -117,6 +118,16 @@ public class InfoMonitoradorPanel extends Panel {
             }
         };
         pessoaCardWMC.add(desativarAjax, ativarAjax);
+
+        add(new AjaxLink<>("ajaxCancelar") {
+            @Serial
+            private static final long serialVersionUID = -8806215908629462715L;
+
+            @Override
+            public void onClick(AjaxRequestTarget target) {
+                ModalWindow.closeCurrent(target);
+            }
+        });
 
         add(new DownloadLink("reportDownload", new AbstractReadOnlyModel<>() {
             @Serial

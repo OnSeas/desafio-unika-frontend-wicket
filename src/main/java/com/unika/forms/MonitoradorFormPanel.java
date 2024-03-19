@@ -1,7 +1,7 @@
 package com.unika.forms;
 
+import com.unika.ListarMonitoradores;
 import com.unika.Panels.EnderecoListPanel;
-import com.unika.Panels.MonitoradorListPanel;
 import com.unika.model.Monitorador;
 import com.unika.model.TipoPessoa;
 import com.unika.model.apiService.MonitoradorApi;
@@ -11,6 +11,7 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.extensions.markup.html.form.DateTextField;
+import org.apache.wicket.feedback.FeedbackMessages;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -34,18 +35,16 @@ public class MonitoradorFormPanel extends Panel {
     final FeedbackPanel feedbackPanel;
     final MonitoradorApi monitoradorApi = new MonitoradorApi();
     private final EnderecoListPanel enderecoListPanel;
-    private final WebMarkupContainer pageContent;
 
-    public MonitoradorFormPanel(String id, Monitorador monitorador, FeedbackPanel feedbackPanel, WebMarkupContainer pageContent) {
+    public MonitoradorFormPanel(String id, Monitorador monitorador, FeedbackPanel feedbackPanel) {
         super(id);
         this.feedbackPanel = feedbackPanel;
-        this.pageContent = pageContent;
 
         enderecoListPanel = new EnderecoListPanel("endListPanel", monitorador.getId(), feedbackPanel);
 
         Form<Monitorador> monitoradorForm = getForm(monitorador);
         add(monitoradorForm);
-
+        add(enderecoListPanel);
 
         // Criando um novo monitorador
         if(monitorador.getId() == null) {
@@ -68,7 +67,7 @@ public class MonitoradorFormPanel extends Panel {
     Form<Monitorador> getForm(Monitorador monitorador){
         Form<Monitorador> monitoradorForm = new Form<>("formMonitorador", new CompoundPropertyModel<>(monitorador));
 
-        monitoradorForm.add(enderecoListPanel);
+
 
         RadioGroup<TipoPessoa> radioTipoPessoa = new RadioGroup<>("tipoPessoa");
         radioTipoPessoa.add(new Radio<>("pf", new Model<>(TipoPessoa.PESSOA_FISICA)));
@@ -163,13 +162,13 @@ public class MonitoradorFormPanel extends Panel {
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 try {
                     salvar(monitoradorForm.getModelObject());
+
+
                     if (monitoradorForm.getModelObject().getId() == null){
-                        feedbackPanel.success("Monitorador Cadastrado com Sucesso!");
+                        setResponsePage(new ListarMonitoradores("Monitorador Cadastrado com Sucesso!"));
                     } else {
-                        feedbackPanel.success("Monitorador Atualizado com Sucesso!");
+                        setResponsePage(new ListarMonitoradores("Monitorador Atualizado com Sucesso!"));
                     }
-                    pageContent.get("contentPanel").replaceWith(new MonitoradorListPanel("contentPanel", feedbackPanel, pageContent));
-                    target.add(feedbackPanel, pageContent);
                 } catch (Exception e){
                     error(e.getMessage());
                     target.add(feedbackPanel);
@@ -181,16 +180,24 @@ public class MonitoradorFormPanel extends Panel {
             }
         });
 
-        monitoradorForm.add(new AjaxLink("ajaxCancelar") {
+        add(new AjaxLink<Void>("ajaxCancelar") {
             @Override
             public void onClick(AjaxRequestTarget target) {
-                pageContent.get("contentPanel").replaceWith(new MonitoradorListPanel("contentPanel", feedbackPanel, pageContent));
-                target.add(feedbackPanel, pageContent);
+                setResponsePage(new ListarMonitoradores());
             }
 
             @Serial
             private static final long serialVersionUID = -8806215908629462715L;
+        });
 
+        add(new AjaxLink<>("ajaxTrigger"){
+            @Serial
+            private static final long serialVersionUID = 5832409870699970408L;
+
+            @Override
+            public void onClick(AjaxRequestTarget target) {
+                // TODO tem dar o trigger no ajaxSubmit.
+            }
         });
 
 

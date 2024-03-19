@@ -1,8 +1,8 @@
 package com.unika.Panels;
 
+import com.unika.MonitoradorForm;
 import com.unika.dialogs.ConfirmationLink;
 import com.unika.forms.ImportFormPanel;
-import com.unika.forms.MonitoradorFormPanel;
 import com.unika.forms.PesquisaFormPanel;
 import com.unika.model.Monitorador;
 import com.unika.model.TipoPessoa;
@@ -57,11 +57,8 @@ public class MonitoradorListPanel extends Panel {
     };
     List<Monitorador> monitoradores;
 
-    final WebMarkupContainer pageContent;
-
-    public MonitoradorListPanel(String id, FeedbackPanel feedbackPanel, WebMarkupContainer pageContent) {
+    public MonitoradorListPanel(String id, FeedbackPanel feedbackPanel) {
         super(id);
-        this.pageContent = pageContent;
         this.feedbackPanel = feedbackPanel;
 
         // Inicia a Lista
@@ -142,9 +139,7 @@ public class MonitoradorListPanel extends Panel {
         };
         pagingNavigation.setOutputMarkupId(true);
         pagingNavigation.setOutputMarkupPlaceholderTag(true);
-
         monitoradorListWMC.add(addFormPesquisa(monitoradorListView, feedbackPanel));
-
         monitoradorListWMC.add(monitoradorListView, pagingNavigation);
     }
 
@@ -158,8 +153,7 @@ public class MonitoradorListPanel extends Panel {
             private static final long serialVersionUID = -7101144915138464271L;
             @Override
             public void onClick(AjaxRequestTarget target) {
-                pageContent.get("contentPanel").replaceWith(new MonitoradorFormPanel("contentPanel", new Monitorador(), feedbackPanel, pageContent));
-                target.add(pageContent);
+                setResponsePage(MonitoradorForm.class);
             }
         });
         emptyListWMC.add(new AjaxLink<Void>("importarMonitorador") {
@@ -167,8 +161,9 @@ public class MonitoradorListPanel extends Panel {
             private static final long serialVersionUID = 7931682729645654379L;
             @Override
             public void onClick(AjaxRequestTarget target) {
-                pageContent.get("contentPanel").replaceWith(new ImportFormPanel("contentPanel", feedbackPanel, pageContent));
-                target.add(pageContent);
+                setModalImportPanel();
+                modalWindow.setContent(new ImportFormPanel(modalWindow.getContentId(), feedbackPanel));
+                modalWindow.show(target);
             }
         });
     }
@@ -194,11 +189,7 @@ public class MonitoradorListPanel extends Panel {
                     private static final long serialVersionUID = -387605849215267697L;
                     @Override
                     public void onClick(AjaxRequestTarget target) {
-                        pageContent.get("contentPanel").replaceWith(new MonitoradorFormPanel("contentPanel",
-                                listItem.getModelObject(),
-                                feedbackPanel,
-                                pageContent));
-                        target.add(pageContent);
+                        setResponsePage(new MonitoradorForm(listItem.getModelObject()));
                     }
                 });
                 listItem.add(new ConfirmationLink<>("ajaxEcluirMonitorador", "Tem certeza que deseja EXCLUIR o monitorador?") {
@@ -250,7 +241,13 @@ public class MonitoradorListPanel extends Panel {
         }
     }
 
-    @Override
+    private void setModalImportPanel() {
+        modalWindow.showUnloadConfirmation(false);
+        modalWindow.setInitialWidth(30);
+        modalWindow.setWidthUnit("%");
+        modalWindow.setInitialHeight(230);
+    }
+        @Override
     public void renderHead(IHeaderResponse response) {
         super.renderHead(response);
 

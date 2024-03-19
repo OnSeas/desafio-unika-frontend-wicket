@@ -51,14 +51,16 @@
 		<!-- Body -->
 		<div class="content">
 			<!-- FeedbackPanel -->
-			<div wicket:id="feedbackPanel" class="alert feedback-popup"></div>
+			<div wicket:id="feedbackPanel" class="alert feedback-popup shadow"></div>
 			<!-- FeedbackPanel -->
 
-			<div wicket:id="pageContent" class="card text-dark bg-light d-grid col-11 mx-auto mt-3 mb-3">
-				<span wicket:id="contentPanel"></span>
+			<div class="card text-dark bg-light d-grid col-11 mx-auto mt-3 mb-3">
+				<wicket:child/>
 			</div>
 		</div>
 		<!-- Body -->
+
+		<div wicket:id="modalWindow"></div>
 	</div>
 
 	<wicket:link>

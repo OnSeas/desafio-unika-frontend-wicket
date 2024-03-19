@@ -1,14 +1,11 @@
 package com.unika;
 
-import com.unika.Panels.MonitoradorListPanel;
 import com.unika.forms.ImportFormPanel;
-import com.unika.forms.MonitoradorFormPanel;
-import com.unika.model.Monitorador;
 import lombok.Getter;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 
@@ -19,7 +16,7 @@ public class HomePage extends WebPage {
 	@Serial
 	private static final long serialVersionUID = 1L;
 	final private FeedbackPanel feedbackPanel;
-	private final WebMarkupContainer pageContent = new WebMarkupContainer("pageContent");
+	private final ModalWindow modalWindow = new ModalWindow("modalWindow");
 
 	public HomePage() {
 		feedbackPanel = new FeedbackPanel("feedbackPanel"){ // FeedbackPanel geral para todas as validações.
@@ -62,20 +59,22 @@ public class HomePage extends WebPage {
 		feedbackPanel.setOutputMarkupPlaceholderTag(true);
 		add(feedbackPanel);
 
+		modalWindow.setOutputMarkupId(true);
+		modalWindow.setOutputMarkupPlaceholderTag(true);
+		modalWindow.setResizable(false);
+		modalWindow.showUnloadConfirmation(false);
+		modalWindow.setInitialWidth(30);
+		modalWindow.setWidthUnit("%");
+		modalWindow.setInitialHeight(230);
+		add(modalWindow);
 
-		// Criação da página
-		pageContent.add(new MonitoradorListPanel("contentPanel", getFeedbackPanel(), pageContent));
-		pageContent.setOutputMarkupId(true);
-		pageContent.setOutputMarkupPlaceholderTag(true);
-		add(pageContent);
 
 		add(new AjaxLink<Void>("homePage") {
 			@Serial
 			private static final long serialVersionUID = -3861353272569056434L;
 			@Override
 			public void onClick(AjaxRequestTarget target) {
-				pageContent.get("contentPanel").replaceWith(new MonitoradorListPanel("contentPanel", getFeedbackPanel(), pageContent));
-				target.add(pageContent);
+				setResponsePage(ListarMonitoradores.class);
 			}
 		});
 
@@ -84,8 +83,7 @@ public class HomePage extends WebPage {
 			private static final long serialVersionUID = -6420487693954995450L;
 			@Override
 			public void onClick(AjaxRequestTarget target) {
-				pageContent.get("contentPanel").replaceWith(new MonitoradorFormPanel("contentPanel", new Monitorador(), getFeedbackPanel(), pageContent));
-				target.add(pageContent);
+				setResponsePage(MonitoradorForm.class);
 			}
 		});
 
@@ -94,8 +92,8 @@ public class HomePage extends WebPage {
 			private static final long serialVersionUID = 4025427636012099392L;
 			@Override
 			public void onClick(AjaxRequestTarget target) {
-				pageContent.get("contentPanel").replaceWith(new ImportFormPanel("contentPanel", getFeedbackPanel(), pageContent));
-				target.add(pageContent);
+				modalWindow.setContent(new ImportFormPanel(modalWindow.getContentId(), getFeedbackPanel()));
+				modalWindow.show(target);
 			}
 		});
     }

@@ -11,8 +11,11 @@
                             <label wicket:for="importField" class="form-label">upload de arquivo excel</label>
                             <input wicket:id="importField" class="form-control" type="file">
                         </div>
-                        <div>
-                            <input wicket:id="submitAjax" type="submit" value="Importar" class="btn btn-primary">
+                        <div class="col-8" style="margin: 0 auto">
+                            <div class="btn-group d-flex" role="group">
+                                <button wicket:id="ajaxCancelar" type="button" class="btn btn-secondary">Cancelar</button>
+                                <input wicket:id="submitAjax" class="btn btn-primary" type="submit" value="Salvar">
+                            </div>
                         </div>
                     </div>
                 </form>

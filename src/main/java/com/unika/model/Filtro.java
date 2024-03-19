@@ -20,13 +20,15 @@ public class Filtro implements Serializable {
 
     @Getter
     public enum TipoBusca{
-        CPF("cpf"),
-        CNPJ("cnpj"),
-        EMAIL("email");
+        CPF("cpf", 0),
+        CNPJ("cnpj", 1),
+        EMAIL("email", 2);
 
         private final String label;
-        TipoBusca(String label){
+        private final Integer value;
+        TipoBusca(String label, Integer value){
             this.label = label;
+            this.value = value;
         }
 
     }

@@ -79,7 +79,7 @@
                                         </div>
                                     </div>
                                     <div class="col-md">
-                                        <div class="form-floating mb-3">
+                                        <div class="form-floating">
                                             <input wicket:id="inscricaoEstadual" type="text" class="form-control" placeholder="99.999.999-9">
                                             <label wicket:for="inscricaoEstadual" class="form-label">Inscrição Estadual</label>
                                         </div>
@@ -87,16 +87,20 @@
                                 </div>
                             </div>
 
-                            <span wicket:id="endListPanel" class="d-grid col-11 mx-auto"></span>
-
-                            <div class="col-8" style="margin: 0 auto">
-                                <div class="btn-group d-flex" role="group">
-                                    <button wicket:id="ajaxCancelar" type="button" class="btn btn-secondary">Cancelar</button>
-                                    <input wicket:id="ajaxSubmit" class="btn btn-primary" type="submit" value="Salvar">
-                                </div>
+                            <div hidden="hidden">
+                                <input wicket:id="ajaxSubmit" class="btn btn-primary" type="submit" value="Salvar">
                             </div>
                         </div>
                     </form>
+                </div>
+            </div>
+
+            <span wicket:id="endListPanel" class="d-grid col-11 mx-auto mb-3"></span>
+
+            <div class="col-4" style="margin: 0 auto">
+                <div class="btn-group d-flex" role="group">
+                    <button wicket:id="ajaxCancelar" type="button" class="btn btn-secondary">Cancelar</button>
+                    <input wicket:id="ajaxTrigger" class="btn btn-primary" type="submit" value="Salvar">
                 </div>
             </div>
         </wicket:panel>
