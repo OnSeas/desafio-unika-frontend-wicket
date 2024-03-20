@@ -1,5 +1,5 @@
 body{
-    background-color: #777777;
+    background-color: #fafafa;
 }
 
 h1{
@@ -31,14 +31,12 @@ h1{
 }
 
 .side-bar{
-    height: 100vh;
+    height: 93.5vh;
 }
 
 .content {
-    position: relative;
     display: flex;
     flex: 1;
-    overflow-y: auto;
 }
 
 .feedback-popup{
@@ -54,4 +52,8 @@ h1{
 .table-arredondar{
     border-radius: 6px;
     overflow: hidden;
+}
+
+.navbar-size{
+    height: 6.5vh;
 }
