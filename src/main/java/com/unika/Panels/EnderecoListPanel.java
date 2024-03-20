@@ -5,11 +5,9 @@ import com.unika.forms.EnderecoFormPanel;
 import com.unika.model.Endereco;
 import com.unika.model.UF;
 import com.unika.model.apiService.EnderecoApi;
-import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
-import org.apache.wicket.feedback.FeedbackMessages;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
@@ -148,7 +146,7 @@ public class EnderecoListPanel extends Panel {
                             modalWindow.show(target);
                         }
                     });
-                    listItem.add(new ConfirmationLink<>("ajaxExcluir", "Tem certeza que deseja excluir este endereço?") {
+                    listItem.add(new ConfirmationLink<>("ajaxExcluir", "Tem certeza que deseja excluir endereço " + listItem.getModelObject().getEndereco() + "?") {
                         @Serial
                         private static final long serialVersionUID = -660882723667008281L;
                         @Override
@@ -159,7 +157,7 @@ public class EnderecoListPanel extends Panel {
                     });
                     Label principalButton = new Label("principalButton", Model.of("Principal"));
                     listItem.add(principalButton);
-                    listItem.add(new ConfirmationLink<>("TornarPrincipal", "Tem ceterteza que deseja tornar este seu endereço principal") {
+                    listItem.add(new ConfirmationLink<>("TornarPrincipal", "Tem ceterteza que deseja tornar este seu endereço principal?") {
                         @Serial
                         private static final long serialVersionUID = -7811189455403194862L;
                         @Override

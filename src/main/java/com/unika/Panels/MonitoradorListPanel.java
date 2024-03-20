@@ -100,7 +100,7 @@ public class MonitoradorListPanel extends Panel {
                 }
                 catch (Exception e){
                     reportFile = null;
-                    feedbackPanel.error(e.getMessage());
+                    System.out.println(e.getMessage());
                 }
                 return reportFile;
             }
@@ -175,6 +175,9 @@ public class MonitoradorListPanel extends Panel {
             private static final long serialVersionUID = -7313164500893623865L;
             @Override
             protected void populateItem(final ListItem<Monitorador> listItem) {
+
+                String nome = listItem.getModelObject().getTipoPessoa().equals(TipoPessoa.PESSOA_FISICA) ? listItem.getModelObject().getNome() : listItem.getModelObject().getRazaoSocial();
+
                 // Valores de cada monitorador
                 listItem.add(new Label("index", Model.of(listItem.getIndex() + 1)));
                 listItem.add(new Label("tipoPessoa", new PropertyModel<TipoPessoa>(listItem.getModel(),"tipoPessoa").getObject().getLabel()));
@@ -192,7 +195,7 @@ public class MonitoradorListPanel extends Panel {
                         setResponsePage(new MonitoradorForm(listItem.getModelObject()));
                     }
                 });
-                listItem.add(new ConfirmationLink<>("ajaxEcluirMonitorador", "Tem certeza que deseja EXCLUIR o monitorador?") {
+                listItem.add(new ConfirmationLink<>("ajaxEcluirMonitorador", "Tem certeza que deseja excluir o monitorador " + nome + "?") {
                     @Serial
                     private static final long serialVersionUID = -1679276620382639682L;
                     @Override

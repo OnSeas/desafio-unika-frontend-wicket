@@ -37,6 +37,8 @@ public class EnderecoFormPanel extends Panel {
         super(id);
         this.feedbackPanel = feedbackPanel;
 
+        Endereco enderecoOriginal = endereco;
+
         // Criando um endereço
         if(endereco.getId() == null){
             add(new Label("enderecoFormTitle", Model.of("Criar novo endereço")));
@@ -63,6 +65,11 @@ public class EnderecoFormPanel extends Panel {
                     @Override
                     public Object getDisplayValue(UF estado){
                         return estado.getSigla();
+                    }
+
+                    @Override
+                    public String getIdValue(UF object, int index) {
+                        return object.getSigla();
                     }
                 });
 
@@ -101,9 +108,10 @@ public class EnderecoFormPanel extends Panel {
         AjaxLink<Void> calcelar = new AjaxLink<>("ajaxCancelar") {
             @Serial
             private static final long serialVersionUID = -8806215908629462715L;
-
             @Override
             public void onClick(AjaxRequestTarget target) {
+                System.out.println(enderecoForm.getModelObject());
+                System.out.println(enderecoOriginal);
                 ModalWindow.closeCurrent(target);
             }
         };
@@ -134,11 +142,11 @@ public class EnderecoFormPanel extends Panel {
             protected void onEvent(AjaxRequestTarget target) {
                 try {
                     Endereco enderecoCep = enderecoApi.buscarEnderecopeloCep(inputCep.getInput());
-                    inputEndereco.setModelObject(enderecoCep.getEndereco());
-                    inputBairro.setModelObject(enderecoCep.getBairro());
-                    inputCidade.setModelObject(enderecoCep.getCidade());
-                    dropEstado.setModelObject(enderecoCep.getEstado());
-                    target.add(inputEndereco, inputBairro, inputCidade, dropEstado);
+                    target.appendJavaScript("document.getElementById('" + inputEndereco.getMarkupId() + "').value =\"" + enderecoCep.getEndereco() +"\";");
+                    target.appendJavaScript("document.getElementById('" + inputBairro.getMarkupId() + "').value =\"" + enderecoCep.getBairro() +"\";");
+                    target.appendJavaScript("document.getElementById('" + inputCidade.getMarkupId() + "').value =\"" + enderecoCep.getCidade() +"\";");
+                    target.appendJavaScript("document.getElementById('" + dropEstado.getMarkupId() + "').value =\"" + enderecoCep.getEstado().getSigla() +"\";");
+
                 } catch (IOException e) {
                     feedbackPanel.error("Erro ao buscar pelo CEP no sistema! obs. erro de conexão com o backend");
                 } catch (Exception e){
