@@ -2,7 +2,6 @@ package com.unika.forms;
 
 import com.unika.model.Filtro;
 import com.unika.model.Monitorador;
-import com.unika.model.UF;
 import com.unika.model.apiService.MonitoradorApi;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -15,11 +14,11 @@ import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.validation.validator.StringValidator;
 
 import java.io.IOException;
 import java.io.Serial;
 import java.util.Arrays;
-import java.util.InvalidPropertiesFormatException;
 import java.util.List;
 
 public class PesquisaFormPanel extends Panel {
@@ -131,6 +130,8 @@ public class PesquisaFormPanel extends Panel {
                 target.add(feedbackPanel);
             }
         };
+
+        inputPesquisa.setLabel(Model.of("Pesquisar")).add(StringValidator.maximumLength(30));
 
         pesquisarForm.add(inputPesquisa, inputTipo, searchButton, checkboxes, clearButton);
     }

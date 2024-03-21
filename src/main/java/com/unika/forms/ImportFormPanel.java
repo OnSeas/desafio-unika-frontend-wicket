@@ -70,7 +70,7 @@ public class ImportFormPanel extends Panel {
         });
 
         form.setMultiPart(true);
-        form.setMaxSize(Bytes.megabytes(2));
+        form.setMaxSize(Bytes.megabytes(50));
         form.add(fileUploadField);
         add(form);
     }
